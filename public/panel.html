@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Erased</title>
+  <link rel="stylesheet" href="panel.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="brand">Erased</div>
+    <div id="ai-status" class="pill" title="Where your mail is read">Checking on-device AI…</div>
+  </header>
+
+  <section class="hero">
+    <div class="big" id="count">0</div>
+    <div class="label" id="count-label">companies have your data</div>
+    <div class="score-row">
+      <div><span class="score" id="score">–</span><span class="muted"> / 100 safety</span></div>
+      <div class="muted" id="progress"></div>
+    </div>
+  </section>
+
+  <section class="setup" id="setup">
+    <label class="field">Where you live
+      <select id="region">
+        <option value="GB">United Kingdom</option>
+        <option value="DE">Germany</option>
+        <option value="FR">France</option>
+        <option value="IE">Ireland</option>
+        <option value="NL">Netherlands</option>
+        <option value="ES">Spain</option>
+        <option value="IT">Italy</option>
+        <option value="US-CA">California, US</option>
+        <option value="OTHER">Somewhere else</option>
+      </select>
+    </label>
+    <button id="ready" class="secondary">Get on-device AI ready</button>
+    <button id="scan" class="primary">Scan my inbox</button>
+    <p class="note">Your emails are read on this computer by Gemini Nano. Nothing from your inbox is sent anywhere.</p>
+  </section>
+
+  <nav class="filters" id="filters">
+    <button data-f="risk" class="on">At risk</button>
+    <button data-f="breached">Breached</button>
+    <button data-f="stale">Unused 3+ yrs</button>
+    <button data-f="all">All</button>
+  </nav>
+  <ol class="list" id="list"></ol>
+
+  <script type="module" src="panel.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Erased",
+  "version": "0.1.0",
+  "description": "Find every company holding your data from your own inbox, ask them to delete it, and prove whether they did. Your mail is read on this device.",
+  "minimum_chrome_version": "139",
+  "permissions": ["sidePanel", "storage", "alarms"],
+  "host_permissions": ["https://mail.google.com/*"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "side_panel": { "default_path": "panel.html" },
+  "action": { "default_title": "Erased" },
+  "content_scripts": [{ "matches": ["https://mail.google.com/*"], "js": ["content.js"], "run_at": "document_idle" }]
+}

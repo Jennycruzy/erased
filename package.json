@@ -1,0 +1,24 @@
+{
+  "name": "erased",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Find every company that holds your data from your own inbox, ask them to delete it, and prove whether they did. Reads mail on your device with Gemini Nano through Firebase AI Logic.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "breaches": "node scripts/fetch-breaches.mjs"
+  },
+  "dependencies": {
+    "firebase": "^13.3.0",
+    "tldts": "^6.1.86"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.300",
+    "esbuild": "^0.25.12",
+    "typescript": "5.8",
+    "vitest": "^3.2.7"
+  }
+}
