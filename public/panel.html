@@ -15,10 +15,12 @@
   <section class="hero">
     <div class="big" id="count">0</div>
     <div class="label" id="count-label">companies have your data</div>
+    <div class="alarm" id="alarm"></div>
     <div class="score-row">
       <div><span class="score" id="score">–</span><span class="muted"> / 100 safety</span></div>
       <div class="muted" id="progress"></div>
     </div>
+    <div id="timeline" class="timeline" aria-live="polite"></div>
     <div id="morning" class="morning" hidden></div>
   </section>
 
@@ -66,6 +68,8 @@
           <option value="SE">Sweden</option><option value="AT">Austria</option><option value="DK">Denmark</option>
           <option value="FI">Finland</option><option value="NO">Norway</option>
           <option value="US-CA">California, US</option>
+          <option value="CA">Canada</option>
+          <option value="NG">Nigeria</option>
           <option value="OTHER">Somewhere else</option>
         </select>
       </label>

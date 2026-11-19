@@ -16,6 +16,7 @@ import { firebase } from "../ai/firebase";
 import { lookupRoute } from "../ai/lookup";
 import { ACCOUNT_SCHEMA, isMarketing, MARKETING_SCHEMA, privateModel, readReply, REPLY_SCHEMA } from "../ai/models";
 import { shareOutcome } from "../ai/board";
+import { drawTimeline } from "./timeline";
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls = "", text = "") => {
@@ -64,10 +65,21 @@ function recompute() {
   $("count").textContent = companies.length.toLocaleString();
   $("score").textContent = companies.length ? String(safetyScore(companies)) : "–";
   renderTrail();
+  drawTimeline($("timeline"), companies, now);
   void renderClean();
 }
 
+function renderAlarm() {
+  const bad = companies.filter((c) => c.breachedAfterJoining.length).length;
+  const old = companies.filter((c) => c.stale).length;
+  const box = $("alarm");
+  box.replaceChildren();
+  if (bad) box.append(el("span", "", `${bad} breached after you joined`));
+  if (old) box.append(el("span", "grey", `${bad ? " · " : ""}${old} unused 3+ years`));
+}
+
 function renderTrail() {
+  renderAlarm();
   const list = $("list");
   const shown = companies.filter((c) =>
     filter === "all" ? true : filter === "breached" ? c.breaches.length > 0 : filter === "stale" ? c.stale : c.breachedAfterJoining.length > 0 || c.stale);
@@ -159,6 +171,7 @@ async function restoreTrail() {
   $("count").textContent = companies.length.toLocaleString();
   $("score").textContent = String(safetyScore(companies));
   renderTrail();
+  drawTimeline($("timeline"), companies, now);
 }
 
 // ---------- Clean up ----------
@@ -184,7 +197,7 @@ function cleanRow(c: Company): HTMLLIElement {
   const dir = directory.get(c.domain);
   const route = el("div", "why", dir && dir.request_route !== "unknown"
     ? `How: ${dir.request_route.replace("_", " ")}${dir.dsar_email ? ` (${dir.dsar_email})` : ""}${dir.verified ? "" : " · unverified"}`
-    : "How: not in the directory yet");
+    : "How: not in the directory. Look it up below.");
   const recent = Number.isFinite(c.lastSeen) && Date.now() - c.lastSeen < 90 * DAY;
   if (!chosenKind.has(c.domain)) chosenKind.set(c.domain, recent ? "stop_marketing" : "delete");
   const seg = el("div", "seg");
@@ -312,7 +325,8 @@ async function renderWatch() {
       acts.append(pack);
     }
     if (acts.childElementCount) mid.append(acts);
-    const label = s.state === "proven" ? "ERASED" : s.state === "broken" ? "NOT ERASED" : s.state === "complaint_ready" ? "COMPLAINT" : s.state === "overdue" ? "OVERDUE" : s.state.toUpperCase().replace("_", " ");
+    const LABELS: Record<string, string> = { drafted: "NOT SENT", sent: "SENT", ack: "RECEIVED", needs_id: "ID ASKED", confirmed: "CONFIRMED", proven: "ERASED", broken: "NOT ERASED", refused: "REFUSED", overdue: "OVERDUE", followed_up: "FOLLOWED UP", complaint_ready: "COMPLAINT" };
+    const label = LABELS[s.state] ?? s.state;
     const cls = s.state === "proven" ? "proven" : s.state === "broken" || s.state === "complaint_ready" ? "broken" : s.state === "overdue" || s.state === "needs_id" ? "act" : "wait";
     li.append(ring(s.state === "proven" ? 1 : frac, color), mid, el("span", `verdict ${cls}`, label));
     return li;

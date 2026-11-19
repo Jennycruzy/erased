@@ -1,6 +1,6 @@
 import { addDays, addMonths } from "./time";
 
-export type LawId = "gdpr" | "uk_gdpr" | "ccpa" | "policy";
+export type LawId = "gdpr" | "uk_gdpr" | "ccpa" | "pipeda" | "ndpa" | "policy";
 export type RequestKind = "delete" | "stop_marketing";
 
 export interface Law {
@@ -47,6 +47,24 @@ export const LAWS: Record<LawId, Law> = {
     extendedDeadline: (t) => addDays(t, 90),
     deadlineText: "45 days, extendable once by 45 more days with notice",
     complaintTo: "the California Privacy Protection Agency (cppa.ca.gov)",
+  },
+  pipeda: {
+    id: "pipeda", name: "Canada's Personal Information Protection and Electronic Documents Act (PIPEDA)", regions: ["CA"],
+    deleteArticle: "PIPEDA Schedule 1, Principles 4.3.8 (withdrawal of consent) and 4.5.3 (destruction of personal information no longer needed)",
+    objectArticle: "PIPEDA Schedule 1, Principle 4.3.8 (withdrawal of consent), for marketing",
+    deadline: (t) => addDays(t, 30),
+    extendedDeadline: (t) => addDays(t, 60),
+    deadlineText: "30 days, the PIPEDA time limit for individual requests (s. 8(3)), extendable by up to 30 days with written notice (s. 8(4))",
+    complaintTo: "the Office of the Privacy Commissioner of Canada (priv.gc.ca)",
+  },
+  ndpa: {
+    id: "ndpa", name: "the Nigeria Data Protection Act 2023 and the NDPC General Application and Implementation Directive 2025", regions: ["NG"],
+    deleteArticle: "section 34 of the Nigeria Data Protection Act 2023 and Article 38 of the GAID 2025 (right to be forgotten)",
+    objectArticle: "section 36 of the Nigeria Data Protection Act 2023 (right to object) and Article 38(1)(d) of the GAID 2025",
+    deadline: (t) => addDays(t, 30),
+    extendedDeadline: (t) => addDays(t, 30),
+    deadlineText: "30 days (the period in the NDPC's data subject complaint form, GAID 2025)",
+    complaintTo: "the Nigeria Data Protection Commission (ndpc.gov.ng), Article 39 GAID 2025",
   },
   policy: {
     id: "policy", name: "the company's own privacy policy", regions: [],

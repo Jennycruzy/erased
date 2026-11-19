@@ -18,14 +18,15 @@ on your device for your mail, Gemini in the cloud only for public pages.
 ## What's in it
 
 **Extension (side panel, three tabs).**
-- **Trail.** Pages through the account-type mail in Gmail (welcome, verify, password reset, sign-in alerts,
+- **Trail.** A timeline of every company by the year you joined (red: breached after you joined) above the list.
+  Pages through the account-type mail in Gmail (welcome, verify, password reset, sign-in alerts,
   receipts) in your own browser and builds your data trail live: every company, when you joined, when they last
   wrote, a running count and a safety score.
 - **Breach flags.** Every company is matched against the public [Have I Been Pwned](https://haveibeenpwned.com/)
   catalogue (1,052 breaches, bundled, matched locally); breaches that happened **after you joined** are marked red,
   and companies silent for 3+ years are marked unused.
 - **Clean up.** Breached and unused companies are pre-selected. Choose *Delete me* or *Stop marketing* (keeps the
-  account). The request is a fixed legal letter under GDPR, UK GDPR or CCPA with the legal deadline; Gmail opens
+  account). The request is a fixed legal letter under GDPR, UK GDPR, CCPA, Canada's PIPEDA or Nigeria's NDPA with the legal deadline; Gmail opens
   with it addressed to the company's privacy team and you press Send. Companies that use a form get the letter
   copied and the form opened. For a company the directory doesn't know, *Find how to remove* sends only that
   company's name to cloud Gemini, which reads its public privacy page.
@@ -60,6 +61,7 @@ Plus; a GPU with more than 4 GB VRAM, or 16 GB RAM and 4 CPU cores; 22 GB free d
 npm ci
 npm run build        # bundles the extension into dist/
 npm test             # rules, deadlines, templates, breach matching, quote checks
+npm run verify       # re-checks this README's claims against the repo, offline, in a few seconds
 ```
 
 Then open `chrome://extensions`, switch on Developer mode, choose **Load unpacked** and pick `dist/`. Open Gmail,

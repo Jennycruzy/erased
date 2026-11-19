@@ -15,10 +15,15 @@ describe("deadlines", () => {
     expect(iso(LAWS.ccpa.deadline(d("2026-11-19")))).toBe("2027-01-03");
     expect(iso(LAWS.ccpa.extendedDeadline(d("2026-11-19")))).toBe("2027-02-17");
   });
+  it("PIPEDA gives 30 days, 60 with notice", () => {
+    expect(iso(LAWS.pipeda.deadline(d("2026-11-19")))).toBe("2026-12-19");
+    expect(iso(LAWS.pipeda.extendedDeadline(d("2026-11-19")))).toBe("2027-01-18");
+  });
+  it("NDPA gives 30 days", () => expect(iso(LAWS.ndpa.deadline(d("2026-11-19")))).toBe("2026-12-19"));
   it("policy fallback gives 30 days", () => expect(iso(LAWS.policy.deadline(d("2026-11-19")))).toBe("2026-12-19"));
 });
 
 describe("law by region", () => {
-  it.each([["DE", "gdpr"], ["ie", "gdpr"], ["NO", "gdpr"], ["GB", "uk_gdpr"], ["US-CA", "ccpa"], ["NG", "policy"], ["OTHER", "policy"]])(
+  it.each([["DE", "gdpr"], ["ie", "gdpr"], ["NO", "gdpr"], ["GB", "uk_gdpr"], ["US-CA", "ccpa"], ["CA", "pipeda"], ["NG", "ndpa"], ["BR", "policy"], ["IN", "policy"], ["OTHER", "policy"]])(
     "%s -> %s", (r, id) => expect(lawFor(r).id).toBe(id));
 });

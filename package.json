@@ -9,7 +9,9 @@
     "build": "node scripts/build.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "breaches": "node scripts/fetch-breaches.mjs"
+    "breaches": "node scripts/fetch-breaches.mjs",
+    "verify": "node scripts/verify.mjs",
+    "directory": "node scripts/directory/build.mjs && node .cache/compile.mjs data/directory/seed.txt data/directory/entries.jsonl && node scripts/directory/export.mjs"
   },
   "dependencies": {
     "firebase": "^13.3.0",

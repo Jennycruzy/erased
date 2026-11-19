@@ -65,3 +65,13 @@ input:not([type]), input[type="text"] { font: inherit; padding: 8px; border: 1px
 .verdict.proven { color: var(--green); } .verdict.broken { color: var(--red); } .verdict.wait { color: var(--muted); } .verdict.act { color: var(--amber); }
 .item.watch { grid-template-columns: 34px 1fr auto; }
 .quote { font-size: 12px; color: var(--muted); border-left: 2px solid var(--line); padding-left: 8px; margin-top: 6px; }
+.timeline { margin-top: 14px; min-height: 40px; }
+.timeline svg { display: block; width: 100%; height: auto; }
+.tl-axis { stroke: var(--line); stroke-width: 1; }
+.tl-year { font-size: 10px; fill: var(--muted); text-anchor: middle; }
+.tl-dot { fill: var(--fg); opacity: .55; }
+.tl-dot.grey { fill: var(--grey); opacity: .35; }
+.tl-dot.amber { fill: var(--amber); opacity: .9; }
+.tl-dot.red { fill: var(--red); opacity: 1; }
+.alarm { margin-top: 6px; font-size: 14px; font-weight: 600; color: var(--red); min-height: 1em; }
+.alarm .grey { color: var(--muted); font-weight: 500; }
