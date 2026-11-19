@@ -14,9 +14,9 @@ service cloud.firestore {
       // A signed-in (anonymous) user may add exactly one to exactly one counter, and only together with a new,
       // never-seen report record for that user, company and outcome (so nobody can count twice).
       allow create, update: if request.auth != null
-        && onlyOneCounterUp(domain)
-        && existsAfter(/databases/$(database)/documents/reports/$(request.auth.uid + '_' + domain + '_' + changedCounter()))
-        && !exists(/databases/$(database)/documents/reports/$(request.auth.uid + '_' + domain + '_' + changedCounter()));
+        && request.resource.data.keys().hasOnly(counters())
+        && (countedOnce(domain, 'requests') || countedOnce(domain, 'confirmed') || countedOnce(domain, 'proven')
+            || countedOnce(domain, 'broken') || countedOnce(domain, 'refused') || countedOnce(domain, 'overdue'));
       allow delete: if false;
     }
 
@@ -32,13 +32,13 @@ service cloud.firestore {
 
     function counters() { return ['requests', 'confirmed', 'proven', 'broken', 'refused', 'overdue']; }
     function before() { return resource == null ? {} : resource.data; }
-    function after() { return request.resource.data; }
-    function changedCounter() { return after().diff(before()).affectedKeys().toList()[0]; }
-    function onlyOneCounterUp(domain) {
-      return after().keys().hasOnly(counters())
-        && after().diff(before()).affectedKeys().size() == 1
-        && changedCounter() in counters()
-        && after()[changedCounter()] == before().get(changedCounter(), 0) + 1;
+    function reportPath(domain, c) { return /databases/$(database)/documents/reports/$(request.auth.uid + '_' + domain + '_' + c); }
+    // Only counter c changed, it went up by exactly one, and this request adds the user's first report for it.
+    function countedOnce(domain, c) {
+      return request.resource.data.diff(before()).affectedKeys().hasOnly([c])
+        && request.resource.data[c] == before().get(c, 0) + 1
+        && existsAfter(reportPath(domain, c))
+        && !exists(reportPath(domain, c));
     }
 
     match /{document=**} {
