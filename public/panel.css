@@ -42,3 +42,26 @@ button:disabled { opacity: .5; cursor: default; }
 .tag { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--chip); color: var(--muted); white-space: nowrap; }
 .tag.red { background: var(--red-bg); color: var(--red); }
 .empty { padding: 24px 16px; color: var(--muted); }
+.tabs { display: flex; border-bottom: 1px solid var(--line); }
+.tabs button { flex: 1; border: 0; border-radius: 0; padding: 11px 4px; font-size: 13px; color: var(--muted); background: transparent; border-bottom: 2px solid transparent; }
+.tabs button.on { color: var(--fg); border-bottom-color: var(--fg); font-weight: 600; }
+.n { font-size: 11px; color: var(--muted); }
+.actions { display: flex; gap: 8px; padding: 12px 16px 0; }
+.actions button { flex: 1; }
+.pad { padding: 8px 16px 0; }
+input:not([type]), input[type="text"] { font: inherit; padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); }
+.check { display: flex; gap: 8px; font-size: 13px; align-items: flex-start; }
+.morning { margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: var(--chip); font-size: 13px; }
+.morning div + div { margin-top: 4px; }
+.row-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.row-actions button { padding: 5px 10px; font-size: 12px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.seg button { border: 0; border-radius: 0; padding: 4px 10px; font-size: 12px; }
+.seg button.on { background: var(--fg); color: var(--bg); }
+.ring { width: 34px; height: 34px; }
+.ring circle { fill: none; stroke-width: 4; }
+.ring .bg { stroke: var(--line); }
+.verdict { font-weight: 700; font-size: 12px; letter-spacing: .02em; }
+.verdict.proven { color: var(--green); } .verdict.broken { color: var(--red); } .verdict.wait { color: var(--muted); } .verdict.act { color: var(--amber); }
+.item.watch { grid-template-columns: 34px 1fr auto; }
+.quote { font-size: 12px; color: var(--muted); border-left: 2px solid var(--line); padding-left: 8px; margin-top: 6px; }

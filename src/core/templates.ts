@@ -56,6 +56,27 @@ export function buildRequest(f: RequestFill): { subject: string; body: string } 
   };
 }
 
+/** Reminder sent when the legal deadline has passed without a proper answer. */
+export function buildFollowUp(f: RequestFill & { originalSentAt: number }): { subject: string; body: string } {
+  const law = LAWS[f.law];
+  const what = f.kind === "delete" ? "erase my personal data" : "stop using my personal data for direct marketing";
+  return {
+    subject: `Follow-up: overdue privacy request [${f.ref}]`,
+    body: [
+      `Dear ${f.company} privacy team,`,
+      ``,
+      `On ${fmt(f.originalSentAt)} I asked you to ${what} (reference ${f.ref}). Under ${law.name} you had ${law.deadlineText} to respond, and that time has passed without a complete answer.`,
+      ``,
+      `Please complete the request and confirm in writing within 14 days. If I do not hear from you, I will file a complaint with ${law.complaintTo}.`,
+      ``,
+      `Reference: ${f.ref}`,
+      ``,
+      `Kind regards,`,
+      f.fullName,
+    ].join("\n"),
+  };
+}
+
 const ALPHABET = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 /** "ER-7Q2K9" style reference. */
 export function newRef(rand: () => number = Math.random): string {

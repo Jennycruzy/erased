@@ -1,0 +1,48 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Public deletion-route directory. Built from public privacy pages by the maintainers; read-only for everyone.
+    match /directory/{domain} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // "Who actually deletes": anonymous outcome counts per company. Shown publicly.
+    match /board/{domain} {
+      allow read: if true;
+      // A signed-in (anonymous) user may add exactly one to exactly one counter, and only together with a new,
+      // never-seen report record for that user, company and outcome (so nobody can count twice).
+      allow create, update: if request.auth != null
+        && onlyOneCounterUp(domain)
+        && existsAfter(/databases/$(database)/documents/reports/$(request.auth.uid + '_' + domain + '_' + changedCounter()))
+        && !exists(/databases/$(database)/documents/reports/$(request.auth.uid + '_' + domain + '_' + changedCounter()));
+      allow delete: if false;
+    }
+
+    // One record per user, company and outcome. Holds no personal data: company, outcome and month only.
+    match /reports/{id} {
+      allow read, update, delete: if false;
+      allow create: if request.auth != null
+        && id == request.auth.uid + '_' + request.resource.data.domain + '_' + request.resource.data.outcome
+        && request.resource.data.keys().hasOnly(['domain', 'outcome', 'month'])
+        && request.resource.data.outcome in ['requests', 'confirmed', 'proven', 'broken', 'refused', 'overdue']
+        && request.resource.data.month is string && request.resource.data.month.matches('^20[0-9]{2}-[01][0-9]$');
+    }
+
+    function counters() { return ['requests', 'confirmed', 'proven', 'broken', 'refused', 'overdue']; }
+    function before() { return resource == null ? {} : resource.data; }
+    function after() { return request.resource.data; }
+    function changedCounter() { return after().diff(before()).affectedKeys().toList()[0]; }
+    function onlyOneCounterUp(domain) {
+      return after().keys().hasOnly(counters())
+        && after().diff(before()).affectedKeys().size() == 1
+        && changedCounter() in counters()
+        && after()[changedCounter()] == before().get(changedCounter(), 0) + 1;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

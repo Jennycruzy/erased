@@ -44,6 +44,15 @@ const olderButton = () =>
 
 /** Opens a Gmail search and pages through every result, calling onPage after each page. */
 export async function scanSearch(query: string, onPage: (rows: Row[], page: number) => void, maxPages = 200): Promise<number> {
+  const back = location.hash;
+  try {
+    return await pageThrough(query, onPage, maxPages);
+  } finally {
+    location.hash = back;
+  }
+}
+
+async function pageThrough(query: string, onPage: (rows: Row[], page: number) => void, maxPages: number): Promise<number> {
   location.hash = "#search/" + encodeURIComponent(query);
   for (let i = 0; i < 40 && rowsOnPage().length === 0; i++) await sleep(500);
   await sleep(1200);
@@ -62,4 +71,30 @@ export async function scanSearch(query: string, onPage: (rows: Row[], page: numb
     await sleep(800);
   }
   return page;
+}
+
+/** The signed-in Gmail address, from the page title ("Inbox (3) - you@example.com - Gmail"). */
+export function accountEmail(): string | null {
+  const m = document.title.match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/);
+  return m ? m[0].toLowerCase() : null;
+}
+
+/**
+ * Text of one thread through Gmail's print view, fetched from this same Gmail page with the user's own session.
+ * Stays in the browser; goes only to the on-device model.
+ */
+export async function threadText(threadId: string): Promise<string | null> {
+  const base = location.pathname.match(/^\/mail\/u\/\d+\//)?.[0] ?? "/mail/u/0/";
+  const ik = (document.body.innerHTML.match(/"ik"\s*:\s*"([0-9a-f]+)"|GM_ID_KEY\s*=\s*'([0-9a-f]+)'/) ?? [])[1] ?? "";
+  const url = `${base}?view=pt&search=all&permthid=thread-f:${threadId}${ik ? `&ik=${ik}` : ""}`;
+  try {
+    const r = await fetch(url, { credentials: "include" });
+    if (!r.ok) return null;
+    const html = await r.text();
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    doc.querySelectorAll("script,style").forEach((n) => n.remove());
+    return (doc.body?.innerText ?? doc.body?.textContent ?? "").replace(/\n{3,}/g, "\n\n").trim();
+  } catch {
+    return null;
+  }
 }

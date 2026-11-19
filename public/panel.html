@@ -19,34 +19,60 @@
       <div><span class="score" id="score">–</span><span class="muted"> / 100 safety</span></div>
       <div class="muted" id="progress"></div>
     </div>
+    <div id="morning" class="morning" hidden></div>
   </section>
 
-  <section class="setup" id="setup">
-    <label class="field">Where you live
-      <select id="region">
-        <option value="GB">United Kingdom</option>
-        <option value="DE">Germany</option>
-        <option value="FR">France</option>
-        <option value="IE">Ireland</option>
-        <option value="NL">Netherlands</option>
-        <option value="ES">Spain</option>
-        <option value="IT">Italy</option>
-        <option value="US-CA">California, US</option>
-        <option value="OTHER">Somewhere else</option>
-      </select>
-    </label>
-    <button id="ready" class="secondary">Get on-device AI ready</button>
-    <button id="scan" class="primary">Scan my inbox</button>
-    <p class="note">Your emails are read on this computer by Gemini Nano. Nothing from your inbox is sent anywhere.</p>
-  </section>
-
-  <nav class="filters" id="filters">
-    <button data-f="risk" class="on">At risk</button>
-    <button data-f="breached">Breached</button>
-    <button data-f="stale">Unused 3+ yrs</button>
-    <button data-f="all">All</button>
+  <nav class="tabs" id="tabs">
+    <button data-tab="trail" class="on">Trail</button>
+    <button data-tab="clean">Clean up <span id="clean-n" class="n"></span></button>
+    <button data-tab="watch">Watch <span id="watch-n" class="n"></span></button>
+    <button data-tab="settings">You</button>
   </nav>
-  <ol class="list" id="list"></ol>
+
+  <section data-view="trail">
+    <div class="actions">
+      <button id="ready" class="secondary">Get on-device AI ready</button>
+      <button id="scan" class="primary">Scan my inbox</button>
+    </div>
+    <p class="note pad">Your emails are read on this computer by Gemini Nano. Nothing from your inbox is sent anywhere.</p>
+    <nav class="filters" id="filters">
+      <button data-f="risk" class="on">At risk</button>
+      <button data-f="breached">Breached</button>
+      <button data-f="stale">Unused 3+ yrs</button>
+      <button data-f="all">All</button>
+    </nav>
+    <ol class="list" id="list"></ol>
+  </section>
+
+  <section data-view="clean" hidden>
+    <p class="note pad">Pre-selected: companies breached after you joined, and ones you haven't used in 3+ years. Each request opens in Gmail; you press Send.</p>
+    <ol class="list" id="clean-list"></ol>
+  </section>
+
+  <section data-view="watch" hidden>
+    <div class="actions"><button id="check" class="secondary">Check for replies</button></div>
+    <ol class="list" id="watch-list"></ol>
+  </section>
+
+  <section data-view="settings" hidden>
+    <div class="setup">
+      <label class="field">Your name (goes in the request letters)<input id="name" autocomplete="name" /></label>
+      <label class="field">Where you live (sets the law)
+        <select id="region">
+          <option value="GB">United Kingdom</option>
+          <option value="IE">Ireland</option><option value="DE">Germany</option><option value="FR">France</option>
+          <option value="NL">Netherlands</option><option value="ES">Spain</option><option value="IT">Italy</option>
+          <option value="BE">Belgium</option><option value="PT">Portugal</option><option value="PL">Poland</option>
+          <option value="SE">Sweden</option><option value="AT">Austria</option><option value="DK">Denmark</option>
+          <option value="FI">Finland</option><option value="NO">Norway</option>
+          <option value="US-CA">California, US</option>
+          <option value="OTHER">Somewhere else</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" id="share" /> Add my outcomes (company + result only) to the public "who actually deletes" board</label>
+      <p class="note">Account email: <span id="acct">open Gmail to detect</span></p>
+    </div>
+  </section>
 
   <script type="module" src="panel.js"></script>
 </body>

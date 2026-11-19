@@ -7,3 +7,5 @@ coverage/
 SPEC*.md
 *-private/
 .private/
+.cache/
+.firebase/

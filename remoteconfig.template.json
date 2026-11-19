@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "cloud_models": { "defaultValue": { "value": "[\"gemini-3.5-flash-lite\",\"gemini-3.8-flash\"]" }, "valueType": "JSON", "description": "Cloud models in order of preference, for public pages only." },
+    "proof_days": { "defaultValue": { "value": "30" }, "valueType": "NUMBER", "description": "Quiet days after a confirmed deletion before it counts as proven." },
+    "grace_days": { "defaultValue": { "value": "3" }, "valueType": "NUMBER", "description": "Days after a confirmation before marketing counts as a broken promise." },
+    "follow_up_days": { "defaultValue": { "value": "14" }, "valueType": "NUMBER", "description": "Days after a follow-up before the complaint pack is offered." },
+    "directory_url": { "defaultValue": { "value": "https://forget-me-hybrid.web.app/directory.json" }, "valueType": "STRING", "description": "Public deletion-route directory, downloaded whole and matched on the device." },
+    "prompt_version": { "defaultValue": { "value": "1" }, "valueType": "STRING", "description": "Version of the on-device prompts." }
+  }
+}

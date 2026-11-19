@@ -17,19 +17,39 @@ on your device for your mail, Gemini in the cloud only for public pages.
 
 ## What's in it
 
-- **Inbox scan (side panel).** Pages through the account-type mail in Gmail (welcome, verify, password reset,
-  sign-in alerts, receipts) in your own browser and builds your data trail live: every company, when you joined,
-  when they last wrote, with a running count and a safety score.
-- **Breach flags.** Matches each company against the public [Have I Been Pwned](https://haveibeenpwned.com/)
-  breach catalogue (1,052 breaches, bundled with the extension, matched locally) and marks breaches that
-  happened **after you joined**, plus companies you haven't heard from in 3+ years.
-- **On-device reading.** Private reads use `ONLY_ON_DEVICE` with a JSON schema: is this a real account, what did
-  the company reply, is this email marketing. Each answer must carry a quote found word for word in the email.
-- **Legal requests.** Fixed templates for erasure, or "stop marketing, keep my account", under GDPR, UK GDPR or
-  CCPA, with the legal deadline (including extensions) and a Gmail compose link so you send it yourself.
-- **Proof rules.** Every request moves through clear states: sent → acknowledged → confirmed → **proven**
-  (30 quiet days) or **broken** (marketing arrives after they said your data was deleted), and a complaint is
-  ready when a company refuses, stays silent past the deadline, or breaks its word.
+**Extension (side panel, three tabs).**
+- **Trail.** Pages through the account-type mail in Gmail (welcome, verify, password reset, sign-in alerts,
+  receipts) in your own browser and builds your data trail live: every company, when you joined, when they last
+  wrote, a running count and a safety score.
+- **Breach flags.** Every company is matched against the public [Have I Been Pwned](https://haveibeenpwned.com/)
+  catalogue (1,052 breaches, bundled, matched locally); breaches that happened **after you joined** are marked red,
+  and companies silent for 3+ years are marked unused.
+- **Clean up.** Breached and unused companies are pre-selected. Choose *Delete me* or *Stop marketing* (keeps the
+  account). The request is a fixed legal letter under GDPR, UK GDPR or CCPA with the legal deadline; Gmail opens
+  with it addressed to the company's privacy team and you press Send. Companies that use a form get the letter
+  copied and the form opened. For a company the directory doesn't know, *Find how to remove* sends only that
+  company's name to cloud Gemini, which reads its public privacy page.
+- **Watch.** Each request shows its deadline ring and state. *Check for replies* finds your sent copy and the
+  company's replies by the request's reference, reads them with the on-device model, and watches for marketing
+  after a confirmed deletion. Verdicts: **ERASED** (confirmed, then 30 quiet days) or **NOT ERASED** (marketing
+  more than 3 days after "deleted"). Overdue requests get a follow-up letter; refusals, silence after the
+  follow-up and broken promises get a printable **complaint pack**, built on the device with dated quotes.
+- **Morning badge.** Once a day the icon shows how many requests need you.
+
+**Public deletion directory.** `scripts/directory` builds it from public privacy pages: finds each company's
+policy (a real headless browser for sites that block plain downloads), sends only the rights and contact
+sections to cloud Gemini through Firebase AI Logic (`ONLY_IN_CLOUD`), and keeps a route or email only when the
+sentence proving it is on the page word for word. Seeded from the Tranco top sites and every company in the
+breach catalogue. Published as `directory.json` (the extension downloads it whole and matches on the device, so
+not even your list of companies is sent) and to Firestore.
+
+**Site** (`site/`, Firebase Hosting): the directory, the anonymous "who actually deletes" board, evidence and a
+try-it guide.
+
+**Firebase.** AI Logic (hybrid: on-device for mail, cloud for public pages), App Check (debug token in the
+extension; no remote code), Firestore (directory; board counts with rules that allow one count per anonymous
+user, company and outcome), Remote Config (cloud model list, proof timings, directory location, prompt version),
+anonymous Auth for board counts.
 
 ## Run it
 
@@ -57,12 +77,16 @@ click the Erased icon, press **Get on-device AI ready** once (the first run down
 ## Project layout
 
 ```
-src/core     rules: domains, subject rules, laws and deadlines, request states, templates, quote checks, trail
-src/ai       Firebase setup (App Check) and the hybrid models: private on-device reads, public cloud reads
-src/gmail    reads the Gmail page in your browser (content script)
-src/panel    the side panel
-data         the public breach catalogue (npm run breaches to refresh)
-test         unit tests
+src/core           rules: domains, subject rules, laws and deadlines, request states, watcher, templates,
+                   complaint pack, morning card, quote checks, trail, storage
+src/ai             Firebase setup (App Check), hybrid models, company lookup, board counts
+src/gmail          reads the Gmail page in your browser (content script)
+src/panel          the side panel and the complaint page
+scripts/directory  builds and publishes the public deletion directory
+site               the public site (Firebase Hosting)
+firestore.rules    who may read and write what
+data               breach catalogue and directory build output
+test               unit tests
 ```
 
 ## License
