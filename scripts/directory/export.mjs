@@ -11,10 +11,12 @@ for (const line of readFileSync("data/directory/entries.jsonl", "utf8").split("\
   latest.set(e.domain, e);
 }
 const FIELDS = ["domain", "company", "privacy_url", "request_route", "dsar_email", "form_url", "laws_named", "route_quote", "verified", "verified_at", "method"];
-const entries = [...latest.values()].map((e) => Object.fromEntries(FIELDS.map((f) => [f, e[f] ?? null]))).sort((a, b) => a.domain.localeCompare(b.domain));
+const routed = (e) => e.request_route !== "unknown" && e.request_route !== "none";
+// "verified" means a usable route proven by a quote on the company's own page; no route is never "verified".
+const entries = [...latest.values()].map((e) => Object.fromEntries(FIELDS.map((f) => [f, f === "verified" ? !!e.verified && routed(e) : e[f] ?? null]))).sort((a, b) => a.domain.localeCompare(b.domain));
 mkdirSync("site", { recursive: true });
 writeFileSync("site/directory.json", JSON.stringify({ generatedAt: new Date().toISOString(), count: entries.length, entries }));
-const usable = entries.filter((e) => e.request_route !== "unknown" && e.request_route !== "none");
+const usable = entries.filter(routed);
 console.log(`${entries.length} entries (${usable.length} with a route, ${entries.filter((e) => e.verified).length} verified) -> site/directory.json`);
 
 if (process.argv.includes("--firestore")) {

@@ -10,7 +10,7 @@ import { initializeApp } from "firebase/app";
 import { getAI, getGenerativeModel, GoogleAIBackend, InferenceMode } from "firebase/ai";
 import { firebaseConfig } from "../../src/ai/firebase-config";
 import { quoteIsIn } from "../../src/core/quote";
-import { DIRECTORY_SCHEMA, directoryPrompt, type DirectoryEntry } from "../../src/core/directory";
+import { DIRECTORY_SCHEMA, directoryPrompt, hasRoute, isPlumbing, type DirectoryEntry } from "../../src/core/directory";
 
 const [, , listFile, outFile, limitArg] = process.argv;
 const limit = Number(limitArg ?? Infinity);
@@ -122,8 +122,10 @@ async function findPolicy(domain: string): Promise<{ url: string; text: string; 
     if (score >= 40) break;
   }
   if (best) return { url: best.url, text: best.text, html: best.html };
-  if (!home) throw new Error("site unreachable");
-  return { url: candidates[0] ?? `https://${domain}/privacy`, text: null, html: null };
+  // Real companies often block automated downloads (PayPal, eBay, Canva…); let the cloud read the usual privacy
+  // address instead. Plumbing domains with no site stay out.
+  if (!home && isPlumbing(domain)) throw new Error("site unreachable");
+  return { url: home ? candidates[0] ?? `https://${domain}/privacy` : `https://www.${domain}/privacy`, text: null, html: null };
 }
 
 /** Keeps the opening and every paragraph about rights, deletion or privacy contacts, so long policies fit. */
@@ -203,13 +205,17 @@ async function compileOnce(domain: string, model: number): Promise<DirectoryEntr
     form_url: routeOk && formOk ? j.form_url : null,
     laws_named: j.laws_named ?? [],
     route_quote: quote,
-    verified: routeOk || emailOk,
+    verified: (routeOk || emailOk) && hasRoute({ request_route: route }),
     verified_at: now,
     method: "page_text",
   };
 }
 
-const done = new Set(existsSync(outFile) ? readFileSync(outFile, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l).domain) : []);
+// Domains already answered are skipped; ones that ended in an error ("model unavailable", "site unreachable") get
+// another try, and the newest line wins at export.
+const latestLine = new Map<string, { error?: string }>();
+if (existsSync(outFile)) for (const l of readFileSync(outFile, "utf8").split("\n").filter(Boolean)) { const e = JSON.parse(l); latestLine.set(e.domain, e); }
+const done = new Set([...latestLine].filter(([, e]) => !e.error).map(([d]) => d));
 const domains = readFileSync(listFile, "utf8").split("\n").map((s) => s.trim()).filter((d) => d && !done.has(d));
 let n = 0;
 for (const domain of domains) {

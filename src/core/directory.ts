@@ -32,3 +32,30 @@ export const directoryPrompt = (domain: string) =>
   `You read the public privacy policy of ${domain}. Find how a person asks this company to delete their personal data. ` +
   `Prefer a dedicated privacy/DPO email or request form over general support. Copy route_quote exactly from the page, ` +
   `word for word. If the page gives no way to request deletion, use request_route "none".`;
+
+/**
+ * Internet plumbing nobody holds an account with: DNS, ad and tag servers, CDNs, telemetry, update and
+ * connectivity checks, raw cloud hosts. Kept out of the directory seed and out of coverage counts.
+ */
+const PLUMBING_EXACT = new Set([
+  "gtld-servers.net", "domaincontrol.com", "2mdn.net", "doubleclick.net", "googlesyndication.com", "googletagservices.com",
+  "googleadservices.com", "googletagmanager.com", "google-analytics.com", "app-measurement.com", "app-analytics-services.com",
+  "gstatic.com", "googleapis.com", "ggpht.com", "googleusercontent.com", "youtube-nocookie.com", "ytimg.com", "youtu.be", "goo.gl", "forms.gle", "wa.me",
+  "akam.net", "akamai.net", "akamaiedge.net", "akamaized.net", "akadns.net", "edgekey.net", "edgesuite.net", "cloudfront.net", "fastly.net", "jsdelivr.net",
+  "office.net", "static.microsoft", "msftconnecttest.com", "msftncsi.com", "windowsupdate.com", "sfx.ms", "microsoftonline.com", "lsrelayaccess.com",
+  "amazon-adsystem.com", "media-amazon.com", "awswaf.com", "aws.dev", "amazon.dev", "a2z.com", "aliyuncs.com", "aliyuncsslbintl.com", "yandexcloud.net",
+  "nflximg.com", "nflxvideo.net", "ttvnw.net", "vkuserphoto.ru", "online-metrix.net", "shopifysvc.com", "mybluehost.me", "name-services.com", "tbcache.com",
+  "3gppnetwork.org", "h264.io", "w3.org", "xcal.tv", "imcmdb.net", "gwfb.net", "whatsapp.net", "fbcdn.net", "cdninstagram.com", "twimg.com", "apple-dns.net",
+  "icloud-content.com", "aaplimg.com", "mzstatic.com", "cdn-apple.com", "root-servers.net", "in-addr.arpa", "digicert.com", "sectigo.com", "letsencrypt.org",
+]);
+const PLUMBING_WORDS = /(^|[.-])(cdn|dns|ns\d*|static|img|imgs|assets|ads?|adsystem|adservice|adserver|analytics|metrics?|telemetry|tracking|tag|tags|pixel|beacon|update|updates|ocsp|crl|edge|cache|relay|servers?|nocookie|usercontent|measurement|connecttest|ncsi)([.-]|$)/;
+
+export function isPlumbing(domain: string): boolean {
+  const d = domain.toLowerCase();
+  if (PLUMBING_EXACT.has(d)) return true;
+  if (/^[a-z0-9]{12,}-[a-z]\.com$|^[a-z0-9]{16,}\./.test(d)) return true; // random machine names
+  return PLUMBING_WORDS.test(d.split(".").slice(0, -1).join("."));
+}
+
+/** A route a person can actually use; "verified" only counts for these. */
+export const hasRoute = (e: Pick<DirectoryEntry, "request_route">) => e.request_route !== "none" && e.request_route !== "unknown";
