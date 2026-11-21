@@ -11,12 +11,13 @@ import { chromeKV, newRequest, Store, type StoredRequest } from "../core/store";
 import { buildFollowUp, buildRequest, composeUrl, newRef } from "../core/templates";
 import { DAY } from "../core/time";
 import { safetyScore, summarise, type Company, type Sighting } from "../core/trail";
-import { companyReplies, marketingEvent, replyEvent, sentEvent, watchQueries, type MailRow } from "../core/watch";
+import { companyReplies, isResetMail, marketingEvent, replyEvent, sentEvent, watchQueries, type MailRow } from "../core/watch";
 import { firebase } from "../ai/firebase";
 import { lookupRoute } from "../ai/lookup";
 import { ACCOUNT_SCHEMA, isMarketing, MARKETING_SCHEMA, privateModel, readReply, REPLY_SCHEMA } from "../ai/models";
 import { shareOutcome } from "../ai/board";
 import { boardLine, type BoardCounts } from "../core/board";
+import { accountAliveEvent, resetPage, signInQuery } from "../core/signin";
 import { drawTimeline } from "./timeline";
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -314,7 +315,7 @@ async function renderWatch() {
     const li = el("li", "item watch");
     const sent = r.events.find((e) => e.type === "sent")?.at;
     const frac = sent && s.deadline ? (now - sent) / (s.deadline - sent) : 0;
-    const color = s.state === "proven" ? "var(--green)" : s.state === "broken" || s.state === "complaint_ready" ? "var(--red)" : s.state === "overdue" ? "var(--amber)" : "var(--fg)";
+    const color = s.state === "proven" ? "var(--green)" : s.state === "broken" || s.state === "complaint_ready" || s.state === "reopened" ? "var(--red)" : s.state === "overdue" ? "var(--amber)" : "var(--fg)";
     const mid = el("div");
     mid.append(el("div", "name", r.company), el("div", "why", s.reason));
     const ev = s.evidence;
@@ -346,15 +347,27 @@ async function renderWatch() {
       skip.onclick = async () => { await store.addEvent(r.id, { type: "user_skipped_id", at: Date.now() }); void renderWatch(); };
       acts.append(skip);
     }
-    if (s.state === "complaint_ready" || s.state === "broken") {
+    const reset = resetPage(r);
+    if (s.state === "confirmed" && reset && !r.events.some((e) => e.type === "signin_check")) {
+      const chk = el("button", "", "Check the account is gone");
+      chk.title = "Opens their password-reset page. Ask for a reset with your email: if a reset email arrives in the next 24 hours, the account still exists.";
+      chk.onclick = async () => {
+        await store.addEvent(r.id, { type: "signin_check", at: Date.now() });
+        await chrome.tabs.create({ url: reset });
+        void renderWatch();
+      };
+      acts.append(chk);
+    }
+    if (ev && ev.type === "account_alive") mid.append(el("div", "quote", `Sign-in email after deletion: “${ev.subject}”`));
+    if (s.state === "complaint_ready" || s.state === "broken" || s.state === "reopened") {
       const pack = el("button", "primary", "Complaint pack");
       pack.onclick = () => chrome.tabs.create({ url: chrome.runtime.getURL(`complaint.html?id=${encodeURIComponent(r.id)}`) });
       acts.append(pack);
     }
     if (acts.childElementCount) mid.append(acts);
-    const LABELS: Record<string, string> = { drafted: "NOT SENT", sent: "SENT", ack: "RECEIVED", needs_id: "ID ASKED", confirmed: "CONFIRMED", proven: "ERASED", broken: "NOT ERASED", refused: "REFUSED", overdue: "OVERDUE", followed_up: "FOLLOWED UP", complaint_ready: "COMPLAINT" };
+    const LABELS: Record<string, string> = { drafted: "NOT SENT", sent: "SENT", ack: "RECEIVED", needs_id: "ID ASKED", confirmed: "CONFIRMED", signin_checked: "CHECKED", proven: "ERASED", broken: "NOT ERASED", reopened: "REOPENED", refused: "REFUSED", overdue: "OVERDUE", followed_up: "FOLLOWED UP", complaint_ready: "COMPLAINT" };
     const label = LABELS[s.state] ?? s.state;
-    const cls = s.state === "proven" ? "proven" : s.state === "broken" || s.state === "complaint_ready" ? "broken" : s.state === "overdue" || s.state === "needs_id" ? "act" : "wait";
+    const cls = s.state === "proven" ? "proven" : s.state === "broken" || s.state === "complaint_ready" || s.state === "reopened" ? "broken" : s.state === "overdue" || s.state === "needs_id" ? "act" : "wait";
     li.append(ring(s.state === "proven" ? 1 : frac, color), mid, el("span", `verdict ${cls}`, label));
     return li;
   }));
@@ -391,7 +404,7 @@ async function checkReplies() {
       if (!r.events.some((e) => e.type === "sent")) continue;
       $("progress").textContent = `Checking ${r.company}…`;
       for (const row of companyReplies(r, await search(q0.replies, 3))) {
-        if (!row.threadId || !replyModel) continue;
+        if (!row.threadId || !replyModel || isResetMail(row.subject)) continue;
         if (r.events.some((e) => e.type === "reply" && e.at === row.at)) continue;
         const text = await threadText(row.threadId, row.from);
         if (!text) continue;
@@ -410,6 +423,12 @@ async function checkReplies() {
           }
           const ev = marketingEvent(row, device);
           if (ev) await store.addEvent(r.id, ev);
+        }
+        // Sign-in check: a reset or sign-in email within 24 h means the account still exists.
+        const check = fresh.events.find((e) => e.type === "signin_check" && e.at >= confirmed.at);
+        if (check && !fresh.events.some((e) => e.type === "account_alive" && e.at >= check.at)) {
+          const alive = accountAliveEvent(check.at, companyReplies(fresh, await search(signInQuery(fresh, check.at), 1)));
+          if (alive) await store.addEvent(r.id, alive);
         }
       }
       await maybeShare(fresh.id);

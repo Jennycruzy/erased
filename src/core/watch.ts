@@ -65,6 +65,9 @@ export function isCompanySender(r: StoredRequest, from: string): boolean {
 }
 
 /** Rows with a reply from the company; `from` is set to the company sender (a thread row can list you first). */
+/** Password-reset mail is never a reply to the request (it is what the sign-in check looks for). */
+export const isResetMail = (subject: string) => /reset (your )?password|password reset|change (your )?password|forgot (your )?password/i.test(subject);
+
 export function companyReplies(r: StoredRequest, rows: MailRow[]): MailRow[] {
   const sent = r.events.find((e) => e.type === "sent")?.at ?? r.createdAt;
   return rows.flatMap((x) => {

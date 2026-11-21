@@ -17,7 +17,9 @@ export function morningCard(reqs: StoredRequest[], now: number, lastSeen: number
   for (const r of reqs) {
     const s = status(r, now);
     const fresh = r.events.filter((e) => e.at > lastSeen);
-    if (s.state === "broken") lines.push(`${r.company} said your data was deleted, then emailed you again. Complaint ready.`);
+    if (s.state === "broken" && s.result === "BROKEN_ACCOUNT_STILL_EXISTS") lines.push(`${r.company} said your account was deleted, but it still answers a password reset. Complaint ready.`);
+    else if (s.state === "broken") lines.push(`${r.company} said your data was deleted, then emailed you again. Complaint ready.`);
+    else if (s.state === "reopened") lines.push(`${r.company} emailed you again after the deletion was proven. The case is open again.`);
     else if (s.state === "needs_id") lines.push(`${r.company} wants you to confirm it's you.`);
     else if (s.state === "overdue") lines.push(`${r.company} missed the legal deadline. Send the follow-up.`);
     else if (s.state === "complaint_ready") lines.push(`${r.company}: complaint pack ready.`);
