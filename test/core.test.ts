@@ -124,3 +124,19 @@ describe("privacy correspondence is never account proof", () => {
     expect(isPrivacyCorrespondence({ from: "no-reply@slack.com", subject: "Welcome to Slack" })).toBe(false);
   });
 });
+describe("privacy-request services", () => {
+  it("are never account proof", () => {
+    expect(isPrivacyCorrespondence({ from: "no-reply-skillsoft@privacy.fides.ethyca.com", subject: "Your one-time code is 915532" })).toBe(true);
+    expect(isPrivacyCorrespondence({ from: "noreply@m.ketch.com", subject: "Identity Verification" })).toBe(true);
+  });
+});
+describe("which email to read on the device", () => {
+  it("prefers a password reset over a welcome email, then falls back to the next", () => {
+    const welcome: Sighting = { domain: "zapier.com", from: "learn@send.zapier.com", subject: "Welcome aboard", kind: "welcome", at: 1, threadId: "a" };
+    const reset: Sighting = { domain: "zapier.com", from: "security@mail.zapier.com", subject: "Zapier Password Reset", kind: "reset", at: 2, threadId: "b" };
+    const sightings = new Map([["zapier.com", [welcome, reset]]]);
+    const companies = [summarise("zapier.com", [welcome, reset], [], 3)];
+    expect(deviceTargets(sightings, companies, 10)[0].sighting).toBe(reset);
+    expect(deviceTargets(sightings, companies, 10, new Set([reset]))[0].sighting).toBe(welcome);
+  });
+});

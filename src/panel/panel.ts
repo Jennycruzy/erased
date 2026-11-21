@@ -183,11 +183,15 @@ async function scan() {
     // Phase 2: read one email per company on this device; an account counts only with a sentence found in the email.
     if (deviceReady) {
       const m = privateModel(fb().ai, ACCOUNT_SCHEMA);
-      const targets = deviceTargets(sightings, companies, DEVICE_READS_PER_SCAN);
+      // Second round: a company whose first email proved nothing gets its next-best email read.
       let n = 0;
+      const tried = new Set<Sighting>();
+      for (let round = 0; round < 2 && n < DEVICE_READS_PER_SCAN; round++) {
+      const targets = deviceTargets(sightings, companies, DEVICE_READS_PER_SCAN - n, tried);
       for (const t of targets) {
         n++;
-        $("progress").textContent = `Reading ${n} of ${targets.length} on this device: ${t.domain}…`;
+        tried.add(t.sighting);
+        $("progress").textContent = `Reading ${n} on this device: ${t.domain}…`;
         const text = await threadText(t.sighting.threadId!, t.sighting.from);
         if (!text) continue;
         const r = await readAccountEmail(m, t.sighting.from ?? "", t.sighting.subject ?? "", text).catch(() => null);
@@ -196,6 +200,7 @@ async function scan() {
         if (n % 10 === 0) recompute();
       }
       recompute();
+      }
       await saveTrail();
       const proven = companies.filter((c) => c.account === "confirmed").length;
       $("progress").textContent = `${rows.length.toLocaleString()} account emails read · ${proven} accounts proven on this device`;
