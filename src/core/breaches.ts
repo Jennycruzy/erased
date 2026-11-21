@@ -27,3 +27,8 @@ export function indexBreaches(raw: Array<Record<string, unknown>>): BreachIndex 
   }
   return idx;
 }
+
+/** The hosted catalogue wins only if it is complete and newer than the copy bundled with the extension. */
+export function useHosted(bundledAt: string, hosted: { fetchedAt?: string; breaches?: unknown[] } | null): boolean {
+  return !!hosted?.fetchedAt && Array.isArray(hosted.breaches) && hosted.breaches.length > 100 && hosted.fetchedAt > bundledAt;
+}

@@ -75,3 +75,4 @@ input:not([type]), input[type="text"] { font: inherit; padding: 8px; border: 1px
 .tl-dot.red { fill: var(--red); opacity: 1; }
 .alarm { margin-top: 6px; font-size: 14px; font-weight: 600; color: var(--red); min-height: 1em; }
 .alarm .grey { color: var(--muted); font-weight: 500; }
+.why .others { color: var(--muted); font-size: 12px; margin-top: 2px; }

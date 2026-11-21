@@ -1,6 +1,6 @@
 import breachFile from "../../data/breaches.json";
 import { getRemoteConfig, getValue, fetchAndActivate } from "firebase/remote-config";
-import { indexBreaches } from "../core/breaches";
+import { indexBreaches, useHosted } from "../core/breaches";
 import type { DirectoryEntry } from "../core/directory";
 import { companyDomain } from "../core/domain";
 import { ACCOUNT_SEARCH, kindFromSubject } from "../core/headers";
@@ -16,6 +16,7 @@ import { firebase } from "../ai/firebase";
 import { lookupRoute } from "../ai/lookup";
 import { ACCOUNT_SCHEMA, isMarketing, MARKETING_SCHEMA, privateModel, readReply, REPLY_SCHEMA } from "../ai/models";
 import { shareOutcome } from "../ai/board";
+import { boardLine, type BoardCounts } from "../core/board";
 import { drawTimeline } from "./timeline";
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -26,17 +27,23 @@ const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls = "", text = "") 
   return e;
 };
 const store = new Store(chromeKV);
-const breaches = indexBreaches(breachFile.breaches as Array<Record<string, unknown>>);
+// Bundled copy first; replaced by the hosted catalogue (refreshed every 2 hours) when it loads. Only the whole file is
+// downloaded, so nothing about you is sent.
+let breaches = indexBreaches(breachFile.breaches as Array<Record<string, unknown>>);
 const sightings = new Map<string, Sighting[]>();
 let companies: Company[] = [];
 let directory = new Map<string, DirectoryEntry>();
+let board: Record<string, BoardCounts> = {};
 let filter = "risk";
 let deviceReady = false;
 const fmtDate = (t: number) => (Number.isFinite(t) ? new Date(t).toLocaleDateString(undefined, { year: "numeric", month: "short" }) : "–");
 const fmtDay = (t: number) => new Date(t).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 
 // ---------- Firebase (App Check debug token; Remote Config for the directory location and timings) ----------
-const fb = () => firebase({ debugToken: true });
+// A registered debug token saved in this browser (extension pages share one origin) wins; otherwise the SDK makes a
+// new one and prints it to the console for registering.
+const savedToken = (() => { try { return localStorage.getItem("appcheckDebug"); } catch { return null; } })();
+const fb = () => firebase({ debugToken: savedToken || true });
 
 async function loadDirectory() {
   let url = "https://forget-me-hybrid.web.app/directory.json";
@@ -53,6 +60,18 @@ async function loadDirectory() {
       directory = new Map(list.entries.map((e) => [e.domain, e]));
     }
   } catch { /* the trail still works without it */ }
+  try {
+    const r = await fetch(new URL("breaches.json", url).href, { cache: "no-cache" });
+    if (r.ok) {
+      const hosted = (await r.json()) as { fetchedAt: string; breaches: Array<Record<string, unknown>> };
+      if (useHosted(breachFile.fetchedAt, hosted)) { breaches = indexBreaches(hosted.breaches); recompute(); }
+    }
+  } catch { /* the bundled copy stays */ }
+  // The whole board, next to the directory; matched here, so nothing says which companies you have.
+  try {
+    const r = await fetch(new URL("board.json", url).href, { cache: "no-cache" });
+    if (r.ok) board = ((await r.json()) as { entries: Record<string, BoardCounts> }).entries ?? {};
+  } catch { /* optional */ }
   const extra = ((await chromeKV.get("lookups")) as DirectoryEntry[] | undefined) ?? [];
   for (const e of extra) if (!directory.has(e.domain)) directory.set(e.domain, e);
 }
@@ -98,6 +117,8 @@ function whyLine(c: Company): HTMLElement {
     line.append(el("b", "", `Breached ${b.date.slice(0, 7)} after you joined: ${b.title} (${b.accounts.toLocaleString()} accounts)`));
     why.append(line);
   }
+  const others = boardLine(board[c.domain]);
+  if (others) why.append(el("div", "others", others));
   return why;
 }
 
@@ -410,7 +431,7 @@ async function maybeShare(id: string) {
   const r = (await store.requests()).find((x) => x.id === id);
   if (!r) return;
   const st = status(r, Date.now());
-  const outcome = st.state === "proven" ? "proven" : st.state === "broken" ? "broken" : st.state === "complaint_ready" && st.result === "REFUSED_WITH_REASON" ? "refused" : st.state === "overdue" ? "overdue" : r.events.some((e) => e.type === "sent") ? "requests" : null;
+  const outcome = st.state === "proven" ? "proven" : st.state === "broken" ? "broken" : st.state === "confirmed" ? "confirmed" : st.state === "complaint_ready" && st.result === "REFUSED_WITH_REASON" ? "refused" : st.state === "overdue" ? "overdue" : r.events.some((e) => e.type === "sent") ? "requests" : null;
   if (outcome) await shareOutcome(fb().app, r.domain, outcome).catch(() => undefined);
 }
 
@@ -480,7 +501,7 @@ $("filters").addEventListener("click", (e) => {
 
 void deviceStatus();
 void initSettings();
-void restoreTrail().then(() => loadDirectory()).then(() => renderClean());
+void restoreTrail().then(() => loadDirectory()).then(() => { renderTrail(); return renderClean(); });
 void renderWatch();
 void renderMorning();
 renderTrail();

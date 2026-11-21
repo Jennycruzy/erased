@@ -1,6 +1,6 @@
 import type { FirebaseApp } from "firebase/app";
 import { getAuth, signInAnonymously } from "firebase/auth/web-extension";
-import { doc, getDoc, getFirestore, increment, writeBatch } from "firebase/firestore";
+import { doc, getFirestore, increment, writeBatch } from "firebase/firestore";
 
 /**
  * Adds one anonymous outcome to the public "who actually deletes" board: company domain, outcome and month only.
@@ -25,7 +25,5 @@ export async function shareOutcome(app: FirebaseApp, domain: string, outcome: st
   }
 }
 
-export async function boardFor(app: FirebaseApp, domain: string): Promise<Record<string, number> | null> {
-  const snap = await getDoc(doc(getFirestore(app), "board", domain));
-  return snap.exists() ? (snap.data() as Record<string, number>) : null;
-}
+// Reading is never per company: the whole board is published with the directory (board.json) and matched on the
+// device, so no request ever says which companies you have.

@@ -29,4 +29,22 @@ if (process.argv.includes("--firestore")) {
     if (!r.ok) throw new Error(`Firestore ${r.status}: ${(await r.text()).slice(0, 200)}`);
   }
   console.log(`Firestore: ${entries.length} directory documents written`);
+
+  // The board goes out whole, next to the directory, so the extension matches it on the device and never asks
+  // Firestore about one company. Companies with fewer than BOARD_MIN_REPORTS reports stay private.
+  const BOARD_MIN_REPORTS = 5; // same as src/core/board.ts
+  const all = {};
+  let pageToken = "";
+  do {
+    const r = await fetch(`${base}/board?pageSize=300${pageToken ? `&pageToken=${pageToken}` : ""}`, { headers: { authorization: `Bearer ${tok}` } });
+    if (!r.ok) throw new Error(`Firestore board ${r.status}`);
+    const j = await r.json();
+    for (const d of j.documents ?? []) {
+      all[decodeURIComponent(d.name.split("/").pop())] = Object.fromEntries(Object.entries(d.fields ?? {}).map(([k, v]) => [k, Number(v.integerValue ?? v.doubleValue ?? 0)]));
+    }
+    pageToken = j.nextPageToken ?? "";
+  } while (pageToken);
+  const shown = Object.fromEntries(Object.entries(all).filter(([, c]) => Math.max(0, ...Object.values(c)) >= BOARD_MIN_REPORTS));
+  writeFileSync("site/board.json", JSON.stringify({ generatedAt: new Date().toISOString(), minReports: BOARD_MIN_REPORTS, count: Object.keys(shown).length, entries: shown }));
+  console.log(`board: ${Object.keys(all).length} companies, ${Object.keys(shown).length} shown -> site/board.json`);
 }
