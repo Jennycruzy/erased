@@ -27,7 +27,11 @@ const model = (name: string, tools = false) =>
       generationConfig: tools ? { temperature: 0 } : { temperature: 0, responseMimeType: "application/json", responseJsonSchema: DIRECTORY_SCHEMA },
       ...(tools ? { tools: [{ urlContext: {} }] } : {}),
     },
-  });
+  }, { timeout: 60000 });
+
+/** The SDK timeout is not always honoured, so race it as well. */
+const withTimeout = <T>(p: Promise<T>, ms: number) =>
+  Promise.race([p, new Promise<never>((_, no) => setTimeout(() => no(new Error(`timeout after ${ms} ms`)), ms))]);
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -144,15 +148,17 @@ function sentenceWith(text: string, needle: string): string | null {
 }
 
 async function ask(prompt: string, tools = false, first = 0): Promise<string> {
-  for (let attempt = 0; attempt < 6; attempt++) {
+  for (let attempt = 0; attempt < 10; attempt++) {
     const name = MODELS[(attempt + first) % MODELS.length];
     try {
-      const r = await model(name, tools).generateContent(prompt);
+      const r = await withTimeout(model(name, tools).generateContent(prompt), 75000);
       return r.response.text();
     } catch (e) {
       const msg = String((e as Error).message ?? e);
-      const wait = /429|quota|RESOURCE_EXHAUSTED/i.test(msg) ? 30000 * (attempt + 1) : 5000;
-      process.stderr.write(`  retry ${attempt + 1} (${name}): ${msg.slice(0, 90)}\n`);
+      // 429 = quota; 500/503 "high demand" and timeouts = model overloaded. Both pass, so wait longer each time.
+      const busy = /429|quota|RESOURCE_EXHAUSTED|high demand|overloaded|UNAVAILABLE|\[50[03]|timeout/i.test(msg);
+      const wait = busy ? Math.min(15000 * (attempt + 1), 90000) : 5000;
+      process.stderr.write(`  retry ${attempt + 1} (${name}): ${msg.replace(/AIza[\w-]+/g, "<key>").slice(0, 300)}\n`);
       await sleep(wait);
     }
   }

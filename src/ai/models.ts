@@ -1,5 +1,6 @@
 import { getGenerativeModel, InferenceMode, type AI, type GenerativeModel } from "firebase/ai";
-import { quoteIsIn } from "../core/quote";
+import { notDoneYet, quoteIsIn } from "../core/quote";
+import { numbered, pick, sentencesOf } from "../core/sentences";
 import type { ReplyKind } from "../core/requests";
 
 /** Longest slice of an email sent to the on-device model (well inside its 9,216-token window). */
@@ -10,29 +11,28 @@ export const ACCOUNT_SCHEMA = {
   properties: {
     is_account: { type: "boolean", description: "True if this email shows the reader holds an account with the sender." },
     kind: { type: "string", enum: ["welcome", "verify", "reset", "receipt", "security", "newsletter", "person", "other"] },
-    service_name: { type: "string" },
-    quote: { type: "string", description: "Exact sentence copied from the email that proves the answer." },
+    proof: { type: "integer", description: "Number of the one sentence that proves the answer." },
   },
-  required: ["is_account", "kind", "quote"],
+  required: ["is_account", "kind", "proof"],
 } as const;
 
 export const REPLY_SCHEMA = {
   type: "object",
   properties: {
-    reply: { type: "string", enum: ["ack", "deleted", "needs_id", "refused", "other"] },
+    reply: { type: "string", enum: ["ack", "deleted", "needs_id", "refused", "other", "unrelated"] },
     extension: { type: "boolean", description: "True if they say they need more time." },
-    quote: { type: "string", description: "Exact sentence copied from the email that proves the answer." },
+    proof: { type: "integer", description: "Number of the one sentence that proves the answer." },
   },
-  required: ["reply", "extension", "quote"],
+  required: ["reply", "extension", "proof"],
 } as const;
 
 export const MARKETING_SCHEMA = {
   type: "object",
   properties: {
     marketing: { type: "boolean", description: "True if the email promotes products, offers or content rather than handling a request." },
-    quote: { type: "string" },
+    proof: { type: "integer", description: "Number of the one sentence that proves the answer." },
   },
-  required: ["marketing", "quote"],
+  required: ["marketing", "proof"],
 } as const;
 
 export interface Logged<T> {
@@ -40,6 +40,8 @@ export interface Logged<T> {
   source: "on_device" | "in_cloud" | "unknown";
   ms: number;
 }
+
+const clip = (s: string) => s.slice(0, MAX_EMAIL_CHARS);
 
 /** Every model call is logged with where it ran, so the evidence page can show it. */
 export const callLog: Array<{ task: string; source: string; ms: number; at: number }> = [];
@@ -63,40 +65,50 @@ export function publicCloudModel(ai: AI, model = "gemini-3.5-flash-lite"): Gener
   return getGenerativeModel(ai, { mode: InferenceMode.ONLY_IN_CLOUD, inCloudParams: { model } });
 }
 
-async function ask<T>(task: string, m: GenerativeModel, prompt: string): Promise<Logged<T>> {
+/**
+ * The email goes in as numbered sentences and the model answers with a sentence NUMBER; the code copies that exact
+ * sentence as the quote. Writing the sentence out took 3.5-5.8 s per email on an M1; pointing at it takes ~2 s.
+ */
+async function ask<T extends object>(task: string, m: GenerativeModel, instruction: string, head: string, body: string): Promise<Logged<T & { quote: string }> & { quoteOk: boolean }> {
+  const sents = sentencesOf(clip(body));
   const t0 = performance.now();
-  const r = await m.generateContent(prompt);
+  const r = await m.generateContent(`${instruction}\n\n${head}\n\n${numbered(sents)}`);
   const ms = Math.round(performance.now() - t0);
   const source = (r.response.inferenceSource as Logged<T>["source"]) ?? "unknown";
   callLog.push({ task, source, ms, at: Date.now() });
-  return { value: JSON.parse(r.response.text()) as T, source, ms };
+  const raw = JSON.parse(r.response.text()) as T & { proof?: unknown };
+  const quote = pick(sents, raw.proof);
+  return { value: { ...raw, quote }, source, ms, quoteOk: quoteIsIn(quote, body) };
 }
 
-const clip = (s: string) => s.slice(0, MAX_EMAIL_CHARS);
-
-export async function readAccountEmail(m: GenerativeModel, from: string, subject: string, body: string) {
-  const r = await ask<{ is_account: boolean; kind: string; service_name?: string; quote: string }>(
+export function readAccountEmail(m: GenerativeModel, from: string, subject: string, body: string) {
+  return ask<{ is_account: boolean; kind: string }>(
     "account",
     m,
-    `You read one email. Decide if it shows that the reader has an account with the sender (sign-up, verification, password reset, login alert, receipt for their own order). Newsletters the reader never signed up for and emails from people are not accounts. Copy one exact sentence from the email as proof.\n\nFrom: ${from}\nSubject: ${subject}\n\n${clip(body)}`,
+    "You read one email, given as numbered sentences. Decide if it shows that the reader has an account with the sender (sign-up, verification, password reset, login alert, receipt for their own order). Newsletters the reader never signed up for and emails from people are not accounts. Give the number of the one sentence that proves your answer.",
+    `From: ${from}\nSubject: ${subject}`,
+    body,
   );
-  return { ...r, quoteOk: quoteIsIn(r.value.quote, body) };
 }
 
 export async function readReply(m: GenerativeModel, from: string, subject: string, body: string) {
-  const r = await ask<{ reply: ReplyKind; extension: boolean; quote: string }>(
+  const r = await ask<{ reply: ReplyKind | "unrelated"; extension: boolean }>(
     "reply",
     m,
-    `This email is a company's reply to a data deletion or marketing objection request. Classify it: "deleted" only if it says the data or account has been deleted or the objection applied; "ack" if it only confirms receipt; "needs_id" if it asks the person to verify identity; "refused" if it declines; otherwise "other". Copy one exact sentence as proof.\n\nFrom: ${from}\nSubject: ${subject}\n\n${clip(body)}`,
+    'This email, given as numbered sentences, is a company\'s reply to a data deletion or marketing objection request. Classify it: "deleted" only if it says the data or account has been deleted or the objection applied; "ack" if it only confirms receipt; "needs_id" if it asks the person to verify identity; "refused" if it declines; "unrelated" if it is not about this request at all (welcome, onboarding tips, newsletters, marketing); otherwise "other". Give the number of the one sentence that proves your answer.',
+    `From: ${from}\nSubject: ${subject}`,
+    body,
   );
-  return { ...r, quoteOk: quoteIsIn(r.value.quote, body) };
+  r.value.reply = notDoneYet(r.value.reply, r.value.quote);
+  return r;
 }
 
-export async function isMarketing(m: GenerativeModel, from: string, subject: string, body: string) {
-  const r = await ask<{ marketing: boolean; quote: string }>(
+export function isMarketing(m: GenerativeModel, from: string, subject: string, body: string) {
+  return ask<{ marketing: boolean }>(
     "marketing",
     m,
-    `Is this email marketing (promoting products, offers, content or re-engagement), rather than a transactional or legal message? Copy one exact sentence as proof.\n\nFrom: ${from}\nSubject: ${subject}\n\n${clip(body)}`,
+    "Is this email, given as numbered sentences, marketing (promoting products, offers, content or re-engagement), rather than a transactional or legal message? Give the number of the one sentence that proves your answer.",
+    `From: ${from}\nSubject: ${subject}`,
+    body,
   );
-  return { ...r, quoteOk: quoteIsIn(r.value.quote, body) };
 }

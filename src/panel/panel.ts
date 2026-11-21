@@ -133,12 +133,18 @@ async function gmailTab(): Promise<chrome.tabs.Tab | null> {
 async function search(query: string, maxPages: number, onRows?: (rows: MailRow[], page: number) => void): Promise<MailRow[]> {
   const tab = await gmailTab();
   if (!tab?.id) throw new Error("Open Gmail in this window first.");
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const all: MailRow[] = [];
+    let done = false;
     const port = chrome.tabs.connect(tab.id!, { name: "erased-scan" });
     port.onMessage.addListener((m: { type: string; rows?: MailRow[]; page?: number }) => {
       if (m.type === "rows" && m.rows) { all.push(...m.rows); onRows?.(m.rows, m.page ?? 0); }
-      if (m.type === "done") { port.disconnect(); resolve(all); }
+      if (m.type === "done") { done = true; port.disconnect(); resolve(all); }
+    });
+    // No content script in the tab (Gmail opened before Erased was installed or updated, or still loading).
+    port.onDisconnect.addListener(() => {
+      void chrome.runtime.lastError;
+      if (!done) reject(new Error("Erased can't see your Gmail tab yet. Reload the Gmail tab, wait for your inbox, then try again."));
     });
     port.postMessage({ type: "scan", query, maxPages });
   });
@@ -333,10 +339,10 @@ async function renderWatch() {
   }));
 }
 
-async function threadText(threadId: string): Promise<string | null> {
+async function threadText(threadId: string, from?: string): Promise<string | null> {
   const tab = await gmailTab();
   if (!tab?.id) return null;
-  const res = (await chrome.tabs.sendMessage(tab.id, { type: "thread", threadId }).catch(() => null)) as { text: string | null } | null;
+  const res = (await chrome.tabs.sendMessage(tab.id, { type: "thread", threadId, from }).catch(() => null)) as { text: string | null } | null;
   return res?.text ?? null;
 }
 
@@ -350,15 +356,23 @@ async function checkReplies() {
     for (const r of await store.requests()) {
       const q0 = watchQueries(r);
       if (!r.events.some((e) => e.type === "sent")) {
-        const ev = sentEvent(await search(q0.sent, 2));
-        if (ev) await store.addEvent(r.id, ev);
+        const rows = await search(q0.sent, 2);
+        const ev = sentEvent(rows);
+        // The list shows the newest message's date; read our own message's time from the thread.
+        if (ev && rows[0]?.threadId) {
+          const tab = await gmailTab();
+          const got = tab?.id ? ((await chrome.tabs.sendMessage(tab.id, { type: "sentAt", threadId: rows[0].threadId, from: r.accountEmail }).catch(() => null)) as { at: number | null } | null) : null;
+          if (got?.at && got.at <= ev.at) ev.at = got.at;
+        }
+        // Update this in-memory copy too, or the request is skipped below until the next click.
+        if (ev) { await store.addEvent(r.id, ev); r.events.push(ev); }
       }
       if (!r.events.some((e) => e.type === "sent")) continue;
       $("progress").textContent = `Checking ${r.company}…`;
       for (const row of companyReplies(r, await search(q0.replies, 3))) {
         if (!row.threadId || !replyModel) continue;
         if (r.events.some((e) => e.type === "reply" && e.at === row.at)) continue;
-        const text = await threadText(row.threadId);
+        const text = await threadText(row.threadId, row.from);
         if (!text) continue;
         const read = await readReply(replyModel, row.from, row.subject, text);
         for (const ev of replyEvent(row.at, { ...read.value, quoteOk: read.quoteOk })) await store.addEvent(r.id, ev);
@@ -370,7 +384,7 @@ async function checkReplies() {
         for (const row of await search(q.marketing!, 2)) {
           let device: { marketing: boolean; quoteOk: boolean } | undefined;
           if (mktModel && row.threadId) {
-            const text = await threadText(row.threadId);
+            const text = await threadText(row.threadId, row.from);
             if (text) { const m = await isMarketing(mktModel, row.from, row.subject, text); device = { marketing: m.value.marketing, quoteOk: m.quoteOk }; }
           }
           const ev = marketingEvent(row, device);

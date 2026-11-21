@@ -1,5 +1,5 @@
 import { ACCOUNT_SEARCH } from "../core/headers";
-import { accountEmail, scanSearch, threadText, type Row } from "./reader";
+import { accountEmail, firstSentAt, scanSearch, threadText, type Row } from "./reader";
 
 /**
  * Runs inside mail.google.com. Talks only to this extension's side panel over local ports and messages;
@@ -23,8 +23,9 @@ chrome.runtime.onConnect.addListener((port) => {
   });
 });
 
-chrome.runtime.onMessage.addListener((msg: { type: string; threadId?: string }, _sender, reply) => {
+chrome.runtime.onMessage.addListener((msg: { type: string; threadId?: string; from?: string }, _sender, reply) => {
   if (msg.type === "whoami") { reply({ email: accountEmail() }); return false; }
-  if (msg.type === "thread" && msg.threadId) { threadText(msg.threadId).then((text) => reply({ text })); return true; }
+  if (msg.type === "thread" && msg.threadId) { threadText(msg.threadId, msg.from).then((text) => reply({ text })); return true; }
+  if (msg.type === "sentAt" && msg.threadId && msg.from) { firstSentAt(msg.threadId, msg.from).then((at) => reply({ at })); return true; }
   return false;
 });

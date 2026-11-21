@@ -9,3 +9,6 @@ SPEC*.md
 .private/
 .cache/
 .firebase/
+dist-node/
+src/panel/m0.ts
+public/m0.html

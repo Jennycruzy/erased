@@ -46,3 +46,13 @@ code { font-size: 13px; background: var(--chip); padding: 1px 6px; border-radius
   nav.links { gap: 12px; font-size: 13px; }
   table.dir th:nth-child(4), table.dir td:nth-child(4) { display: none; }
 }
+
+@media (max-width: 640px) {
+  header.site .wrap { height: auto; padding-top: 12px; padding-bottom: 12px; flex-wrap: wrap; gap: 8px 16px; }
+  nav.links { flex-wrap: wrap; gap: 6px 14px; }
+  table.cards thead { display: none; }
+  table.cards, table.cards tbody, table.cards tr, table.cards td { display: block; width: 100%; }
+  table.cards tr { border-bottom: 1px solid var(--line); padding: 12px 0; }
+  table.cards td { border: 0; padding: 2px 0; }
+  table.cards td[data-label]::before { content: attr(data-label) ": "; color: var(--muted); font-size: 13px; }
+}

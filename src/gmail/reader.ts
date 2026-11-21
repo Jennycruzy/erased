@@ -1,6 +1,9 @@
 /** Reads the Gmail web page in this browser. Nothing here makes a network request. */
+import { gmailIdKey, htmlToText, latestMessage, messageTimes, printViewUrl } from "../core/html";
 export interface Row {
   from: string;
+  /** Every sender Gmail lists on the row; a thread with your request and their reply shows both. */
+  senders?: string[];
   subject: string;
   at: number;
   threadId?: string;
@@ -33,7 +36,8 @@ export function rowsOnPage(): Row[] {
       row.querySelector("[data-legacy-thread-id]")?.getAttribute("data-legacy-thread-id") ??
       row.querySelector("[data-thread-id]")?.getAttribute("data-thread-id")?.replace(/^#?thread-f:/, "") ??
       undefined;
-    out.push({ from: s.getAttribute("email") ?? "", subject, at, threadId });
+    const senders = [...new Set([...row.querySelectorAll("[email]")].filter(visible).map((x) => x.getAttribute("email") ?? "").filter(Boolean))];
+    out.push({ from: s.getAttribute("email") ?? "", senders, subject, at, threadId });
   });
   return out;
 }
@@ -83,17 +87,35 @@ export function accountEmail(): string | null {
  * Text of one thread through Gmail's print view, fetched from this same Gmail page with the user's own session.
  * Stays in the browser; goes only to the on-device model.
  */
-export async function threadText(threadId: string): Promise<string | null> {
+let idKey: string | null = null;
+
+export async function threadText(threadId: string, from?: string): Promise<string | null> {
   const base = location.pathname.match(/^\/mail\/u\/\d+\//)?.[0] ?? "/mail/u/0/";
-  const ik = (document.body.innerHTML.match(/"ik"\s*:\s*"([0-9a-f]+)"|GM_ID_KEY\s*=\s*'([0-9a-f]+)'/) ?? [])[1] ?? "";
-  const url = `${base}?view=pt&search=all&permthid=thread-f:${threadId}${ik ? `&ik=${ik}` : ""}`;
+  const ik = (idKey ??= gmailIdKey(document.documentElement.innerHTML));
+  const url = ik ? printViewUrl(base, ik, threadId) : null;
+  if (!url) return null;
   try {
     const r = await fetch(url, { credentials: "include" });
     if (!r.ok) return null;
     const html = await r.text();
-    const doc = new DOMParser().parseFromString(html, "text/html");
-    doc.querySelectorAll("script,style").forEach((n) => n.remove());
-    return (doc.body?.innerText ?? doc.body?.textContent ?? "").replace(/\n{3,}/g, "\n\n").trim();
+    if (/<title>[^<]*Conversation deleted/i.test(html)) return null;
+    return latestMessage(htmlToText(html), from);
+  } catch {
+    return null;
+  }
+}
+
+/** When `me` first wrote in this thread (the list row shows the newest message's date, not ours). */
+export async function firstSentAt(threadId: string, me: string): Promise<number | null> {
+  const base = location.pathname.match(/^\/mail\/u\/\d+\//)?.[0] ?? "/mail/u/0/";
+  const ik = (idKey ??= gmailIdKey(document.documentElement.innerHTML));
+  const url = ik ? printViewUrl(base, ik, threadId) : null;
+  if (!url) return null;
+  try {
+    const r = await fetch(url, { credentials: "include" });
+    if (!r.ok) return null;
+    const mine = messageTimes(htmlToText(await r.text())).filter((x) => x.email === me.toLowerCase()).map((x) => x.at);
+    return mine.length ? Math.min(...mine) : null;
   } catch {
     return null;
   }

@@ -4,13 +4,32 @@ import type { RequestEvent, ReplyKind } from "./requests";
 import type { StoredRequest } from "./store";
 
 /** A Gmail list row, as the content script reports it. */
-export interface MailRow { from: string; subject: string; at: number; threadId?: string }
+export interface MailRow { from: string; senders?: string[]; subject: string; at: number; threadId?: string }
+
+const day = (t: number) => { const d = new Date(t); return `${d.getUTCFullYear()}/${d.getUTCMonth() + 1}/${d.getUTCDate()}`; };
+
+/** Name words Gmail can match in a sender address: "box" finds privacy@box.com and privacy@box.zendesk.com. */
+export function senderWords(r: StoredRequest): string[] {
+  const ds = [r.domain, r.to ? companyDomain(r.to) : null, PARENT[r.domain] ?? null].filter(Boolean) as string[];
+  return [...new Set(ds.map((d) => d.split(".")[0].toLowerCase()).filter((w) => /^[a-z0-9-]{3,}$/.test(w)))];
+}
+
+/**
+ * Replies: mail that quotes our reference, or anything from the company's name since the day before we sent.
+ * In the live run 20 of 33 replies did not quote the reference (new tickets, "[Request received]"), so the
+ * reference alone misses most of them. isCompanySender then drops anyone who is not the company.
+ */
+export function replyQuery(r: StoredRequest): string {
+  const sent = r.events.find((e) => e.type === "sent")?.at ?? r.createdAt;
+  const from = senderWords(r).map((w) => `from:${w}`).join(" ");
+  return `{"${r.ref}" ${from}} after:${day(sent - 864e5)}`;
+}
 
 /** Gmail searches the watcher runs for one request. */
 export function watchQueries(r: StoredRequest, confirmedAt?: number) {
   const q = {
     sent: `in:sent "${r.ref}"`,
-    replies: `"${r.ref}" -in:sent`,
+    replies: replyQuery(r),
     marketing: null as string | null,
   };
   if (confirmedAt) {
@@ -27,13 +46,40 @@ export function sentEvent(rows: MailRow[]): RequestEvent | null {
 }
 
 /** Replies count only when they come from the company's own domain. */
+/** Help desks that answer for many companies from "<company>.<desk>" addresses (box.zendesk.com, atlassiansupport.atlassian.net). */
+const HELP_DESKS = new Set(["zendesk.com", "atlassian.net", "freshdesk.com", "helpscout.net", "zohodesk.com", "kustomer.com", "gorgias.com", "intercom-mail.com"]);
+/** Companies whose privacy team writes from the parent's domain. */
+const PARENT: Record<string, string> = { "slack.com": "salesforce.com", "tableau.com": "salesforce.com", "linkedin.com": "microsoft.com", "github.com": "microsoft.com", "youtube.com": "google.com", "instagram.com": "meta.com", "whatsapp.com": "meta.com" };
+
+/** True if this sender can speak for the company in `r`. A stranger quoting the reference is not enough. */
+export function isCompanySender(r: StoredRequest, from: string): boolean {
+  const d = companyDomain(from);
+  if (!d) return false;
+  if (d === r.domain || (r.to && companyDomain(r.to) === d) || PARENT[r.domain] === d) return true;
+  if (HELP_DESKS.has(d)) {
+    const label = (from.split("@").pop() ?? "").toLowerCase().slice(0, -d.length - 1).split(".").pop() ?? "";
+    const names = [r.domain, r.to ? companyDomain(r.to) : null].filter(Boolean).map((x) => x!.split(".")[0].toLowerCase());
+    return label.length >= 3 && names.some((name) => label.includes(name) || name.includes(label));
+  }
+  return false;
+}
+
+/** Rows with a reply from the company; `from` is set to the company sender (a thread row can list you first). */
 export function companyReplies(r: StoredRequest, rows: MailRow[]): MailRow[] {
-  return rows.filter((x) => companyDomain(x.from) === r.domain || (r.to && companyDomain(r.to) === companyDomain(x.from)));
+  const sent = r.events.find((e) => e.type === "sent")?.at ?? r.createdAt;
+  return rows.flatMap((x) => {
+    if (x.at < sent - 3600e3) return []; // an hour's margin: form requests are marked sent by hand
+    // Two requests to one privacy team (Trello and Loom both to Atlassian): a subject naming the other reference is theirs.
+    const refs: string[] = x.subject.match(/\bER-[A-Z0-9]{5}\b/g) ?? [];
+    if (refs.length && !refs.includes(r.ref)) return [];
+    const who = [x.from, ...(x.senders ?? [])].find((s) => isCompanySender(r, s));
+    return who ? [{ ...x, from: who }] : [];
+  });
 }
 
 /** Turns an on-device reply reading into an event, only if its quote was found in the email. */
-export function replyEvent(at: number, read: { reply: ReplyKind; extension: boolean; quote: string; quoteOk: boolean }): RequestEvent[] {
-  if (!read.quoteOk) return [];
+export function replyEvent(at: number, read: { reply: ReplyKind | "unrelated"; extension: boolean; quote: string; quoteOk: boolean }): RequestEvent[] {
+  if (!read.quoteOk || read.reply === "unrelated") return [];
   const out: RequestEvent[] = [{ type: "reply", at, reply: read.reply, quote: read.quote }];
   if (read.extension) out.push({ type: "extension_notice", at, quote: read.quote });
   return out;
