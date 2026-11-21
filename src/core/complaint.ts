@@ -13,6 +13,7 @@ function describe(e: RequestEvent): string {
     case "marketing": return `Marketing email received: “${e.subject}”`;
     case "followed_up": return "Follow-up sent after the deadline.";
     case "user_skipped_id": return "Identity check requested; not provided.";
+    case "step_done": return "I did what the company's reply asked.";
     case "signin_check": return "After the deletion was confirmed, a password reset was requested on the company's own sign-in page.";
     case "account_alive": return `The company then sent a sign-in email, so the account still exists: “${e.subject}”`;
   }

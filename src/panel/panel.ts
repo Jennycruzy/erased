@@ -11,10 +11,12 @@ import { chromeKV, newRequest, Store, type StoredRequest } from "../core/store";
 import { buildFollowUp, buildRequest, composeUrl, newRef } from "../core/templates";
 import { DAY } from "../core/time";
 import { deviceTargets, safetyScore, summarise, type Company, type Sighting } from "../core/trail";
-import { companyReplies, isResetMail, marketingEvent, replyEvent, sentEvent, watchQueries, type MailRow } from "../core/watch";
+import { companyReplies, isResetMail, marketingEvent, mentionsCompany, replyEvent, sentEvent, watchQueries, type MailRow } from "../core/watch";
+import { askByRules, nextStep, trustedLink, type Advice } from "../core/coach";
+import type { ReplyCoachData } from "../core/requests";
 import { firebase } from "../ai/firebase";
 import { lookupRoute } from "../ai/lookup";
-import { ACCOUNT_SCHEMA, isMarketing, MARKETING_SCHEMA, privateModel, readAccountEmail, readReply, REPLY_SCHEMA } from "../ai/models";
+import { ACCOUNT_SCHEMA, ASK_SCHEMA, isMarketing, MARKETING_SCHEMA, privateModel, readAccountEmail, readAsk, readReply, REPLY_SCHEMA } from "../ai/models";
 import { shareOutcome } from "../ai/board";
 import { boardLine, type BoardCounts } from "../core/board";
 import { accountAliveEvent, resetPage, signInQuery } from "../core/signin";
@@ -338,6 +340,7 @@ function ring(fraction: number, color: string): SVGSVGElement {
 
 async function renderWatch() {
   const reqs = await store.requests();
+  fullNameCache = (await store.settings()).fullName;
   const now = Date.now();
   $("watch-n").textContent = reqs.length ? String(reqs.length) : "";
   const list = $("watch-list");
@@ -354,6 +357,8 @@ async function renderWatch() {
     if (ev && (ev.type === "reply" || ev.type === "extension_notice")) mid.append(el("div", "quote", `“${ev.quote}”`));
     if (ev && ev.type === "marketing") mid.append(el("div", "quote", `Marketing after deletion: “${ev.subject}”`));
     const acts = el("div", "row-actions");
+    const step = nextStep(r, fullNameCache);
+    if (step) mid.append(coachCard(r, step));
     if (s.state === "drafted") {
       const again = el("button", "", "Open the request again");
       again.onclick = async () => {
@@ -405,6 +410,38 @@ async function renderWatch() {
   }));
 }
 
+let fullNameCache = "";
+
+/** Reply Coach card: what the company asked, the quickest lawful way through, one button. */
+function coachCard(r: StoredRequest, a: Advice): HTMLElement {
+  const box = el("div", `coach ask-${a.ask}`);
+  box.append(el("div", "coach-head", a.headline), el("div", "coach-why", a.why));
+  if (a.by && a.byMeaning === "expires") box.append(el("div", a.by < Date.now() ? "coach-by late" : "coach-by", a.by < Date.now() ? `Expired ${fmtDay(a.by)}` : `Do it before ${fmtDay(a.by)}`));
+  if (a.legal.length) box.append(el("div", "coach-legal", a.legal.join(" ")));
+  const row = el("div", "row-actions");
+  for (const act of [a.action, a.alt].filter(Boolean) as NonNullable<Advice["alt"]>[]) {
+    if (act.type === "wait") { row.append(el("span", "coach-wait", act.label)); continue; }
+    const b = el("button", act === a.action ? "primary" : "", act.type === "email" ? (act === a.action ? act.label : "Or reply by email") : act.label);
+    b.onclick = () => chrome.tabs.create({ url: act.url });
+    row.append(b);
+  }
+  if (a.ask !== "wait" && a.ask !== "scheduled") {
+    const done = el("button", "", "I've done it");
+    done.title = "Marks this step as done. ERASED keeps watching for their reply.";
+    done.onclick = async () => { await store.addEvent(r.id, { type: "step_done", at: Date.now(), ask: a.ask }); void renderWatch(); };
+    row.append(done);
+  }
+  box.append(row);
+  return box;
+}
+
+async function threadFull(threadId: string, from?: string): Promise<{ text: string; links: Array<{ text: string; url: string }> } | null> {
+  const tab = await gmailTab();
+  if (!tab?.id) return null;
+  const res = (await chrome.tabs.sendMessage(tab.id, { type: "threadFull", threadId, from }).catch(() => null)) as { full: { text: string; links: Array<{ text: string; url: string }> } | null } | null;
+  return res?.full ?? null;
+}
+
 async function threadText(threadId: string, from?: string): Promise<string | null> {
   const tab = await gmailTab();
   if (!tab?.id) return null;
@@ -418,6 +455,7 @@ async function checkReplies() {
   btn.disabled = true;
   const replyModel = deviceReady ? privateModel(fb().ai, REPLY_SCHEMA) : null;
   const mktModel = deviceReady ? privateModel(fb().ai, MARKETING_SCHEMA) : null;
+  const askModel = deviceReady ? privateModel(fb().ai, ASK_SCHEMA) : null;
   try {
     for (const r of await store.requests()) {
       const q0 = watchQueries(r);
@@ -438,10 +476,25 @@ async function checkReplies() {
       for (const row of companyReplies(r, await search(q0.replies, 3))) {
         if (!row.threadId || !replyModel || isResetMail(row.subject)) continue;
         if (r.events.some((e) => e.type === "reply" && e.at === row.at)) continue;
-        const text = await threadText(row.threadId, row.from);
-        if (!text) continue;
+        const full = await threadFull(row.threadId, row.from);
+        if (!full) continue;
+        const text = full.text;
+        if (row.vendor && !mentionsCompany(r, text)) continue;
         const read = await readReply(replyModel, row.from, row.subject, text);
-        for (const ev of replyEvent(row.at, { ...read.value, quoteOk: read.quoteOk })) await store.addEvent(r.id, ev);
+        // Reply Coach: what they ask next. The model picks from a fixed list; the rules decide if its sentence is not in the email.
+        let coachData: ReplyCoachData | undefined;
+        if (read.quoteOk && read.value.reply !== "deleted" && read.value.reply !== "unrelated") {
+          const m = askModel ? await readAsk(askModel, row.from, row.subject, text).catch(() => null) : null;
+          const rules = askByRules(text);
+          // Measured on 34 real replies: the model alone 28/34; known phrases (rules) are exact. The model decides only
+          // when no known phrase matches, and only with a sentence that is really in the email.
+          const byModel = rules.ask === "wait" && !!m && m.quoteOk && !!m.value.ask && m.value.ask !== "wait";
+          coachData = {
+            ask: byModel ? m!.value.ask : rules.ask, askQuote: byModel ? m!.value.quote : rules.quote, by: byModel ? "model" : "rules",
+            from: row.from, subject: row.subject, text: text.slice(0, 3000), links: full.links.filter((l) => trustedLink(r, l.url, row.from)).slice(0, 12),
+          };
+        }
+        for (const ev of replyEvent(row.at, { ...read.value, quoteOk: read.quoteOk }, coachData)) await store.addEvent(r.id, ev);
       }
       const fresh = (await store.requests()).find((x) => x.id === r.id)!;
       const confirmed = fresh.events.find((e) => e.type === "reply" && e.reply === "deleted");

@@ -2,6 +2,7 @@ import { getGenerativeModel, InferenceMode, type AI, type GenerativeModel } from
 import { notDoneYet, quoteIsIn } from "../core/quote";
 import { numbered, pick, sentencesOf } from "../core/sentences";
 import type { ReplyKind } from "../core/requests";
+import { ASKS, type Ask } from "../core/coach";
 
 /** Longest slice of an email sent to the on-device model (well inside its 9,216-token window). */
 export const MAX_EMAIL_CHARS = 6000;
@@ -24,6 +25,15 @@ export const REPLY_SCHEMA = {
     proof: { type: "integer", description: "Number of the one sentence that proves the answer." },
   },
   required: ["reply", "extension", "proof"],
+} as const;
+
+export const ASK_SCHEMA = {
+  type: "object",
+  properties: {
+    ask: { type: "string", enum: ASKS as unknown as string[] },
+    proof: { type: "integer", description: "Number of the one sentence that shows what they ask." },
+  },
+  required: ["ask", "proof"],
 } as const;
 
 export const MARKETING_SCHEMA = {
@@ -108,6 +118,17 @@ export function isMarketing(m: GenerativeModel, from: string, subject: string, b
     "marketing",
     m,
     "Is this email, given as numbered sentences, marketing (promoting products, offers, content or re-engagement), rather than a transactional or legal message? Give the number of the one sentence that proves your answer.",
+    `From: ${from}\nSubject: ${subject}`,
+    body,
+  );
+}
+
+/** What the company's reply asks the person to do. Only picks from a fixed list; Reply Coach writes the answer. */
+export function readAsk(m: GenerativeModel, from: string, subject: string, body: string) {
+  return ask<{ ask: Ask }>(
+    "ask",
+    m,
+    'This email, given as numbered sentences, is a company\'s reply to a person who asked it to delete their data. Most such replies only confirm they received it: then answer "wait". Answer something else only if the email clearly tells the person to do one thing now:\n"scheduled" - it says the account is already scheduled to be deleted.\n"verify_link" - click a verification link or enter a code.\n"go_ahead" - reply YES, I AGREE or similar to confirm they may delete.\n"confirm_sender" - write again from the account\'s own email address, or it says it cannot accept requests from third-party services.\n"clarify" - say what should be deleted.\n"provide_info" - send more details.\n"use_form" - fill in a privacy or request form.\n"log_in_delete" - sign in and delete the account themselves.\nMentions of a help center, a ticket number or logging in to view the case do not count. Give the number of the one sentence that shows the answer.',
     `From: ${from}\nSubject: ${subject}`,
     body,
   );

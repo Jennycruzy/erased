@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { newRequest } from "../src/core/store";
-import { companyReplies, marketingEvent, replyEvent, sentEvent, watchQueries } from "../src/core/watch";
+import { companyReplies, marketingEvent, replyEvent, sentEvent, watchQueries, mentionsCompany } from "../src/core/watch";
 
 const d = (s: string) => Date.parse(s + "T12:00:00Z");
 const r = newRequest({ id: "1", ref: "ER-ABCDE", domain: "acme.com", company: "Acme", kind: "delete", law: "gdpr", route: "email", to: "privacy@acme-privacy.eu", formUrl: null, accountEmail: "me@example.com", now: d("2026-11-01") });
@@ -63,7 +63,15 @@ import { replyQuery, senderWords } from "../src/core/watch";
 describe("replyQuery", () => {
   const r = { id: "x", ref: "ER-GGJBD", domain: "substack.com", company: "Substack", kind: "delete", law: "gdpr", route: "email", to: "privacy@substackinc.com", formUrl: null, accountEmail: "me@gmail.com", createdAt: Date.UTC(2026, 10, 20, 17), events: [{ type: "sent", at: Date.UTC(2026, 10, 20, 17, 10) }] } as never;
   it("uses the company names from the domain and the address we wrote to", () => expect(senderWords(r)).toEqual(["substack", "substackinc"]));
-  it("finds the reference OR the company since the day before sending", () => expect(replyQuery(r)).toBe('{"ER-GGJBD" from:substack from:substackinc} after:2026/11/19'));
+  it("finds the reference OR the company (or a privacy-request service) since the day before sending", () =>
+    expect(replyQuery(r)).toBe('{"ER-GGJBD" from:substack from:substackinc from:onetrust.com from:ketch.com from:privacyportal.co from:ethyca.com from:transcend.io from:datagrail.io from:securiti.ai from:trustarc.com from:osano.com from:mineos.ai} after:2026/11/19'));
+  it("keeps a privacy-service email only if it names the company", () => {
+    const cal = { ...(r as object), domain: "calendly.com", company: "Calendly", to: null } as never;
+    const rows = companyReplies(cal, [{ from: "noreply@m.ketch.com", subject: "Identity Verification", at: 2e12 }]);
+    expect(rows[0]).toMatchObject({ vendor: true });
+    expect(mentionsCompany(cal, "Verify: https://calendly. privacyportal.co/identity?token=x")).toBe(true);
+    expect(mentionsCompany(cal, "Your privacy request has been received.")).toBe(false);
+  });
 });
 describe("companyReplies guards (live run)", () => {
   const base = { kind: "delete", law: "gdpr", route: "email", formUrl: null, accountEmail: "me@gmail.com", createdAt: 100, events: [{ type: "sent", at: 100 }] };

@@ -34,6 +34,38 @@ export function htmlToText(html: string): string {
     .trim();
 }
 
+/** Removes utm_* parameters, keeps the path and the #fragment (form links live there: #/dsr/<id>). */
+export function dropTracking(url: string): string {
+  try {
+    const u = new URL(url);
+    for (const k of [...u.searchParams.keys()]) if (/^utm_/i.test(k)) u.searchParams.delete(k);
+    return u.toString().replace(/\?(#|$)/, "$1");
+  } catch {
+    return url;
+  }
+}
+
+/** Links in an HTML document as { text, url }, http(s) only, in order, without duplicates. */
+export function anchorsOf(html: string, max = 60): Array<{ text: string; url: string }> {
+  const out: Array<{ text: string; url: string }> = [];
+  const seen = new Set<string>();
+  for (const m of html.matchAll(/<a\b[^>]*?\bhref\s*=\s*("([^"]*)"|'([^']*)')[^>]*>([\s\S]*?)<\/a\s*>/gi)) {
+    let url = decodeEntities((m[2] ?? m[3] ?? "").trim());
+    // Gmail's print view wraps outside links as https://www.google.com/url?q=<real>&...
+    const g = url.match(/^https?:\/\/www\.google\.com\/url\?(?:.*&)?q=([^&]+)/);
+    if (g) { try { url = decodeURIComponent(g[1]); } catch { /* keep as is */ } }
+    // Click trackers that carry the real address inside the path (awstrack.me/L0/https:%2F%2F...).
+    const t = url.match(/\/(https?(?::|%3A)(?:\/\/|%2F%2F)[^/]+.*?)(?:\/\d+\/[0-9a-f-]{20,}.*)?$/i);
+    if (t && !/^https?:\/\/[^/]*(google|gmail)\./i.test(url)) { try { url = decodeURIComponent(t[1]); } catch { /* keep as is */ } }
+    url = dropTracking(url);
+    if (!/^https?:\/\//i.test(url) || seen.has(url)) continue;
+    seen.add(url);
+    out.push({ text: htmlToText(m[4]).replace(/\s+/g, " ").trim(), url });
+    if (out.length >= max) break;
+  }
+  return out;
+}
+
 /** Gmail's per-account key ("ik"), from the page source. Current Gmail writes `var GM_ID_KEY = '…'` in <head>. */
 export function gmailIdKey(source: string): string | null {
   const m = source.match(/GM_ID_KEY\s*=\s*'([0-9a-f]+)'/) ?? source.match(/"ik"\s*:\s*"([0-9a-f]+)"/);

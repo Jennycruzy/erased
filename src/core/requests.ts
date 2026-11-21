@@ -1,15 +1,29 @@
 import { LAWS, type LawId, type RequestKind } from "./laws";
 import { addDays } from "./time";
 
+/** What Reply Coach needs, kept with the reply in this browser only. */
+export interface ReplyCoachData {
+  ask: import("./coach").Ask;
+  askQuote: string;
+  /** "model" when the on-device model's sentence was found in the email; "rules" otherwise. */
+  by: "model" | "rules";
+  from: string;
+  subject: string;
+  text: string;
+  links: Array<{ text: string; url: string }>;
+}
+
 export type ReplyKind = "ack" | "deleted" | "needs_id" | "refused" | "other";
 
 export type RequestEvent =
   | { type: "sent"; at: number }
-  | { type: "reply"; at: number; reply: ReplyKind; quote: string }
+  | { type: "reply"; at: number; reply: ReplyKind; quote: string; coach?: ReplyCoachData }
   | { type: "extension_notice"; at: number; quote: string }
   | { type: "marketing"; at: number; subject: string }
   | { type: "followed_up"; at: number }
   | { type: "user_skipped_id"; at: number }
+  /** The person did what the company's reply asked (signed in and deleted, filled the form, verified…). */
+  | { type: "step_done"; at: number; ask: import("./coach").Ask }
   /** The user opened the company's password-reset page and asked for a reset, after it said "deleted". */
   | { type: "signin_check"; at: number }
   /** A reset or sign-in email from the company after that check: the account still exists. */

@@ -1,5 +1,5 @@
 /** Reads the Gmail web page in this browser. Nothing here makes a network request. */
-import { gmailIdKey, htmlToText, latestMessage, messageTimes, printViewUrl } from "../core/html";
+import { gmailIdKey, htmlToText, latestMessage, messageTimes, printViewUrl, anchorsOf } from "../core/html";
 export interface Row {
   from: string;
   /** Every sender Gmail lists on the row; a thread with your request and their reply shows both. */
@@ -89,6 +89,22 @@ export function accountEmail(): string | null {
  * Stays in the browser; goes only to the on-device model.
  */
 let idKey: string | null = null;
+
+export async function threadFull(threadId: string, from?: string): Promise<{ text: string; links: Array<{ text: string; url: string }> } | null> {
+  const base = location.pathname.match(/^\/mail\/u\/\d+\//)?.[0] ?? "/mail/u/0/";
+  const ik = (idKey ??= gmailIdKey(document.documentElement.innerHTML));
+  const url = ik ? printViewUrl(base, ik, threadId) : null;
+  if (!url) return null;
+  try {
+    const r = await fetch(url, { credentials: "include" });
+    if (!r.ok) return null;
+    const html = await r.text();
+    if (/<title>[^<]*Conversation deleted/i.test(html)) return null;
+    return { text: latestMessage(htmlToText(html), from), links: anchorsOf(html) };
+  } catch {
+    return null;
+  }
+}
 
 export async function threadText(threadId: string, from?: string): Promise<string | null> {
   const base = location.pathname.match(/^\/mail\/u\/\d+\//)?.[0] ?? "/mail/u/0/";

@@ -1,10 +1,11 @@
 import { companyDomain } from "./domain";
 import { kindFromSubject } from "./headers";
-import type { RequestEvent, ReplyKind } from "./requests";
+import type { ReplyCoachData, RequestEvent, ReplyKind } from "./requests";
 import type { StoredRequest } from "./store";
+import { PRIVACY_VENDORS } from "./coach";
 
 /** A Gmail list row, as the content script reports it. */
-export interface MailRow { from: string; senders?: string[]; subject: string; at: number; threadId?: string }
+export interface MailRow { from: string; senders?: string[]; subject: string; at: number; threadId?: string; vendor?: boolean }
 
 const day = (t: number) => { const d = new Date(t); return `${d.getUTCFullYear()}/${d.getUTCMonth() + 1}/${d.getUTCDate()}`; };
 
@@ -21,7 +22,7 @@ export function senderWords(r: StoredRequest): string[] {
  */
 export function replyQuery(r: StoredRequest): string {
   const sent = r.events.find((e) => e.type === "sent")?.at ?? r.createdAt;
-  const from = senderWords(r).map((w) => `from:${w}`).join(" ");
+  const from = [...senderWords(r), ...PRIVACY_VENDORS].map((w) => `from:${w}`).join(" ");
   return `{"${r.ref}" ${from}} after:${day(sent - 864e5)}`;
 }
 
@@ -76,14 +77,24 @@ export function companyReplies(r: StoredRequest, rows: MailRow[]): MailRow[] {
     const refs: string[] = x.subject.match(/\bER-[A-Z0-9]{5}\b/g) ?? [];
     if (refs.length && !refs.includes(r.ref)) return [];
     const who = [x.from, ...(x.senders ?? [])].find((s) => isCompanySender(r, s));
-    return who ? [{ ...x, from: who }] : [];
+    if (who) return [{ ...x, from: who }];
+    // Privacy-request services (Ketch, OneTrust…) write for many companies: kept only if the email names this one.
+    const vendor = [x.from, ...(x.senders ?? [])].find((s) => PRIVACY_VENDORS.has(companyDomain(s) ?? ""));
+    return vendor ? [{ ...x, from: vendor, vendor: true }] : [];
   });
 }
 
+/** A privacy-service email counts for this request only if it names the company (calendly.privacyportal.co). */
+export function mentionsCompany(r: StoredRequest, text: string): boolean {
+  const t = text.toLowerCase().replace(/\s+/g, "");
+  const label = r.domain.split(".")[0].toLowerCase();
+  return label.length >= 4 && t.includes(label);
+}
+
 /** Turns an on-device reply reading into an event, only if its quote was found in the email. */
-export function replyEvent(at: number, read: { reply: ReplyKind | "unrelated"; extension: boolean; quote: string; quoteOk: boolean }): RequestEvent[] {
+export function replyEvent(at: number, read: { reply: ReplyKind | "unrelated"; extension: boolean; quote: string; quoteOk: boolean }, coach?: ReplyCoachData): RequestEvent[] {
   if (!read.quoteOk || read.reply === "unrelated") return [];
-  const out: RequestEvent[] = [{ type: "reply", at, reply: read.reply, quote: read.quote }];
+  const out: RequestEvent[] = [{ type: "reply", at, reply: read.reply, quote: read.quote, ...(coach ? { coach } : {}) }];
   if (read.extension) out.push({ type: "extension_notice", at, quote: read.quote });
   return out;
 }
