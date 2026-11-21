@@ -44,7 +44,8 @@ export function rowsOnPage(): Row[] {
 
 const signature = () => rowsOnPage().slice(0, 3).map((r) => r.from + r.subject).join("|");
 const olderButton = () =>
-  [...document.querySelectorAll('[aria-label="Older"],[data-tooltip="Older"],[aria-label="Older messages"]')].find(visible);
+  // Search results page with "Next results"; mailbox views with "Older".
+  [...document.querySelectorAll('[aria-label="Next results"],[data-tooltip="Next results"],[aria-label="Older"],[data-tooltip="Older"],[aria-label="Older messages"]')].find(visible);
 
 /** Opens a Gmail search and pages through every result, calling onPage after each page. */
 export async function scanSearch(query: string, onPage: (rows: Row[], page: number) => void, maxPages = 200): Promise<number> {

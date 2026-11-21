@@ -10,11 +10,11 @@ import { status } from "../core/requests";
 import { chromeKV, newRequest, Store, type StoredRequest } from "../core/store";
 import { buildFollowUp, buildRequest, composeUrl, newRef } from "../core/templates";
 import { DAY } from "../core/time";
-import { safetyScore, summarise, type Company, type Sighting } from "../core/trail";
+import { deviceTargets, safetyScore, summarise, type Company, type Sighting } from "../core/trail";
 import { companyReplies, isResetMail, marketingEvent, replyEvent, sentEvent, watchQueries, type MailRow } from "../core/watch";
 import { firebase } from "../ai/firebase";
 import { lookupRoute } from "../ai/lookup";
-import { ACCOUNT_SCHEMA, isMarketing, MARKETING_SCHEMA, privateModel, readReply, REPLY_SCHEMA } from "../ai/models";
+import { ACCOUNT_SCHEMA, isMarketing, MARKETING_SCHEMA, privateModel, readAccountEmail, readReply, REPLY_SCHEMA } from "../ai/models";
 import { shareOutcome } from "../ai/board";
 import { boardLine, type BoardCounts } from "../core/board";
 import { accountAliveEvent, resetPage, signInQuery } from "../core/signin";
@@ -118,6 +118,7 @@ function whyLine(c: Company): HTMLElement {
     line.append(el("b", "", `Breached ${b.date.slice(0, 7)} after you joined: ${b.title} (${b.accounts.toLocaleString()} accounts)`));
     why.append(line);
   }
+  if (c.proof) why.append(el("div", "proof", `“${c.proof}”`));
   const others = boardLine(board[c.domain]);
   if (others) why.append(el("div", "others", others));
   return why;
@@ -138,7 +139,7 @@ function addRows(rows: MailRow[]) {
     const d = companyDomain(r.from);
     if (!d) continue;
     const list = sightings.get(d) ?? [];
-    list.push({ domain: d, at: r.at, kind: kindFromSubject(r.subject) });
+    list.push({ domain: d, at: r.at, kind: kindFromSubject(r.subject), threadId: r.threadId, from: r.from, subject: r.subject });
     sightings.set(d, list);
   }
   recompute();
@@ -178,7 +179,27 @@ async function scan() {
   try {
     const rows = await search(ACCOUNT_SEARCH, 200, (r, page) => { addRows(r); $("progress").textContent = `Reading page ${page}…`; });
     $("progress").textContent = `${rows.length.toLocaleString()} account emails read`;
-    await chromeKV.set("trail", companies.map(({ domain, emails, firstSeen, lastSeen, signedUp, account, stale }) => ({ domain, emails, firstSeen, lastSeen, signedUp, account, stale })));
+    await saveTrail();
+    // Phase 2: read one email per company on this device; an account counts only with a sentence found in the email.
+    if (deviceReady) {
+      const m = privateModel(fb().ai, ACCOUNT_SCHEMA);
+      const targets = deviceTargets(sightings, companies, DEVICE_READS_PER_SCAN);
+      let n = 0;
+      for (const t of targets) {
+        n++;
+        $("progress").textContent = `Reading ${n} of ${targets.length} on this device: ${t.domain}…`;
+        const text = await threadText(t.sighting.threadId!, t.sighting.from);
+        if (!text) continue;
+        const r = await readAccountEmail(m, t.sighting.from ?? "", t.sighting.subject ?? "", text).catch(() => null);
+        if (!r) continue;
+        t.sighting.device = { isAccount: !!r.value.is_account, quote: r.value.quote, quoteOk: r.quoteOk };
+        if (n % 10 === 0) recompute();
+      }
+      recompute();
+      await saveTrail();
+      const proven = companies.filter((c) => c.account === "confirmed").length;
+      $("progress").textContent = `${rows.length.toLocaleString()} account emails read · ${proven} accounts proven on this device`;
+    }
     await chromeKV.set("lastScan", Date.now());
   } catch (e) {
     $("progress").textContent = String((e as Error).message);
@@ -187,8 +208,14 @@ async function scan() {
   }
 }
 
+/** Company records only (no email text); the proof sentence stays in this browser. */
+const DEVICE_READS_PER_SCAN = 150;
+async function saveTrail() {
+  await chromeKV.set("trail", companies.map(({ domain, emails, firstSeen, lastSeen, signedUp, account, stale, proof }) => ({ domain, emails, firstSeen, lastSeen, signedUp, account, stale, proof })));
+}
+
 async function restoreTrail() {
-  const saved = (await chromeKV.get("trail")) as Array<Pick<Company, "domain" | "emails" | "firstSeen" | "lastSeen" | "signedUp" | "account" | "stale">> | undefined;
+  const saved = (await chromeKV.get("trail")) as Array<Pick<Company, "domain" | "emails" | "firstSeen" | "lastSeen" | "signedUp" | "account" | "stale" | "proof">> | undefined;
   if (!saved?.length) return;
   const now = Date.now();
   companies = saved.map((s) => {

@@ -8,6 +8,10 @@ export interface Sighting {
   kind: MailKind;
   /** Set when the on-device model read the body. */
   device?: { isAccount: boolean; quote?: string; quoteOk: boolean };
+  /** Where to read it from (Gmail thread and sender), kept only in this browser. */
+  threadId?: string;
+  from?: string;
+  subject?: string;
 }
 
 export interface Company {
@@ -18,6 +22,8 @@ export interface Company {
   /** Earliest email that shows you hold an account. */
   signedUp?: number;
   account: "confirmed" | "likely" | "unknown";
+  /** The sentence that proves the account, copied from the email by the code (not written by the model). */
+  proof?: string;
   stale: boolean;
   breaches: Breach[];
   breachedAfterJoining: Breach[];
@@ -46,6 +52,7 @@ export function summarise(domain: string, s: Sighting[], breaches: Breach[], now
     lastSeen,
     signedUp,
     account,
+    proof: deviceYes.find((x) => x.device?.quote)?.device?.quote,
     stale: Number.isFinite(lastSeen) && now - lastSeen >= STALE_YEARS * 365 * DAY,
     breaches,
     breachedAfterJoining: Number.isFinite(joined) ? breaches.filter((b) => Date.parse(b.date) > joined) : [],
@@ -58,4 +65,28 @@ export function safetyScore(cs: Company[]): number {
   if (!held.length) return 100;
   const risky = held.filter((c) => c.breachedAfterJoining.length || c.stale).length;
   return Math.round(100 * (1 - risky / held.length));
+}
+
+/** Our own deletion-request threads and privacy-team mail say nothing about holding an account. */
+export function isPrivacyCorrespondence(s: Pick<Sighting, "from" | "subject">): boolean {
+  return /\bER-[A-Z0-9]{5}\b|request to delete my personal data|data (deletion|subject|erasure) request|privacy request/i.test(s.subject ?? "")
+    || /^(privacy|dpo|gdpr|dataprotection|data-protection|legal|support|help|customer_?support|customercare|assist|advocates)([+.\-_][^@]*)?@/i.test(s.from ?? "");
+}
+
+/**
+ * Which email to read on the device for each company, best first: companies not yet proven, breached ones first,
+ * then the most mail; per company the earliest account-looking email that has a thread to open.
+ */
+export function deviceTargets(sightings: Map<string, Sighting[]>, companies: Company[], limit: number): Array<{ domain: string; sighting: Sighting }> {
+  const order = companies
+    .filter((c) => c.account !== "confirmed")
+    .sort((a, b) => b.breaches.length - a.breaches.length || b.emails - a.emails);
+  const out: Array<{ domain: string; sighting: Sighting }> = [];
+  for (const c of order) {
+    const list = (sightings.get(c.domain) ?? []).filter((x) => x.threadId && !x.device && !isPrivacyCorrespondence(x));
+    const pick = [...list].sort((a, b) => Number(ACCOUNT_KINDS.has(b.kind)) - Number(ACCOUNT_KINDS.has(a.kind)) || a.at - b.at)[0];
+    if (pick) out.push({ domain: c.domain, sighting: pick });
+    if (out.length >= limit) break;
+  }
+  return out;
 }

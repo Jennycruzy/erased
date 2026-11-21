@@ -98,3 +98,29 @@ describe("request templates", () => {
     expect(u.searchParams.get("to")).toBe("privacy@acme.com");
   });
 });
+
+import { deviceTargets } from "../src/core/trail";
+describe("device reading targets", () => {
+  const s = (domain: string, at: number, kind: string, threadId?: string) => ({ domain, at, kind, threadId }) as never;
+  const sightings = new Map([
+    ["a.com", [s("a.com", 5, "newsletter", "t1"), s("a.com", 9, "welcome", "t2")]],
+    ["b.com", [s("b.com", 1, "receipt", "t3")]],
+    ["c.com", [s("c.com", 1, "welcome")]],
+  ]);
+  const companies = [...sightings].map(([d, x]) => summarise(d, x, d === "b.com" ? [{ name: "B", title: "B", domain: "b.com", date: "2020-01-01", accounts: 1, dataClasses: [] }] : [], 100));
+  it("breached first, account-looking email first, skips rows without a thread", () => expect(deviceTargets(sightings, companies, 10).map((t) => `${t.domain}:${t.sighting.threadId}`)).toEqual(["b.com:t3", "a.com:t2"]));
+  it("respects the limit", () => expect(deviceTargets(sightings, companies, 1)).toHaveLength(1));
+  it("a quoted device answer proves the account and keeps the sentence", () => {
+    const c = summarise("a.com", [{ domain: "a.com", at: 1, kind: "other", device: { isAccount: true, quote: "Welcome to A.", quoteOk: true } }], [], 10);
+    expect([c.account, c.proof]).toEqual(["confirmed", "Welcome to A."]);
+  });
+});
+import { isPrivacyCorrespondence } from "../src/core/trail";
+describe("privacy correspondence is never account proof", () => {
+  it("our request threads and privacy teams are skipped", () => {
+    expect(isPrivacyCorrespondence({ from: "assist@cx.monday.com", subject: "Re: Request to delete my personal data [ER-TWVYB]" })).toBe(true);
+    expect(isPrivacyCorrespondence({ from: "privacy+ad7a@privacy.airtable.com", subject: "Confirmation" })).toBe(true);
+    expect(isPrivacyCorrespondence({ from: "noreply@m.ketch.com", subject: "Your privacy request has been received" })).toBe(true);
+    expect(isPrivacyCorrespondence({ from: "no-reply@slack.com", subject: "Welcome to Slack" })).toBe(false);
+  });
+});
