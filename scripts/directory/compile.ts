@@ -215,13 +215,21 @@ async function compileOnce(domain: string, model: number): Promise<DirectoryEntr
 // another try, and the newest line wins at export.
 const latestLine = new Map<string, { error?: string }>();
 if (existsSync(outFile)) for (const l of readFileSync(outFile, "utf8").split("\n").filter(Boolean)) { const e = JSON.parse(l); latestLine.set(e.domain, e); }
-const done = new Set([...latestLine].filter(([, e]) => !e.error).map(([d]) => d));
+// A site that crashes Node itself (seen: an undici assertion on one university site) is marked "crash:" and not retried.
+const done = new Set([...latestLine].filter(([, e]) => !e.error || e.error.startsWith("crash:")).map(([d]) => d));
+let current = "";
+process.on("uncaughtException", (err) => {
+  if (current) appendFileSync(outFile, JSON.stringify({ domain: current, error: "crash: " + String(err.message).slice(0, 180), verified: false, verified_at: new Date().toISOString() }) + "\n");
+  console.log(`${current}: CRASH ${String(err.message).slice(0, 80)}`);
+  process.exit(3);
+});
 const domains = readFileSync(listFile, "utf8").split("\n").map((s) => s.trim()).filter((d) => d && !done.has(d));
 let n = 0;
 for (const domain of domains) {
   if (n >= limit) break;
   n++;
   const t0 = Date.now();
+  current = domain;
   try {
     const e = await compile(domain);
     appendFileSync(outFile, JSON.stringify(e) + "\n");

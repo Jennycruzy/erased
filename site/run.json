@@ -1,15 +1,15 @@
 {
  "inbox": "erased.demo.inbox@gmail.com",
  "sentDay": "2026-11-20",
- "checkedAt": 1795264842951,
+ "checkedAt": 1795271462643,
  "deadline": "2026-12-20",
  "medianReplyMin": 0,
  "counts": {
   "replied": 24,
-  "needs_id": 9,
+  "needs_id": 10,
   "deleted": 0,
-  "ack": 12,
-  "other": 9
+  "ack": 14,
+  "other": 7
  },
  "requests": [
   {
@@ -167,6 +167,28 @@
    "deadline": 1797786900000
   },
   {
+   "company": "Zapier",
+   "domain": "zapier.com",
+   "ref": "ER-JJZSE",
+   "route": "email",
+   "to": "privacy@zapier.com",
+   "sentAt": 1795194780000,
+   "replies": [
+    {
+     "at": 1795194780000,
+     "reply": "needs_id",
+     "quote": "In order to protect your account and personal data, this type of request must be submitted from within your Zapier account (and not a third-party service) so that we can verify your identity."
+    },
+    {
+     "at": 1795198440000,
+     "reply": "other",
+     "quote": "Just describe what you want to automate."
+    }
+   ],
+   "state": "needs_id",
+   "deadline": 1797786780000
+  },
+  {
    "company": "Atlassian (Trello)",
    "domain": "trello.com",
    "ref": "ER-WETHF",
@@ -227,11 +249,11 @@
    "replies": [
     {
      "at": 1795194720000,
-     "reply": "other",
-     "quote": "For all data deletion requests made by or on behalf of the data subject, deleting the data subject’s Figma account is how one can initiate the erasure request."
+     "reply": "ack",
+     "quote": "Thank you for reaching out to Figma’s Privacy team."
     }
    ],
-   "state": "other",
+   "state": "ack",
    "deadline": 1797786720000
   },
   {
@@ -267,23 +289,6 @@
    ],
    "state": "ack",
    "deadline": 1797786720000
-  },
-  {
-   "company": "Medium",
-   "domain": "medium.com",
-   "ref": "ER-97G4D",
-   "route": "email",
-   "to": "privacy@medium.com",
-   "sentAt": 1795194660000,
-   "replies": [
-    {
-     "at": 1795194660000,
-     "reply": "other",
-     "quote": "Our subject access request and account deletion process is self-service."
-    }
-   ],
-   "state": "other",
-   "deadline": 1797786660000
   },
   {
    "company": "Meetup",
@@ -364,7 +369,7 @@
     {
      "at": 1795194960000,
      "reply": "ack",
-     "quote": "Hello and thanks for reaching out to us."
+     "quote": "This is an automated message to let you know that we received your help request."
     }
    ],
    "state": "ack",
@@ -405,6 +410,23 @@
    "deadline": 1797786780000
   },
   {
+   "company": "Substack",
+   "domain": "substack.com",
+   "ref": "ER-GGJBD",
+   "route": "email",
+   "to": "privacy@substackinc.com",
+   "sentAt": 1795194600000,
+   "replies": [
+    {
+     "at": 1795194660000,
+     "reply": "ack",
+     "quote": "Thank you for reaching out to Substack Standards & Enforcement."
+    }
+   ],
+   "state": "ack",
+   "deadline": 1797786600000
+  },
+  {
    "company": "SurveyMonkey",
    "domain": "surveymonkey.com",
    "ref": "ER-MDAK7",
@@ -414,29 +436,12 @@
    "replies": [
     {
      "at": 1795194960000,
-     "reply": "other",
+     "reply": "needs_id",
      "quote": "[ ref:_00D301HuKJ._500Pi2h1UlY: ref ] autoresponse-identity"
     }
    ],
-   "state": "other",
-   "deadline": 1797786960000
-  },
-  {
-   "company": "Zapier",
-   "domain": "zapier.com",
-   "ref": "ER-JJZSE",
-   "route": "email",
-   "to": "privacy@zapier.com",
-   "sentAt": 1795194780000,
-   "replies": [
-    {
-     "at": 1795194780000,
-     "reply": "needs_id",
-     "quote": "In order to protect your account and personal data, this type of request must be submitted from within your Zapier account (and not a third-party service) so that we can verify your identity."
-    }
-   ],
    "state": "needs_id",
-   "deadline": 1797786780000
+   "deadline": 1797786960000
   },
   {
    "company": "Zoom",
@@ -500,15 +505,15 @@
    "deadline": 1797788940000
   },
   {
-   "company": "Substack",
-   "domain": "substack.com",
-   "ref": "ER-GGJBD",
+   "company": "Medium",
+   "domain": "medium.com",
+   "ref": "ER-97G4D",
    "route": "email",
-   "to": "privacy@substackinc.com",
-   "sentAt": 1795194600000,
+   "to": "privacy@medium.com",
+   "sentAt": 1795194660000,
    "replies": [],
    "state": "sent",
-   "deadline": 1797786600000
+   "deadline": 1797786660000
   },
   {
    "company": "TLDR",

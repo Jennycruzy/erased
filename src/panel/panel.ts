@@ -435,10 +435,10 @@ function coachCard(r: StoredRequest, a: Advice): HTMLElement {
   return box;
 }
 
-async function threadFull(threadId: string, from?: string): Promise<{ text: string; links: Array<{ text: string; url: string }> } | null> {
+async function threadFull(threadId: string, from?: string): Promise<{ text: string; earlier: string[]; links: Array<{ text: string; url: string }> } | null> {
   const tab = await gmailTab();
   if (!tab?.id) return null;
-  const res = (await chrome.tabs.sendMessage(tab.id, { type: "threadFull", threadId, from }).catch(() => null)) as { full: { text: string; links: Array<{ text: string; url: string }> } | null } | null;
+  const res = (await chrome.tabs.sendMessage(tab.id, { type: "threadFull", threadId, from }).catch(() => null)) as { full: { text: string; earlier: string[]; links: Array<{ text: string; url: string }> } | null } | null;
   return res?.full ?? null;
 }
 
@@ -479,19 +479,26 @@ async function checkReplies() {
         const full = await threadFull(row.threadId, row.from);
         if (!full) continue;
         const text = full.text;
+        if (!text) continue;
         if (row.vendor && !mentionsCompany(r, text)) continue;
         const read = await readReply(replyModel, row.from, row.subject, text);
         // Reply Coach: what they ask next. The model picks from a fixed list; the rules decide if its sentence is not in the email.
         let coachData: ReplyCoachData | undefined;
         if (read.quoteOk && read.value.reply !== "deleted" && read.value.reply !== "unrelated") {
           const m = askModel ? await readAsk(askModel, row.from, row.subject, text).catch(() => null) : null;
-          const rules = askByRules(text);
+          let rules = askByRules(text);
+          let askText = text;
+          // A reminder ("we are still waiting for your reply") asks nothing new: the question is in an earlier message.
+          if (rules.ask === "wait") {
+            const before = [...full.earlier].reverse().map((b) => ({ b, r: askByRules(b) })).find((x) => x.r.ask !== "wait");
+            if (before) { rules = before.r; askText = before.b; }
+          }
           // Measured on 34 real replies: the model alone 28/34; known phrases (rules) are exact. The model decides only
           // when no known phrase matches, and only with a sentence that is really in the email.
           const byModel = rules.ask === "wait" && !!m && m.quoteOk && !!m.value.ask && m.value.ask !== "wait";
           coachData = {
             ask: byModel ? m!.value.ask : rules.ask, askQuote: byModel ? m!.value.quote : rules.quote, by: byModel ? "model" : "rules",
-            from: row.from, subject: row.subject, text: text.slice(0, 3000), links: full.links.filter((l) => trustedLink(r, l.url, row.from)).slice(0, 12),
+            from: row.from, subject: row.subject, text: (byModel ? text : askText).slice(0, 3000), links: full.links.filter((l) => trustedLink(r, l.url, row.from)).slice(0, 12),
           };
         }
         for (const ev of replyEvent(row.at, { ...read.value, quoteOk: read.quoteOk }, coachData)) await store.addEvent(r.id, ev);

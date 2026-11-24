@@ -1,5 +1,5 @@
 /** Reads the Gmail web page in this browser. Nothing here makes a network request. */
-import { gmailIdKey, htmlToText, latestMessage, messageTimes, printViewUrl, anchorsOf } from "../core/html";
+import { gmailIdKey, htmlToText, latestMessage, messagesFrom, messageTimes, printViewUrl, anchorsOf } from "../core/html";
 export interface Row {
   from: string;
   /** Every sender Gmail lists on the row; a thread with your request and their reply shows both. */
@@ -90,7 +90,7 @@ export function accountEmail(): string | null {
  */
 let idKey: string | null = null;
 
-export async function threadFull(threadId: string, from?: string): Promise<{ text: string; links: Array<{ text: string; url: string }> } | null> {
+export async function threadFull(threadId: string, from?: string): Promise<{ text: string; earlier: string[]; links: Array<{ text: string; url: string }> } | null> {
   const base = location.pathname.match(/^\/mail\/u\/\d+\//)?.[0] ?? "/mail/u/0/";
   const ik = (idKey ??= gmailIdKey(document.documentElement.innerHTML));
   const url = ik ? printViewUrl(base, ik, threadId) : null;
@@ -100,7 +100,10 @@ export async function threadFull(threadId: string, from?: string): Promise<{ tex
     if (!r.ok) return null;
     const html = await r.text();
     if (/<title>[^<]*Conversation deleted/i.test(html)) return null;
-    return { text: latestMessage(htmlToText(html), from), links: anchorsOf(html) };
+    const all = htmlToText(html);
+    // Their earlier messages in the same thread, oldest first: a later "we are waiting for your answer" reminder
+    // must not hide the question it reminds you of.
+    return { text: latestMessage(all, from), earlier: messagesFrom(all, from).slice(0, -1), links: anchorsOf(html) };
   } catch {
     return null;
   }

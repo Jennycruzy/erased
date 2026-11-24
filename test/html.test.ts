@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decodeEntities, gmailIdKey, hexThreadId, htmlToText, latestMessage, printViewUrl } from "../src/core/html";
+import { decodeEntities, gmailIdKey, hexThreadId, htmlToText, latestMessage, messagesFrom, printViewUrl } from "../src/core/html";
 
 const PRINT = `<html><head><title>Gmail - Almost done</title><style>.x{color:red}</style><script>var a=1;</script></head>
 <body><table><tr><td><b>Example</b> &lt;no-reply@example.com&gt;</td><td>Fri, Nov 20, 2026 at 7:23&#8239;PM</td></tr></table>
@@ -56,5 +56,29 @@ describe("messageTimes", () => {
     const t = messageTimes("me <me@x.com> Fri, Nov 20, 2026 at 5:10 PM To: a@b.com\nhi\nAcme <privacy@acme.com> Fri, Nov 20, 2026 at 6:47 PM Reply-To: x\nok");
     expect(t.map((x) => x.email)).toEqual(["me@x.com", "privacy@acme.com"]);
     expect(t[1].at - t[0].at).toBe(97 * 60000);
+  });
+});
+
+describe("every message in a thread", () => {
+  const thread = [
+    "erased demo <me@example.com>", "", "Request [ER-AAAAA]", "3 messages", "",
+    "Privacy Team <privacy@acme.com> Fri, Nov 20, 2026 at 5:18 PM", "To: erased demo <me@example.com>", "",
+    "____________________", "", "Hi,", "Please confirm what you would like deleted?", "Thanks",
+    "erased demo <me@example.com> Sat, Nov 21, 2026 at 9:00 AM", "To: privacy@acme.com", "", "My own words here.",
+    "Privacy Team <privacy@acme.com> Sun, Nov 22, 2026 at 6:00 PM", "To: erased demo <me@example.com>", "",
+    "This is an automated message to remind you that we are looking forward to your response.",
+  ].join("\n");
+  it("keeps a help-desk message that opens with a reply bar", () => {
+    expect(messagesFrom(thread, "privacy@acme.com")[0]).toContain("Please confirm what you would like deleted?");
+  });
+  it("lists their messages oldest first, without ours", () => {
+    const m = messagesFrom(thread, "privacy@acme.com");
+    expect(m).toHaveLength(2);
+    expect(m.join("\n")).not.toContain("My own words");
+    expect(latestMessage(thread, "privacy@acme.com")).toContain("remind you");
+  });
+  it("never falls back to the whole thread for an empty message", () => {
+    const t = ["Acme <help@acme.com> Fri, Nov 20, 2026 at 5:18 PM", "To: me@example.com", "", "", "me@example.com Sat, Nov 21, 2026 at 9:00 AM", "", "My own words here."].join("\n");
+    expect(latestMessage(t, "help@acme.com")).toBe("");
   });
 });
