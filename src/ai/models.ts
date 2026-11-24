@@ -82,7 +82,12 @@ export function publicCloudModel(ai: AI, model = "gemini-3.5-flash-lite"): Gener
 async function ask<T extends object>(task: string, m: GenerativeModel, instruction: string, head: string, body: string): Promise<Logged<T & { quote: string }> & { quoteOk: boolean }> {
   const sents = sentencesOf(clip(body));
   const t0 = performance.now();
-  const r = await m.generateContent(`${instruction}\n\n${head}\n\n${numbered(sents)}`);
+  // A stuck on-device call must not stall a whole check: give up on this email after 90 s (a cold first call takes ~18 s).
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const r = await Promise.race([
+    m.generateContent(`${instruction}\n\n${head}\n\n${numbered(sents)}`),
+    new Promise<never>((_, no) => { timer = setTimeout(() => no(new Error(`${task}: no answer from the model in 90 s`)), 90_000); }),
+  ]).finally(() => clearTimeout(timer));
   const ms = Math.round(performance.now() - t0);
   const source = (r.response.inferenceSource as Logged<T>["source"]) ?? "unknown";
   callLog.push({ task, source, ms, at: Date.now() });
@@ -128,7 +133,7 @@ export function readAsk(m: GenerativeModel, from: string, subject: string, body:
   return ask<{ ask: Ask }>(
     "ask",
     m,
-    'This email, given as numbered sentences, is a company\'s reply to a person who asked it to delete their data. Most such replies only confirm they received it: then answer "wait". Answer something else only if the email clearly tells the person to do one thing now:\n"scheduled" - it says the account is already scheduled to be deleted.\n"verify_link" - click a verification link or enter a code.\n"go_ahead" - reply YES, I AGREE or similar to confirm they may delete.\n"confirm_sender" - write again from the account\'s own email address, or it says it cannot accept requests from third-party services.\n"clarify" - say what should be deleted.\n"provide_info" - send more details.\n"use_form" - fill in a privacy or request form.\n"log_in_delete" - sign in and delete the account themselves.\nMentions of a help center, a ticket number or logging in to view the case do not count. Give the number of the one sentence that shows the answer.',
+    'This email, given as numbered sentences, is a company\'s reply to a person who asked it to delete their data. Most such replies only confirm they received it: then answer "wait". Answer something else only if the email clearly tells the person to do one thing now:\n"scheduled" - it says the account is already scheduled to be deleted.\n"no_account" - it says no account was found for the person\'s email address.\n"verify_link" - click a verification link or enter a code.\n"go_ahead" - reply YES, I AGREE or similar to confirm they may delete.\n"confirm_sender" - write again from the account\'s own email address, or it says it cannot accept requests from third-party services.\n"clarify" - say what should be deleted.\n"provide_info" - send more details.\n"use_form" - fill in a privacy or request form.\n"log_in_delete" - sign in and delete the account themselves.\nMentions of a help center, a ticket number or logging in to view the case do not count. Give the number of the one sentence that shows the answer.',
     `From: ${from}\nSubject: ${subject}`,
     body,
   );

@@ -5,6 +5,8 @@ import { addDays } from "./time";
 export interface ReplyCoachData {
   ask: import("./coach").Ask;
   askQuote: string;
+  /** When the message that asked it arrived (a thread's newest date can be your own answer). */
+  askAt?: number;
   /** "model" when the on-device model's sentence was found in the email; "rules" otherwise. */
   by: "model" | "rules";
   from: string;
@@ -31,11 +33,12 @@ export type RequestEvent =
 
 export type State =
   | "drafted" | "sent" | "ack" | "needs_id" | "confirmed" | "signin_checked" | "proven" | "broken" | "reopened"
-  | "refused" | "overdue" | "followed_up" | "complaint_ready";
+  | "refused" | "overdue" | "followed_up" | "complaint_ready" | "still_marketing";
 
 export type ResultCode =
   | "PROVEN_NO_MAIL_30D" | "BROKEN_MARKETING_AFTER_CONFIRM" | "REFUSED_WITH_REASON" | "OVERDUE_NO_REPLY"
-  | "OVERDUE_ACK_ONLY" | "NEEDS_ID_USER_SKIPPED" | "BROKEN_ACCOUNT_STILL_EXISTS" | "REOPENED_MAIL_AFTER_PROVEN";
+  | "OVERDUE_ACK_ONLY" | "NEEDS_ID_USER_SKIPPED" | "BROKEN_ACCOUNT_STILL_EXISTS" | "REOPENED_MAIL_AFTER_PROVEN"
+  | "STILL_MARKETING_AFTER_REQUEST";
 
 export interface Request {
   id: string;
@@ -54,7 +57,7 @@ export interface Status {
   evidence?: RequestEvent;
 }
 
-/** Days after a confirmation before a marketing email counts as a broken promise. */
+/** Days after a confirmation (or after the request, which also says stop marketing) before a marketing email counts. */
 export const GRACE_DAYS = 3;
 /** Quiet days after a confirmation before deletion counts as proven. */
 export const PROOF_DAYS = 30;
@@ -115,6 +118,17 @@ export function status(r: Request, now: number): Status {
   const refused = ev.find((e) => e.type === "reply" && e.reply === "refused");
   if (refused) {
     return { state: "complaint_ready", result: "REFUSED_WITH_REASON", deadline, evidence: refused, reason: `Refused on ${fmt(refused.at)}.` };
+  }
+
+  // Every request also says "stop sending me marketing". Once they have had it a few days, more marketing breaks
+  // the objection (GDPR and UK GDPR Art 21(3), NDPA s.36(4): "shall no longer be processed for such purposes").
+  const still = ev.find((e) => e.type === "marketing" && e.at > addDays(sent.at, GRACE_DAYS));
+  if (still) {
+    const days = Math.floor((still.at - sent.at) / 864e5);
+    return {
+      state: "still_marketing", result: "STILL_MARKETING_AFTER_REQUEST", deadline, evidence: still,
+      reason: `Still sending marketing ${days} days after you told them to stop (${fmt(still.at)}).`,
+    };
   }
 
   const followUp = ev.find((e) => e.type === "followed_up");

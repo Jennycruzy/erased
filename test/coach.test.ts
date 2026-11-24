@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { askByRules, coach, pickLink, trustedLink } from "../src/core/coach";
+import { answeredAt, askByRules, coach, confirmsDeletion, pickLink, trustedLink } from "../src/core/coach";
 import { anchorsOf } from "../src/core/html";
 import type { StoredRequest } from "../src/core/store";
 
@@ -22,6 +22,19 @@ describe("reading what the company asks", () => {
     ["In order for us to facilitate your request, could you please provide the following:", "provide_info"],
     ["We will need to verify your identity. We will generally require either the successful login to your account.", "wait"],
     ["We have received your message and will review it as soon as possible.", "wait"],
+    ["We just wanted to let you know we received your request ( We've received your request to permanently delete your account data ).", "wait"],
+    ["I have also submitted the form on your behalf. Please check your email to complete the form submission.", "verify_link"],
+    ["For Deleting Your Airtable Account: If you have an active Airtable account, you must initiate the deletion yourself by:", "log_in_delete"],
+    ["Before I make any permanent changes, please confirm that you'd like your data to be deleted per GDPR.", "go_ahead"],
+    ["If you’d like to continue with your account's deletion, please submit a request through our Online Form here:", "use_form"],
+    ["We couldn't find an account associated with that email address me@example.com.", "no_account"],
+    ["We don't see an account linked to the email address you are contacting us from.", "no_account"],
+    ["Zoom is unable to match your email address with a Zoom account. If you have a Zoom account, please complete the Data Subject Rights Request Form.", "no_account"],
+    ["I wasn’t able to find a Typeform account associated with the email address you’re contacting us from.", "no_account"],
+    ["Your data from all Wix services and products will be deleted 7 days after receiving this message.", "scheduled"],
+    ["FOR YOU : We’ll need you to delete your Zapier account. For security reasons, we can’t do this for you.", "log_in_delete"],
+    ["Once that's done, the following steps can only be completed by you directly for security purposes.", "log_in_delete"],
+    ["Please respond to this email with: Confirmation that this request was indeed made by you,", "confirm_sender"],
   ])("%s -> %s", (text, ask) => expect(askByRules(text).ask).toBe(ask));
 
   it("returns the sentence that shows it", () => expect(askByRules("Hi there. Please respond directly from that email. Thanks.").quote).toBe("Please respond directly from that email."));
@@ -123,4 +136,47 @@ describe("go-ahead", () => {
     expect(a.action.type === "email" && a.action.body.startsWith("Hello,\n\nYES. I AGREE.")).toBe(true);
     expect(a.action.type === "email" && a.action.subject).toBe("Re: CA-4339437 Request to delete my personal data [ER-G9GRH] [ER-CDSXS]");
   });
+});
+
+describe("no account under this email", () => {
+  it("says there is nothing to delete here, no button to mark done", () => {
+    const a = coach(req(), { ...reply("We couldn't find an account associated with that email address."), ask: "no_account" }, "");
+    expect(a.headline).toBe("Vimeo found no account under me@example.com");
+    expect(a.action.type).toBe("wait");
+  });
+  it("a scheduled deletion 'N days after' gets its date", () => {
+    const a = coach(req(), { ...reply("Your data will be deleted 7 days after receiving this message."), ask: "scheduled" }, "");
+    expect(a.by).toBe(T + 3600e3 + 7 * 864e5);
+  });
+});
+
+describe("your own reply counts as done", () => {
+  it("a reply after their ask marks it done, an earlier one does not", () => {
+    expect(answeredAt("clarify", 100, [50, 180, 150])).toBe(150);
+    expect(answeredAt("clarify", 100, [50])).toBeNull();
+  });
+  it("asks that need nothing from you are never 'done'", () => expect(answeredAt("no_account", 100, [200])).toBeNull());
+});
+
+describe("stop-marketing email", () => {
+  it("quotes the law's own words and the email they sent", async () => {
+    const { stopMarketingEmail } = await import("../src/core/coach");
+    const e = stopMarketingEmail(req(), "Ada", { at: T + 5 * 864e5, subject: "50% off" });
+    expect(e.body).toContain("Section 36(4) of the Nigeria Data Protection Act 2023");
+    expect(e.body).toContain('"50% off"');
+    expect(e.to).toBe("privacy@vimeo.com");
+  });
+});
+
+describe("a real deletion confirmation", () => {
+  it("the account named as deleted counts, even with a form still open", () => {
+    const q = "I can confirm that your Asana account associated with me@example.com has now been deleted.";
+    expect(confirmsDeletion(q, q + " Please check your email to complete the form submission.")).toBe(true);
+  });
+  it("'when it is deleted' is not a deletion", () => expect(confirmsDeletion("Please check out this guide for details on what happens to your account when it is deleted.", "")).toBe(false));
+  it("marketing data deleted, account left to you, is not a deletion", () => {
+    const q = "What We've Done: We've confirmed that your personal data associated with the email address you used to contact us has been deleted from our Sales and Marketing systems.";
+    expect(confirmsDeletion(q, q + "\nFor Deleting Your Airtable Account: If you have an active Airtable account, you must initiate the deletion yourself by: Logging into your Airtable account")).toBe(false);
+  });
+  it("a plain confirmation counts", () => expect(confirmsDeletion("Your personal data has been permanently deleted.", "Your personal data has been permanently deleted. Thanks.")).toBe(true));
 });

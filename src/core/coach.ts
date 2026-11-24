@@ -17,9 +17,10 @@ export type Ask =
   | "clarify" // "what would you like deleted?"
   | "provide_info" // "please provide the following"
   | "scheduled" // "your account will be deleted in 14 days"
+  | "no_account" // "we couldn't find an account linked to this email"
   | "wait"; // receipt or ticket only
 
-export const ASKS: readonly Ask[] = ["wait", "scheduled", "verify_link", "go_ahead", "confirm_sender", "clarify", "provide_info", "use_form", "log_in_delete"];
+export const ASKS: readonly Ask[] = ["wait", "scheduled", "no_account", "verify_link", "go_ahead", "confirm_sender", "clarify", "provide_info", "use_form", "log_in_delete"];
 
 export interface Link { text: string; url: string }
 
@@ -48,15 +49,17 @@ const day = (t: number) => new Date(t).toISOString().slice(0, 10);
 
 /** Rule-based reading of the reply: which ask, and the sentence that shows it. First match wins. */
 const RULES: Array<[Ask, RegExp]> = [
-  ["scheduled", /\b(is|has been) scheduled to be (permanently )?deleted\b|\bwill be (permanently )?deleted in \d+ days\b/i],
-  ["verify_link", /\b(verify my identity|verification (code|request|link)|one-time code|enter the code|confirm your identity by clicking|email verification request)\b/i],
-  ["confirm_sender", /\b(respond directly from (that|this|the) email|from the email address linked to your account|third[- ]party (service|services)|don'?t see an account linked to the email)\b/i],
-  ["go_ahead", /\brespond with (either )?["“”\s]*(yes|i agree)\b|\b(written|your) (confirmation|consent) to (proceed|move forward|go ahead)\b|\breply (with )?["“”\s]*(yes|confirm)["“”\s]* to (proceed|confirm)\b/i],
+  ["scheduled", /\b(is|has been) scheduled to be (permanently )?deleted\b|\bwill be (permanently )?deleted (in \d+ days|\d+ days after)\b/i],
+  // Before every other ask: a company that finds no account often also points at its form, which would be wasted work.
+  ["no_account", /\b(couldn['’]?t|could not|can['’]?t|cannot|unable to|wasn['’]?t able to|were not able to|weren['’]?t able to) (find|locate|match|identify) (an?|any|your) ([\w ]{0,20})?(account|record)s?\b|\b(unable to|could not|couldn['’]?t) match your email( address)? (with|to) an? [\w ]{0,20}account\b|\bdon['’]?t see an account linked to\b|\bno account (is )?(linked|associated|registered) (to|with)\b/i],
+  ["verify_link", /\b(check your email to (complete|confirm|verify)|verify my identity|verification (code|request|link)|one-time code|enter the code|confirm your identity by clicking|email verification request)\b/i],
+  ["confirm_sender", /\b(respond directly from (that|this|the) email|from the email address linked to your account|third[- ]party (service|services)|confirmation that this request was (indeed )?made by you)\b/i],
+  ["go_ahead", /\bplease confirm that you(['’]d| would) like (your|the) (data|account|information) to be (deleted|erased|removed)\b|\brespond with (either )?["“”\s]*(yes|i agree)\b|\b(written|your) (confirmation|consent) to (proceed|move forward|go ahead)\b|\breply (with )?["“”\s]*(yes|confirm)["“”\s]* to (proceed|confirm)\b/i],
   ["clarify", /\b(confirm what (you would like|you'd like) (deleted|to delete)|what (data|information) (you would like|you'd like) (deleted|removed))\b/i],
   ["provide_info", /\b(could you please provide|please provide (us with )?the following|we (will )?need the following)\b/i],
-  ["log_in_delete", /\b(log ?in|sign in) and (submit|fill|complete|request|delete)\b/i],
-  ["use_form", /\b((fill out|complete|submit)( our| the)?( data subject( rights)?| privacy| deletion)?( request)? (form|webform)|privacy form|request form|data subject rights request form)\b/i],
-  ["log_in_delete", /(^|\b(please|you (must|need to|can|will need to)|and)\s)(sign (in|into)|log ?in)( to)? (to )?your [\w ]{0,20}account\b|\byou can (also )?delete your [\w ]{0,20}(account|profile)\b|\bsettings page\b|\bself-service\b|\bdelete (your|the) [\w ]{0,20}account (yourself|from)\b|\bpermanently delete your account\b|\b(easy|simple) steps\b|\bdelete my data\b/i],
+  ["log_in_delete", /\b(log ?in|sign in) and (submit|fill|complete|request|delete)\b|\bwe(['’]ll| will) need you to delete your [\w ]{0,20}account\b|\b(just )?log ?in to [a-z0-9-]+\.[a-z]{2,}\b and follow\b|\bcan only be completed by you\b|\byou must (initiate|start|request) the deletion yourself\b/i],
+  ["use_form", /\bsubmit a request through our [\w ]{0,20}form\b|\b((fill out|complete|submit)( our| the)?( data subject( rights)?| privacy| deletion)?( request)? (form|webform)|privacy form|request form|data subject rights request form)\b/i],
+  ["log_in_delete", /(^|\b(please|you (must|need to|can|will need to)|and)\s)(sign (in|into)|log ?in)( to)? (to )?your [\w ]{0,20}account\b|\byou can (also )?delete your [\w ]{0,20}(account|profile)\b|\bsettings page\b|\bself-service\b|\bdelete (your|the) [\w ]{0,20}account (yourself|from)\b|(?<!request to )\bpermanently delete your account\b|\b(easy|simple) steps\b|\bdelete my data\b/i],
 ];
 
 export function sentencesWithin(text: string): string[] {
@@ -224,7 +227,7 @@ export function coach(
         ]),
       };
     case "scheduled": {
-      const by = daysIn(reply.text, reply.at, /in (\d+) days/i);
+      const by = daysIn(reply.text, reply.at, /deleted (?:in )?(\d+) days\b/i);
       return {
         ask: "scheduled",
         headline: `${company} will delete the account${by ? ` on ${day(by)}` : ""}`,
@@ -235,6 +238,14 @@ export function coach(
         byMeaning: by ? "do_not_sign_in_before" : undefined,
       };
     }
+    case "no_account":
+      return {
+        ask: "no_account",
+        headline: `${company} found no account under ${r.accountEmail}`,
+        why: "Then there is nothing of yours to delete under this address. If you signed up with a different email, send the request again from that one.",
+        legal: [],
+        action: { type: "wait", label: "Nothing more to do" },
+      };
     default: {
       const due = law.deadline(r.events.find((e) => e.type === "sent")?.at ?? r.createdAt);
       return {
@@ -265,6 +276,50 @@ export function trustedLink(r: StoredRequest, url: string, sender?: string): boo
   if (own.includes(d) || PRIVACY_VENDORS.has(d)) return true;
   const name = r.domain.split(".")[0];
   return DESKS.has(d) && host.split(".")[0].includes(name);
+}
+
+/** The law's own words on marketing after an objection, only where we checked the text. */
+function marketingLines(law: LawId): string[] {
+  switch (law) {
+    case "gdpr": return ["Article 21(3) GDPR says that where the data subject objects to processing for direct marketing purposes, the personal data shall no longer be processed for such purposes."];
+    case "uk_gdpr": return ["Article 21(3) UK GDPR says that where the data subject objects to processing for direct marketing purposes, the personal data shall no longer be processed for such purposes."];
+    case "ndpa": return ["Section 36(4) of the Nigeria Data Protection Act 2023 says that where the data subject objects to processing for direct marketing purposes, the personal data shall no longer be processed for such purposes."];
+    default: return [];
+  }
+}
+
+/** A short email when marketing keeps coming after the request told them to stop. */
+export function stopMarketingEmail(r: StoredRequest, fullName: string, mail: { at: number; subject: string }) {
+  const sent = r.events.find((e) => e.type === "sent")?.at ?? r.createdAt;
+  const to = r.to ?? `privacy@${r.domain}`;
+  return replyEmail(r, fullName, to, `Request to delete my personal data`, [
+    `On ${day(sent)} I asked you to erase my personal data and to stop sending me marketing of any kind. On ${day(mail.at)} you sent me another marketing email: "${mail.subject}".`,
+    ...marketingLines(r.law),
+    `Please stop all marketing to ${r.accountEmail} now, and confirm in writing that my request is being carried out.`,
+  ]);
+}
+
+const DONE = /\b(has|have) (now )?been (permanently )?(deleted|erased|removed|purged)\b|\bwe(['’]ve| have) (now )?(permanently )?(deleted|erased|removed|purged)\b|\b(deletion|erasure)( request)? (is|has been) (now )?(complete|completed|processed)\b/i;
+
+/**
+ * Whether a reply the model read as "deleted" really confirms it. The sentence must say it was done ("has been
+ * deleted", not "when it is deleted"), and it must name the account, or the email must ask nothing more of you:
+ * "deleted from our Sales and Marketing systems ... you must delete the account yourself" is not a deletion.
+ */
+export function confirmsDeletion(quote: string, text: string): boolean {
+  if (!DONE.test(quote)) return false;
+  if (/\baccount\b/i.test(quote)) return true;
+  return NO_STEP.includes(askByRules(text).ask);
+}
+
+/** Asks that need nothing from you. */
+export const NO_STEP: readonly Ask[] = ["wait", "scheduled", "no_account"];
+
+/** Your own reply in the same thread after the company's ask: the step is done (returns when), else null. */
+export function answeredAt(ask: Ask, askAt: number, mine: number[]): number | null {
+  if (NO_STEP.includes(ask)) return null;
+  const after = mine.filter((t) => t > askAt).sort((a, b) => a - b);
+  return after[0] ?? null;
 }
 
 /** The next step for a request: a scheduled deletion first, else the newest reply that asks for something. */

@@ -9,5 +9,6 @@ await build({ ...common, entryPoints: ["src/background.ts"], outfile: "dist/back
 await build({ ...common, entryPoints: ["src/panel/panel.ts"], outfile: "dist/panel.js", format: "esm" });
 // Local platform check page (not in the repo); built only when present.
 if (existsSync("src/panel/m0.ts")) await build({ ...common, entryPoints: ["src/panel/m0.ts"], outfile: "dist/m0.js", format: "esm" });
+await build({ ...common, entryPoints: ["src/panel/eval.ts"], outfile: "dist/eval.js", format: "esm" });
 await build({ ...common, entryPoints: ["src/panel/complaint-page.ts"], outfile: "dist/complaint.js", format: "esm" });
 cpSync("public", "dist", { recursive: true });

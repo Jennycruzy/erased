@@ -12,7 +12,7 @@ import { buildFollowUp, buildRequest, composeUrl, newRef } from "../core/templat
 import { DAY } from "../core/time";
 import { deviceTargets, safetyScore, summarise, type Company, type Sighting } from "../core/trail";
 import { companyReplies, isResetMail, marketingEvent, mentionsCompany, replyEvent, sentEvent, watchQueries, type MailRow } from "../core/watch";
-import { askByRules, nextStep, trustedLink, type Advice } from "../core/coach";
+import { answeredAt, askByRules, confirmsDeletion, nextStep, NO_STEP, stopMarketingEmail, trustedLink, type Advice } from "../core/coach";
 import type { ReplyCoachData } from "../core/requests";
 import { firebase } from "../ai/firebase";
 import { lookupRoute } from "../ai/lookup";
@@ -152,6 +152,11 @@ async function gmailTab(): Promise<chrome.tabs.Tab | null> {
   if (tab?.id) return tab;
   const any = await chrome.tabs.query({ url: "https://mail.google.com/*" });
   return any[0] ?? null;
+}
+
+/** A message to the Gmail tab that gives up after `ms` (the tab may be reloading or stuck). */
+function tabAsk<T>(tabId: number, msg: object, ms = 30_000): Promise<T | null> {
+  return Promise.race([chrome.tabs.sendMessage(tabId, msg).catch(() => null) as Promise<T | null>, new Promise<null>((ok) => setTimeout(() => ok(null), ms))]);
 }
 
 /** Runs one Gmail search in the open Gmail tab and collects the rows. */
@@ -350,12 +355,12 @@ async function renderWatch() {
     const li = el("li", "item watch");
     const sent = r.events.find((e) => e.type === "sent")?.at;
     const frac = sent && s.deadline ? (now - sent) / (s.deadline - sent) : 0;
-    const color = s.state === "proven" ? "var(--green)" : s.state === "broken" || s.state === "complaint_ready" || s.state === "reopened" ? "var(--red)" : s.state === "overdue" ? "var(--amber)" : "var(--fg)";
+    const color = s.state === "proven" ? "var(--green)" : s.state === "broken" || s.state === "complaint_ready" || s.state === "reopened" || s.state === "still_marketing" ? "var(--red)" : s.state === "overdue" ? "var(--amber)" : "var(--fg)";
     const mid = el("div");
     mid.append(el("div", "name", r.company), el("div", "why", s.reason));
     const ev = s.evidence;
     if (ev && (ev.type === "reply" || ev.type === "extension_notice")) mid.append(el("div", "quote", `“${ev.quote}”`));
-    if (ev && ev.type === "marketing") mid.append(el("div", "quote", `Marketing after deletion: “${ev.subject}”`));
+    if (ev && ev.type === "marketing") mid.append(el("div", "quote", `${s.state === "still_marketing" ? "Marketing after your request" : "Marketing after deletion"}: “${ev.subject}”`));
     const acts = el("div", "row-actions");
     const step = nextStep(r, fullNameCache);
     if (step) mid.append(coachCard(r, step));
@@ -396,15 +401,22 @@ async function renderWatch() {
       acts.append(chk);
     }
     if (ev && ev.type === "account_alive") mid.append(el("div", "quote", `Sign-in email after deletion: “${ev.subject}”`));
-    if (s.state === "complaint_ready" || s.state === "broken" || s.state === "reopened") {
+    if (s.state === "still_marketing" && ev?.type === "marketing") {
+      const stop = stopMarketingEmail(r, fullNameCache, ev);
+      const b = el("button", "primary", "Tell them to stop");
+      b.title = stop.body;
+      b.onclick = () => chrome.tabs.create({ url: stop.url });
+      acts.append(b);
+    }
+    if (s.state === "complaint_ready" || s.state === "broken" || s.state === "reopened" || s.state === "still_marketing") {
       const pack = el("button", "primary", "Complaint pack");
       pack.onclick = () => chrome.tabs.create({ url: chrome.runtime.getURL(`complaint.html?id=${encodeURIComponent(r.id)}`) });
       acts.append(pack);
     }
     if (acts.childElementCount) mid.append(acts);
-    const LABELS: Record<string, string> = { drafted: "NOT SENT", sent: "SENT", ack: "RECEIVED", needs_id: "ID ASKED", confirmed: "CONFIRMED", signin_checked: "CHECKED", proven: "ERASED", broken: "NOT ERASED", reopened: "REOPENED", refused: "REFUSED", overdue: "OVERDUE", followed_up: "FOLLOWED UP", complaint_ready: "COMPLAINT" };
+    const LABELS: Record<string, string> = { drafted: "NOT SENT", sent: "SENT", ack: "RECEIVED", needs_id: "ID ASKED", confirmed: "CONFIRMED", signin_checked: "CHECKED", proven: "ERASED", broken: "NOT ERASED", reopened: "REOPENED", refused: "REFUSED", overdue: "OVERDUE", followed_up: "FOLLOWED UP", complaint_ready: "COMPLAINT", still_marketing: "STILL MARKETING" };
     const label = LABELS[s.state] ?? s.state;
-    const cls = s.state === "proven" ? "proven" : s.state === "broken" || s.state === "complaint_ready" || s.state === "reopened" ? "broken" : s.state === "overdue" || s.state === "needs_id" ? "act" : "wait";
+    const cls = s.state === "proven" ? "proven" : s.state === "broken" || s.state === "complaint_ready" || s.state === "reopened" || s.state === "still_marketing" ? "broken" : s.state === "overdue" || s.state === "needs_id" ? "act" : "wait";
     li.append(ring(s.state === "proven" ? 1 : frac, color), mid, el("span", `verdict ${cls}`, label));
     return li;
   }));
@@ -425,7 +437,7 @@ function coachCard(r: StoredRequest, a: Advice): HTMLElement {
     b.onclick = () => chrome.tabs.create({ url: act.url });
     row.append(b);
   }
-  if (a.ask !== "wait" && a.ask !== "scheduled") {
+  if (!NO_STEP.includes(a.ask)) {
     const done = el("button", "", "I've done it");
     done.title = "Marks this step as done. ERASED keeps watching for their reply.";
     done.onclick = async () => { await store.addEvent(r.id, { type: "step_done", at: Date.now(), ask: a.ask }); void renderWatch(); };
@@ -435,17 +447,17 @@ function coachCard(r: StoredRequest, a: Advice): HTMLElement {
   return box;
 }
 
-async function threadFull(threadId: string, from?: string): Promise<{ text: string; earlier: string[]; links: Array<{ text: string; url: string }> } | null> {
+async function threadFull(threadId: string, from?: string): Promise<{ text: string; at: number | null; earlier: Array<{ body: string; at: number | null }>; mine: number[]; links: Array<{ text: string; url: string }> } | null> {
   const tab = await gmailTab();
   if (!tab?.id) return null;
-  const res = (await chrome.tabs.sendMessage(tab.id, { type: "threadFull", threadId, from }).catch(() => null)) as { full: { text: string; earlier: string[]; links: Array<{ text: string; url: string }> } | null } | null;
+  const res = (await tabAsk(tab.id, { type: "threadFull", threadId, from })) as { full: { text: string; at: number | null; earlier: Array<{ body: string; at: number | null }>; mine: number[]; links: Array<{ text: string; url: string }> } | null } | null;
   return res?.full ?? null;
 }
 
 async function threadText(threadId: string, from?: string): Promise<string | null> {
   const tab = await gmailTab();
   if (!tab?.id) return null;
-  const res = (await chrome.tabs.sendMessage(tab.id, { type: "thread", threadId, from }).catch(() => null)) as { text: string | null } | null;
+  const res = (await tabAsk(tab.id, { type: "thread", threadId, from })) as { text: string | null } | null;
   return res?.text ?? null;
 }
 
@@ -465,7 +477,7 @@ async function checkReplies() {
         // The list shows the newest message's date; read our own message's time from the thread.
         if (ev && rows[0]?.threadId) {
           const tab = await gmailTab();
-          const got = tab?.id ? ((await chrome.tabs.sendMessage(tab.id, { type: "sentAt", threadId: rows[0].threadId, from: r.accountEmail }).catch(() => null)) as { at: number | null } | null) : null;
+          const got = tab?.id ? ((await tabAsk(tab.id, { type: "sentAt", threadId: rows[0].threadId, from: r.accountEmail })) as { at: number | null } | null) : null;
           if (got?.at && got.at <= ev.at) ev.at = got.at;
         }
         // Update this in-memory copy too, or the request is skipped below until the next click.
@@ -475,47 +487,67 @@ async function checkReplies() {
       $("progress").textContent = `Checking ${r.company}…`;
       for (const row of companyReplies(r, await search(q0.replies, 3))) {
         if (!row.threadId || !replyModel || isResetMail(row.subject)) continue;
-        if (r.events.some((e) => e.type === "reply" && e.at === row.at)) continue;
+        const seen = r.events.find((e): e is Extract<StoredRequest["events"][number], { type: "reply" }> => e.type === "reply" && e.at === row.at);
+        if (seen) {
+          // Already read. Only look again if it asked something you may have answered since by email.
+          const ask = seen.coach?.ask;
+          const doneAfter = r.events.some((e) => e.type === "step_done" && e.at > row.at);
+          if (!ask || NO_STEP.includes(ask) || doneAfter) continue;
+          const again = await threadFull(row.threadId, row.from);
+          const at = again ? answeredAt(ask, seen.coach?.askAt ?? again.at ?? row.at, again.mine) : null;
+          if (at) { const ev = { type: "step_done" as const, at, ask }; await store.addEvent(r.id, ev); r.events.push(ev); }
+          continue;
+        }
         const full = await threadFull(row.threadId, row.from);
         if (!full) continue;
         const text = full.text;
         if (!text) continue;
         if (row.vendor && !mentionsCompany(r, text)) continue;
-        const read = await readReply(replyModel, row.from, row.subject, text);
+        const read = await readReply(replyModel, row.from, row.subject, text).catch(() => null);
+        if (!read) continue;
+        // "Deleted" only when the sentence says it was done and nothing more is asked ("when it is deleted" is not it).
+        if (read.value.reply === "deleted" && !confirmsDeletion(read.value.quote, text)) read.value.reply = "other";
         // Reply Coach: what they ask next. The model picks from a fixed list; the rules decide if its sentence is not in the email.
         let coachData: ReplyCoachData | undefined;
         if (read.quoteOk && read.value.reply !== "deleted" && read.value.reply !== "unrelated") {
           const m = askModel ? await readAsk(askModel, row.from, row.subject, text).catch(() => null) : null;
           let rules = askByRules(text);
           let askText = text;
+          let askAt = full.at ?? row.at;
           // A reminder ("we are still waiting for your reply") asks nothing new: the question is in an earlier message.
           if (rules.ask === "wait") {
-            const before = [...full.earlier].reverse().map((b) => ({ b, r: askByRules(b) })).find((x) => x.r.ask !== "wait");
-            if (before) { rules = before.r; askText = before.b; }
+            const before = [...full.earlier].reverse().map((b) => ({ b, r: askByRules(b.body) })).find((x) => x.r.ask !== "wait");
+            if (before) { rules = before.r; askText = before.b.body; askAt = before.b.at ?? askAt; }
           }
           // Measured on 34 real replies: the model alone 28/34; known phrases (rules) are exact. The model decides only
           // when no known phrase matches, and only with a sentence that is really in the email.
           const byModel = rules.ask === "wait" && !!m && m.quoteOk && !!m.value.ask && m.value.ask !== "wait";
           coachData = {
-            ask: byModel ? m!.value.ask : rules.ask, askQuote: byModel ? m!.value.quote : rules.quote, by: byModel ? "model" : "rules",
+            ask: byModel ? m!.value.ask : rules.ask, askQuote: byModel ? m!.value.quote : rules.quote, by: byModel ? "model" : "rules", askAt: byModel ? (full.at ?? row.at) : askAt,
             from: row.from, subject: row.subject, text: (byModel ? text : askText).slice(0, 3000), links: full.links.filter((l) => trustedLink(r, l.url, row.from)).slice(0, 12),
           };
         }
         for (const ev of replyEvent(row.at, { ...read.value, quoteOk: read.quoteOk }, coachData)) await store.addEvent(r.id, ev);
+        const answered = coachData ? answeredAt(coachData.ask, coachData.askAt ?? row.at, full.mine) : null;
+        if (answered && coachData) { const ev = { type: "step_done" as const, at: answered, ask: coachData.ask }; await store.addEvent(r.id, ev); r.events.push(ev); }
       }
       const fresh = (await store.requests()).find((x) => x.id === r.id)!;
       const confirmed = fresh.events.find((e) => e.type === "reply" && e.reply === "deleted");
-      if (confirmed) {
-        const q = watchQueries(fresh, confirmed.at);
-        for (const row of await search(q.marketing!, 2)) {
+      // Marketing after the request (which also says stop marketing), or after the deletion was confirmed.
+      const since = confirmed?.at ?? fresh.events.find((e) => e.type === "sent")!.at;
+      for (const row of await search(watchQueries(fresh, since).marketing!, 2)) {
+        if (fresh.events.some((e) => (e.type === "marketing" || e.type === "reply") && e.at === row.at)) continue;
+        {
           let device: { marketing: boolean; quoteOk: boolean } | undefined;
           if (mktModel && row.threadId) {
             const text = await threadText(row.threadId, row.from);
-            if (text) { const m = await isMarketing(mktModel, row.from, row.subject, text); device = { marketing: m.value.marketing, quoteOk: m.quoteOk }; }
+            if (text) { const m = await isMarketing(mktModel, row.from, row.subject, text).catch(() => null); if (m) device = { marketing: m.value.marketing, quoteOk: m.quoteOk }; }
           }
           const ev = marketingEvent(row, device);
           if (ev) await store.addEvent(r.id, ev);
         }
+      }
+      if (confirmed) {
         // Sign-in check: a reset or sign-in email within 24 h means the account still exists.
         const check = fresh.events.find((e) => e.type === "signin_check" && e.at >= confirmed.at);
         if (check && !fresh.events.some((e) => e.type === "account_alive" && e.at >= check.at)) {
@@ -593,7 +625,7 @@ async function initSettings() {
   $("share").addEventListener("change", (e) => void store.saveSettings({ shareOutcomes: (e.target as HTMLInputElement).checked }));
   const tab = await gmailTab();
   if (tab?.id) {
-    const who = (await chrome.tabs.sendMessage(tab.id, { type: "whoami" }).catch(() => null)) as { email: string | null } | null;
+    const who = (await tabAsk(tab.id, { type: "whoami" })) as { email: string | null } | null;
     if (who?.email) { await store.saveSettings({ accountEmail: who.email }); $("acct").textContent = who.email; }
   } else if (s.accountEmail) $("acct").textContent = s.accountEmail;
 }

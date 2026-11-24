@@ -95,10 +95,10 @@ const QUOTE_START = /^(On .{6,200} wrote:|-{2,}\s*Original Message\s*-{2,}|From:
 
 /** Every message in a print-view thread, oldest first: sender, header line index and body (no print header,
  * address lines or quoted history). */
-export function messageBodies(text: string): Array<{ email: string; body: string }> {
+export function messageBodies(text: string): Array<{ email: string; body: string; at: number }> {
   const lines = text.split("\n");
-  const heads: Array<{ i: number; email: string }> = [];
-  lines.forEach((l, i) => { const m = l.match(HEADER); if (m) heads.push({ i, email: (m[1] ?? m[2]).toLowerCase() }); });
+  const heads: Array<{ i: number; email: string; at: number }> = [];
+  lines.forEach((l, i) => { const m = l.match(HEADER); if (m) heads.push({ i, email: (m[1] ?? m[2]).toLowerCase(), at: headerTime(l) }); });
   return heads.map((h, k) => {
     const end = heads[k + 1]?.i ?? lines.length;
     const body: string[] = [];
@@ -111,7 +111,7 @@ export function messageBodies(text: string): Array<{ email: string; body: string
       if (HELPDESK_DATE.test(l) && body.filter(Boolean).length >= 4) { body.pop(); break; }
       body.push(l);
     }
-    return { email: h.email, body: body.join("\n").replace(/\n{3,}/g, "\n\n").trim() };
+    return { email: h.email, at: h.at, body: body.join("\n").replace(/\n{3,}/g, "\n\n").trim() };
   });
 }
 
@@ -135,13 +135,18 @@ export function latestMessage(text: string, from?: string): string {
 }
 
 /** Sender and time of every message in a print-view thread. Gmail prints times in the browser's own zone. */
+/** The time on a print-view header line (NaN if there is none). Gmail prints it in the browser's own zone. */
+function headerTime(l: string): number {
+  const when = l.match(/(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), ([A-Z][a-z]{2} \d{1,2}, \d{4}) at (\d{1,2}:\d{2})\s?([AP]M)/);
+  return when ? Date.parse(`${when[1]} ${when[2]} ${when[3]}`) : NaN;
+}
+
 export function messageTimes(text: string): Array<{ email: string; at: number }> {
   const out: Array<{ email: string; at: number }> = [];
   for (const l of text.split("\n")) {
     const m = l.match(HEADER);
     if (!m) continue;
-    const when = l.match(/(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), ([A-Z][a-z]{2} \d{1,2}, \d{4}) at (\d{1,2}:\d{2})\s?([AP]M)/);
-    const at = when ? Date.parse(`${when[1]} ${when[2]} ${when[3]}`) : NaN;
+    const at = headerTime(l);
     if (!Number.isNaN(at)) out.push({ email: (m[1] ?? m[2]).toLowerCase(), at });
   }
   return out;

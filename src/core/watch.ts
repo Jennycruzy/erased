@@ -27,14 +27,15 @@ export function replyQuery(r: StoredRequest): string {
 }
 
 /** Gmail searches the watcher runs for one request. */
-export function watchQueries(r: StoredRequest, confirmedAt?: number) {
+/** `since`: watch for marketing from then on (the request, or the confirmation once there is one). */
+export function watchQueries(r: StoredRequest, since?: number) {
   const q = {
     sent: `in:sent "${r.ref}"`,
     replies: replyQuery(r),
     marketing: null as string | null,
   };
-  if (confirmedAt) {
-    const d = new Date(confirmedAt);
+  if (since) {
+    const d = new Date(since);
     q.marketing = `from:${r.domain} after:${d.getUTCFullYear()}/${d.getUTCMonth() + 1}/${d.getUTCDate()} -"${r.ref}"`;
   }
   return q;

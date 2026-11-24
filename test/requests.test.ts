@@ -63,3 +63,14 @@ describe("request status", () => {
     expect(status(req([c, sent]), d("2026-12-11")).state).toBe("proven");
   });
 });
+
+describe("still marketing after the request", () => {
+  const mkt = (day: string): RequestEvent => ({ type: "marketing", at: d(day), subject: "50% off this week" });
+  it("marketing a day after the request is within the grace days", () => expect(status(req([sent, mkt("2026-11-02")]), d("2026-11-05")).state).toBe("sent"));
+  it("marketing a week after the request breaks the objection", () => {
+    const s = status(req([sent, mkt("2026-11-08")]), d("2026-11-09"));
+    expect([s.state, s.result]).toEqual(["still_marketing", "STILL_MARKETING_AFTER_REQUEST"]);
+    expect(s.reason).toContain("7 days after you told them to stop");
+  });
+  it("a refusal still wins", () => expect(status(req([sent, mkt("2026-11-08"), { type: "reply", at: d("2026-11-03"), reply: "refused", quote: "no" }]), d("2026-11-09")).state).toBe("complaint_ready"));
+});

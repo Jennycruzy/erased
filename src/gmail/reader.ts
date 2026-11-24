@@ -1,5 +1,5 @@
 /** Reads the Gmail web page in this browser. Nothing here makes a network request. */
-import { gmailIdKey, htmlToText, latestMessage, messagesFrom, messageTimes, printViewUrl, anchorsOf } from "../core/html";
+import { gmailIdKey, htmlToText, latestMessage, messageBodies, messageTimes, printViewUrl, anchorsOf } from "../core/html";
 export interface Row {
   from: string;
   /** Every sender Gmail lists on the row; a thread with your request and their reply shows both. */
@@ -90,20 +90,26 @@ export function accountEmail(): string | null {
  */
 let idKey: string | null = null;
 
-export async function threadFull(threadId: string, from?: string): Promise<{ text: string; earlier: string[]; links: Array<{ text: string; url: string }> } | null> {
+export async function threadFull(threadId: string, from?: string): Promise<{ text: string; at: number | null; earlier: Array<{ body: string; at: number | null }>; mine: number[]; links: Array<{ text: string; url: string }> } | null> {
   const base = location.pathname.match(/^\/mail\/u\/\d+\//)?.[0] ?? "/mail/u/0/";
   const ik = (idKey ??= gmailIdKey(document.documentElement.innerHTML));
   const url = ik ? printViewUrl(base, ik, threadId) : null;
   if (!url) return null;
   try {
-    const r = await fetch(url, { credentials: "include" });
+    const r = await fetch(url, { credentials: "include", signal: AbortSignal.timeout(20_000) });
     if (!r.ok) return null;
     const html = await r.text();
     if (/<title>[^<]*Conversation deleted/i.test(html)) return null;
     const all = htmlToText(html);
     // Their earlier messages in the same thread, oldest first: a later "we are waiting for your answer" reminder
     // must not hide the question it reminds you of.
-    return { text: latestMessage(all, from), earlier: messagesFrom(all, from).slice(0, -1), links: anchorsOf(html) };
+    // When you wrote in this thread: a reply after their ask means you already did what it asked.
+    const me = accountEmail()?.toLowerCase();
+    const mine = me ? messageTimes(all).filter((m) => m.email === me).map((m) => m.at) : [];
+    // Their messages with times: "you answered" is judged against the asking message, not the thread's newest date.
+    const theirs = messageBodies(all).filter((m) => m.email === from?.toLowerCase() && m.body).map((m) => ({ body: m.body, at: Number.isNaN(m.at) ? null : m.at }));
+    const latest = theirs.at(-1);
+    return { text: latestMessage(all, from), at: latest?.at ?? null, earlier: theirs.slice(0, -1), mine, links: anchorsOf(html) };
   } catch {
     return null;
   }
@@ -115,7 +121,7 @@ export async function threadText(threadId: string, from?: string): Promise<strin
   const url = ik ? printViewUrl(base, ik, threadId) : null;
   if (!url) return null;
   try {
-    const r = await fetch(url, { credentials: "include" });
+    const r = await fetch(url, { credentials: "include", signal: AbortSignal.timeout(20_000) });
     if (!r.ok) return null;
     const html = await r.text();
     if (/<title>[^<]*Conversation deleted/i.test(html)) return null;
@@ -132,7 +138,7 @@ export async function firstSentAt(threadId: string, me: string): Promise<number 
   const url = ik ? printViewUrl(base, ik, threadId) : null;
   if (!url) return null;
   try {
-    const r = await fetch(url, { credentials: "include" });
+    const r = await fetch(url, { credentials: "include", signal: AbortSignal.timeout(20_000) });
     if (!r.ok) return null;
     const mine = messageTimes(htmlToText(await r.text())).filter((x) => x.email === me.toLowerCase()).map((x) => x.at);
     return mine.length ? Math.min(...mine) : null;

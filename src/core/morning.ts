@@ -8,7 +8,7 @@ export interface MorningCard {
   badge: number;
 }
 
-const NEEDS_YOU: ReadonlySet<State> = new Set(["needs_id", "overdue", "complaint_ready", "broken"]);
+const NEEDS_YOU: ReadonlySet<State> = new Set(["needs_id", "overdue", "complaint_ready", "broken", "still_marketing"]);
 
 /** What changed since yesterday and what needs the user, in plain words. */
 export function morningCard(reqs: StoredRequest[], now: number, lastSeen: number): MorningCard {
@@ -20,6 +20,7 @@ export function morningCard(reqs: StoredRequest[], now: number, lastSeen: number
     if (s.state === "broken" && s.result === "BROKEN_ACCOUNT_STILL_EXISTS") lines.push(`${r.company} said your account was deleted, but it still answers a password reset. Complaint ready.`);
     else if (s.state === "broken") lines.push(`${r.company} said your data was deleted, then emailed you again. Complaint ready.`);
     else if (s.state === "reopened") lines.push(`${r.company} emailed you again after the deletion was proven. The case is open again.`);
+    else if (s.state === "still_marketing") lines.push(`${r.company} is still sending you marketing after you told it to stop. The email to send is ready.`);
     else if (s.state === "needs_id") lines.push(`${r.company} wants you to confirm it's you.`);
     else if (s.state === "overdue") lines.push(`${r.company} missed the legal deadline. Send the follow-up.`);
     else if (s.state === "complaint_ready") lines.push(`${r.company}: complaint pack ready.`);
