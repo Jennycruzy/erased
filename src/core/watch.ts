@@ -70,6 +70,11 @@ export function isCompanySender(r: StoredRequest, from: string): boolean {
 /** Password-reset mail is never a reply to the request (it is what the sign-in check looks for). */
 export const isResetMail = (subject: string) => /reset (your )?password|password reset|change (your )?password|forgot (your )?password/i.test(subject);
 
+/** Subjects that only promotions use. */
+export const PROMO_SUBJECT = /\b\d{1,2}% off\b|\bwelcome (offer|gift)\b|\b(flash )?sale\b|\bdiscount\b|\bblack friday\b|\bcyber monday\b|\bdeal(s)? (inside|ends|for you)\b/i;
+/** Support and privacy desks: their mail (tickets, surveys) is never marketing. */
+export const DESK_SENDER = /^(support|privacy|help|dpo|gdpr|legal|customer|customercare|customer_support|assist|advocates|notifications-support|noreply-privacy|privacy-noreply)[@+._-]/i;
+
 export function companyReplies(r: StoredRequest, rows: MailRow[]): MailRow[] {
   const sent = r.events.find((e) => e.type === "sent")?.at ?? r.createdAt;
   return rows.flatMap((x) => {
@@ -77,6 +82,8 @@ export function companyReplies(r: StoredRequest, rows: MailRow[]): MailRow[] {
     // Two requests to one privacy team (Trello and Loom both to Atlassian): a subject naming the other reference is theirs.
     const refs: string[] = x.subject.match(/\bER-[A-Z0-9]{5}\b/g) ?? [];
     if (refs.length && !refs.includes(r.ref)) return [];
+    // A promotion from the company's own domain is marketing, never a reply ("Your 50% Off Is Waiting For You").
+    if (!refs.length && PROMO_SUBJECT.test(x.subject)) return [];
     const who = [x.from, ...(x.senders ?? [])].find((s) => isCompanySender(r, s));
     if (who) return [{ ...x, from: who }];
     // Privacy-request services (Ketch, OneTrust…) write for many companies: kept only if the email names this one.
@@ -102,6 +109,7 @@ export function replyEvent(at: number, read: { reply: ReplyKind | "unrelated"; e
 
 /** Marketing after a confirmation: the on-device reading decides when available; otherwise the subject rules. */
 export function marketingEvent(row: MailRow, device?: { marketing: boolean; quoteOk: boolean }): RequestEvent | null {
+  if (DESK_SENDER.test(row.from)) return null;
   const isMarketing = device ? device.marketing && device.quoteOk : kindFromSubject(row.subject) === "newsletter";
   return isMarketing ? { type: "marketing", at: row.at, subject: row.subject } : null;
 }

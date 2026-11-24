@@ -128,12 +128,15 @@ export function isMarketing(m: GenerativeModel, from: string, subject: string, b
   );
 }
 
+export const ASK_PROMPT =
+  'This email, given as numbered sentences, is a company\'s reply to a person who asked it to delete their data. Most such replies only confirm they received it: then answer "wait". Answer something else only if the email clearly tells the person to do one thing now:\n"scheduled" - it says the account is already scheduled to be deleted.\n"no_account" - it says no account was found for the person\'s email address.\n"verify_link" - click a verification link or enter a code.\n"go_ahead" - reply YES, I AGREE or similar to confirm they may delete.\n"confirm_sender" - write again from the account\'s own email address, or it says it cannot accept requests from third-party services.\n"clarify" - say what should be deleted.\n"provide_info" - send more details.\n"use_form" - fill in a privacy or request form.\n"log_in_delete" - sign in and delete the account themselves.\nMentions of a help center, a ticket number or logging in to view the case do not count. Give the number of the one sentence that shows the answer.';
+
 /** What the company's reply asks the person to do. Only picks from a fixed list; Reply Coach writes the answer. */
 export function readAsk(m: GenerativeModel, from: string, subject: string, body: string) {
   return ask<{ ask: Ask }>(
     "ask",
     m,
-    'This email, given as numbered sentences, is a company\'s reply to a person who asked it to delete their data. Most such replies only confirm they received it: then answer "wait". Answer something else only if the email clearly tells the person to do one thing now:\n"scheduled" - it says the account is already scheduled to be deleted.\n"no_account" - it says no account was found for the person\'s email address.\n"verify_link" - click a verification link or enter a code.\n"go_ahead" - reply YES, I AGREE or similar to confirm they may delete.\n"confirm_sender" - write again from the account\'s own email address, or it says it cannot accept requests from third-party services.\n"clarify" - say what should be deleted.\n"provide_info" - send more details.\n"use_form" - fill in a privacy or request form.\n"log_in_delete" - sign in and delete the account themselves.\nMentions of a help center, a ticket number or logging in to view the case do not count. Give the number of the one sentence that shows the answer.',
+    ASK_PROMPT,
     `From: ${from}\nSubject: ${subject}`,
     body,
   );

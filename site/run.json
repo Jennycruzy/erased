@@ -1,17 +1,58 @@
 {
  "inbox": "erased.demo.inbox@gmail.com",
  "sentDay": "2026-11-20",
- "checkedAt": 1795271462643,
+ "checkedAt": 1795553078421,
  "deadline": "2026-12-20",
- "medianReplyMin": 0,
+ "medianReplyMin": 1,
  "counts": {
-  "replied": 24,
-  "needs_id": 10,
-  "deleted": 0,
-  "ack": 14,
-  "other": 7
+  "replied": 27,
+  "needs_id": 13,
+  "deleted": 1,
+  "ack": 16,
+  "other": 11
  },
  "requests": [
+  {
+   "company": "Wix",
+   "domain": "wix.com",
+   "ref": "ER-N5E27",
+   "route": "email",
+   "to": "privacy@wix.com",
+   "sentAt": 1795194900000,
+   "replies": [
+    {
+     "at": 1795195260000,
+     "reply": "ack",
+     "quote": "3000449597 )."
+    },
+    {
+     "at": 1795196100000,
+     "reply": "other",
+     "quote": "We understand you're requesting to delete your personal data."
+    },
+    {
+     "at": 1795399920000,
+     "reply": "ack",
+     "quote": "we've deactivated your account, you will no longer be able to log into your account."
+    },
+    {
+     "at": 1795428360000,
+     "reply": "ack",
+     "quote": "We’re writing to confirm that your Wix account has been deactivated and that the process to delete your account data has begun."
+    }
+   ],
+   "state": "ack",
+   "deadline": 1797786900000,
+   "hoops": [
+    {
+     "ask": "use_form",
+     "at": 1795196100000,
+     "quote": "In order to assist you with this, please click here to fill out the form and request the permanent deletion of your Wix account."
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
+  },
   {
    "company": "Airtable",
    "domain": "airtable.com",
@@ -29,10 +70,24 @@
      "at": 1795194780000,
      "reply": "needs_id",
      "quote": "We will need to verify your identity before processing your deletion request."
+    },
+    {
+     "at": 1795542180000,
+     "reply": "other",
+     "quote": "What We've Done: We've confirmed that your personal data associated with the email address you used to contact us has been deleted from our Sales and Marketing systems."
     }
    ],
    "state": "needs_id",
-   "deadline": 1797786720000
+   "deadline": 1797786720000,
+   "hoops": [
+    {
+     "ask": "log_in_delete",
+     "at": 1795542180000,
+     "quote": "For Deleting Your Airtable Account: If you have an active Airtable account, you must initiate the deletion yourself by:"
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
   },
   {
    "company": "Asana",
@@ -48,13 +103,68 @@
      "quote": "This is an automated confirmation that your support case has been received."
     },
     {
-     "at": 1795195920000,
-     "reply": "other",
-     "quote": "I understand you'd like to delete your account."
+     "at": 1795465440000,
+     "reply": "deleted",
+     "quote": "I can confirm that your Asana account associated with erased.demo.inbox@gmail.com has now been deleted."
+    },
+    {
+     "at": 1795472040000,
+     "reply": "needs_id",
+     "quote": "Hi erased demo , Thank you for submitting the following data subject rights requests: Erasure Request In order to verify your identity we ask that you use the email verification link in this email."
     }
    ],
-   "state": "ack",
-   "deadline": 1797787020000
+   "state": "confirmed",
+   "deadline": 1797787020000,
+   "hoops": [
+    {
+     "ask": "verify_link",
+     "at": 1795472040000,
+     "quote": "Hi erased demo , Thank you for submitting the following data subject rights requests: Erasure Request In order to verify your identity we ask that you use the email verification link in this email."
+    }
+   ],
+   "outcome": "deleted",
+   "outcomeAt": 1795465440000
+  },
+  {
+   "company": "monday.com",
+   "domain": "monday.com",
+   "ref": "ER-TWVYB",
+   "route": "email",
+   "to": "privacy@monday.com",
+   "sentAt": 1795194900000,
+   "replies": [
+    {
+     "at": 1795398720000,
+     "reply": "ack",
+     "quote": "Rest assured, our team received your request and will follow up as soon as possible."
+    },
+    {
+     "at": 1795406220000,
+     "reply": "other",
+     "quote": "has reviewed your email and believes that it would be best if we escalate this request directly to another team member who specializes in this topic."
+    },
+    {
+     "at": 1795414140000,
+     "reply": "needs_id",
+     "quote": "Before taking further action, we are required to verify the validity of your request."
+    }
+   ],
+   "state": "needs_id",
+   "deadline": 1797786900000,
+   "hoops": [
+    {
+     "ask": "use_form",
+     "at": 1795398720000,
+     "quote": "To help us process your request correctly, please complete our request form."
+    },
+    {
+     "ask": "confirm_sender",
+     "at": 1795414140000,
+     "quote": "Confirmation that this request was indeed made by you,"
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
   },
   {
    "company": "Box",
@@ -76,7 +186,150 @@
     }
    ],
    "state": "needs_id",
-   "deadline": 1797787020000
+   "deadline": 1797787020000,
+   "hoops": [
+    {
+     "ask": "log_in_delete",
+     "at": 1795195980000,
+     "quote": "Visit: https://app.box.com/account and sign into your personal Box account."
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
+  },
+  {
+   "company": "Canva",
+   "domain": "canva.com",
+   "ref": "ER-FORM3",
+   "route": "account_settings",
+   "to": null,
+   "sentAt": 1795199100000,
+   "replies": [
+    {
+     "at": 1795197900000,
+     "reply": "other",
+     "quote": "Enter the code below to make changes to your account"
+    },
+    {
+     "at": 1795197960000,
+     "reply": "ack",
+     "quote": "Your Canva account is scheduled to be deleted"
+    }
+   ],
+   "state": "ack",
+   "deadline": 1797791100000,
+   "hoops": [
+    {
+     "ask": "verify_link",
+     "at": 1795197900000,
+     "quote": "Enter the code below to make changes to your account"
+    }
+   ],
+   "outcome": "scheduled",
+   "outcomeAt": 1795197960000
+  },
+  {
+   "company": "Medium",
+   "domain": "medium.com",
+   "ref": "ER-97G4D",
+   "route": "email",
+   "to": "privacy@medium.com",
+   "sentAt": 1795194660000,
+   "replies": [
+    {
+     "at": 1795398240000,
+     "reply": "other",
+     "quote": "Our subject access request and account deletion process is self-service."
+    },
+    {
+     "at": 1795475280000,
+     "reply": "other",
+     "quote": "To delete your account yourself, you can use your email address to sign in to Medium and delete the Medium account following the steps below."
+    }
+   ],
+   "state": "other",
+   "deadline": 1797786660000,
+   "hoops": [
+    {
+     "ask": "confirm_sender",
+     "at": 1795398240000,
+     "quote": "For security and verification reasons, we are unable to process requests made by third-party services."
+    },
+    {
+     "ask": "log_in_delete",
+     "at": 1795475280000,
+     "quote": "To delete your account yourself, you can use your email address to sign in to Medium and delete the Medium account following the steps below."
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
+  },
+  {
+   "company": "Miro",
+   "domain": "miro.com",
+   "ref": "ER-GXP7F",
+   "route": "form",
+   "to": null,
+   "sentAt": 1795197900000,
+   "replies": [
+    {
+     "at": 1795197300000,
+     "reply": "other",
+     "quote": "If you would still like Miro’s Customer Support team to take any specific action related to your Miro profile that is connected with your email address, please respond to this message."
+    },
+    {
+     "at": 1795399320000,
+     "reply": "needs_id",
+     "quote": "In order to proceed, we need your confirmation."
+    }
+   ],
+   "state": "needs_id",
+   "deadline": 1797789900000,
+   "hoops": [
+    {
+     "ask": "log_in_delete",
+     "at": 1795197300000,
+     "quote": "• You can also delete your Miro profile entirely at any time by logging into your account and by following the steps outlined in the Help Center article: ‘ how to delete your profile ’."
+    },
+    {
+     "ask": "go_ahead",
+     "at": 1795399320000,
+     "quote": "In order to proceed, we need your confirmation."
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
+  },
+  {
+   "company": "Notion",
+   "domain": "notion.so",
+   "ref": "ER-6VN4F",
+   "route": "email",
+   "to": "privacy@makenotion.com",
+   "sentAt": 1795196940000,
+   "replies": [
+    {
+     "at": 1795196940000,
+     "reply": "ack",
+     "quote": "We received your message (5535049)!"
+    },
+    {
+     "at": 1795398600000,
+     "reply": "other",
+     "quote": "I've passed your request to delete your personal data on to our team."
+    }
+   ],
+   "state": "ack",
+   "deadline": 1797788940000,
+   "hoops": [
+    {
+     "ask": "clarify",
+     "at": 1795398600000,
+     "quote": "In order to make sure we follow your instructions properly, please confirm what you would like deleted?"
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
   },
   {
    "company": "Skillshare",
@@ -88,17 +341,88 @@
    "replies": [
     {
      "at": 1795195080000,
-     "reply": "ack",
-     "quote": "We are confirming that we have received your message ( #2291635 )."
+     "reply": "other",
+     "quote": "We're sorry to see you go and we sincerely apologize for any inconvenience the email notifications have caused!"
     },
     {
-     "at": 1795203060000,
+     "at": 1795284120000,
      "reply": "ack",
-     "quote": "Erased, Your 50% Off Is Waiting For You"
+     "quote": "Just a quick note to say thank you for hanging in there — we haven’t forgotten about your message."
     }
    ],
    "state": "ack",
-   "deadline": 1797787080000
+   "deadline": 1797787080000,
+   "hoops": [
+    {
+     "ask": "use_form",
+     "at": 1795195080000,
+     "quote": "If you’d like to continue with your account's deletion, please submit a request through our Online Form here:"
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
+  },
+  {
+   "company": "Slack",
+   "domain": "slack.com",
+   "ref": "ER-HZ7RM",
+   "route": "email",
+   "to": "privacy@slack.com",
+   "sentAt": 1795194840000,
+   "replies": [
+    {
+     "at": 1795194900000,
+     "reply": "needs_id",
+     "quote": "To allow us to respond to your request, please complete our Privacy Form where you will be able to provide all the relevant information required in order to properly action your request (such as your country and/or state of residence) and verify your identity."
+    },
+    {
+     "at": 1795398420000,
+     "reply": "needs_id",
+     "quote": "To allow us to respond to your request, please complete our Privacy Form where you will be able to provide all the relevant information required in order to properly action your request (such as your country and/or state of residence) and verify your identity."
+    }
+   ],
+   "state": "needs_id",
+   "deadline": 1797786840000,
+   "hoops": [
+    {
+     "ask": "use_form",
+     "at": 1795194900000,
+     "quote": "To allow us to respond to your request, please complete our Privacy Form where you will be able to provide all the relevant information required in order to properly action your request (such as your country and/or state of residence) and v"
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
+  },
+  {
+   "company": "Substack",
+   "domain": "substack.com",
+   "ref": "ER-GGJBD",
+   "route": "email",
+   "to": "privacy@substackinc.com",
+   "sentAt": 1795194600000,
+   "replies": [
+    {
+     "at": 1795194600000,
+     "reply": "needs_id",
+     "quote": "Before I make any permanent changes, please confirm that you'd like your data to be deleted per GDPR and I'll be more than happy to complete your request."
+    },
+    {
+     "at": 1795194660000,
+     "reply": "ack",
+     "quote": "Thank you for reaching out to Substack Standards & Enforcement."
+    }
+   ],
+   "state": "needs_id",
+   "deadline": 1797786600000,
+   "hoops": [
+    {
+     "ask": "go_ahead",
+     "at": 1795194600000,
+     "quote": "Before I make any permanent changes, please confirm that you'd like your data to be deleted per GDPR and I'll be more than happy to complete your request."
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
   },
   {
    "company": "Typeform",
@@ -109,18 +433,21 @@
    "sentAt": 1795196880000,
    "replies": [
     {
-     "at": 1795196880000,
-     "reply": "needs_id",
-     "quote": "In order for us to facilitate your request, could you please provide the following:"
+     "at": 1795196940000,
+     "reply": "other",
+     "quote": "Thanks for reaching out."
     },
     {
-     "at": 1795196940000,
-     "reply": "ack",
-     "quote": "Thanks for reaching out."
+     "at": 1795398660000,
+     "reply": "needs_id",
+     "quote": "Could you please send us the URL of one of your typeforms?"
     }
    ],
    "state": "needs_id",
-   "deadline": 1797788880000
+   "deadline": 1797788880000,
+   "hoops": [],
+   "outcome": "no_account",
+   "outcomeAt": 1795398660000
   },
   {
    "company": "Vimeo",
@@ -136,57 +463,22 @@
      "quote": "Thank you for contacting Vimeo."
     },
     {
-     "at": 1795197300000,
-     "reply": "needs_id",
-     "quote": "As a security precaution, I am responding to erased.demo.inbox@gmail.com ."
-    }
-   ],
-   "state": "needs_id",
-   "deadline": 1797786840000
-  },
-  {
-   "company": "Wix",
-   "domain": "wix.com",
-   "ref": "ER-N5E27",
-   "route": "email",
-   "to": "privacy@wix.com",
-   "sentAt": 1795194900000,
-   "replies": [
-    {
-     "at": 1795195260000,
+     "at": 1795398300000,
      "reply": "ack",
-     "quote": "3000449597 )."
-    },
-    {
-     "at": 1795196100000,
-     "reply": "other",
-     "quote": "We understand you're requesting to delete your personal data."
+     "quote": "This email confirms that our agents have received your request, and we're working to follow up on it."
     }
    ],
    "state": "ack",
-   "deadline": 1797786900000
-  },
-  {
-   "company": "Zapier",
-   "domain": "zapier.com",
-   "ref": "ER-JJZSE",
-   "route": "email",
-   "to": "privacy@zapier.com",
-   "sentAt": 1795194780000,
-   "replies": [
+   "deadline": 1797786840000,
+   "hoops": [
     {
-     "at": 1795194780000,
-     "reply": "needs_id",
-     "quote": "In order to protect your account and personal data, this type of request must be submitted from within your Zapier account (and not a third-party service) so that we can verify your identity."
-    },
-    {
-     "at": 1795198440000,
-     "reply": "other",
-     "quote": "Just describe what you want to automate."
+     "ask": "confirm_sender",
+     "at": 1795398300000,
+     "quote": "If possible, please respond directly from that email."
     }
    ],
-   "state": "needs_id",
-   "deadline": 1797786780000
+   "outcome": null,
+   "outcomeAt": null
   },
   {
    "company": "Atlassian (Trello)",
@@ -203,24 +495,36 @@
     }
    ],
    "state": "ack",
-   "deadline": 1797786720000
+   "deadline": 1797786720000,
+   "hoops": [],
+   "outcome": null,
+   "outcomeAt": null
   },
   {
-   "company": "Canva",
-   "domain": "canva.com",
-   "ref": "ER-FORM3",
-   "route": "account_settings",
+   "company": "Calendly",
+   "domain": "calendly.com",
+   "ref": "ER-3UHT4",
+   "route": "form",
    "to": null,
-   "sentAt": 1795199100000,
+   "sentAt": 1795196280000,
    "replies": [
     {
-     "at": 1795197960000,
-     "reply": "ack",
-     "quote": "Your Canva account is scheduled to be deleted"
+     "at": 1795196580000,
+     "reply": "needs_id",
+     "quote": "As required by law, we have sent you an email verification request to confirm your identity."
     }
    ],
-   "state": "ack",
-   "deadline": 1797791100000
+   "state": "needs_id",
+   "deadline": 1797788280000,
+   "hoops": [
+    {
+     "ask": "verify_link",
+     "at": 1795196580000,
+     "quote": "As required by law, we have sent you an email verification request to confirm your identity."
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
   },
   {
    "company": "Eventbrite",
@@ -237,7 +541,16 @@
     }
    ],
    "state": "other",
-   "deadline": 1797787020000
+   "deadline": 1797787020000,
+   "hoops": [
+    {
+     "ask": "log_in_delete",
+     "at": 1795195020000,
+     "quote": "To delete your personal data , visit the Eventbrite Privacy Center and click “Take Control of Your Data.” Then, click “Delete my data” and follow the instructions provided."
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
   },
   {
    "company": "Figma",
@@ -250,11 +563,20 @@
     {
      "at": 1795194720000,
      "reply": "ack",
-     "quote": "Thank you for reaching out to Figma’s Privacy team."
+     "quote": "For all data deletion requests made by or on behalf of the data subject, deleting the data subject’s Figma account is how one can initiate the erasure request."
     }
    ],
    "state": "ack",
-   "deadline": 1797786720000
+   "deadline": 1797786720000,
+   "hoops": [
+    {
+     "ask": "log_in_delete",
+     "at": 1795194720000,
+     "quote": "You can delete your Figma account (and thus your personal data processed by Figma) by following the instructions here: How to Delete Your Figma Account ( https://help.figma.com/hc/en- us/articles/360039826814- Delete-your-Figma-account )."
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
   },
   {
    "company": "Grammarly",
@@ -270,8 +592,37 @@
      "quote": "Just wanted to let you know we've received your message with the subject \"[EXTERNAL] Request to delete my personal data [ER-88AC9]\" , and soon we’ll be able to help you out."
     }
    ],
-   "state": "ack",
-   "deadline": 1797786780000
+   "state": "still_marketing",
+   "deadline": 1797786780000,
+   "hoops": [
+    {
+     "ask": "still_marketing",
+     "at": 1795461360000,
+     "quote": "Let’s get down to business"
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
+  },
+  {
+   "company": "Kaggle",
+   "domain": "kaggle.com",
+   "ref": "ER-9T8TC",
+   "route": "email",
+   "to": "privacy@kaggle.com",
+   "sentAt": 1795196940000,
+   "replies": [
+    {
+     "at": 1795278540000,
+     "reply": "needs_id",
+     "quote": "Could you please double-check and share the correct email ID so we can assist you further?"
+    }
+   ],
+   "state": "needs_id",
+   "deadline": 1797788940000,
+   "hoops": [],
+   "outcome": "no_account",
+   "outcomeAt": 1795278540000
   },
   {
    "company": "Loom",
@@ -282,13 +633,22 @@
    "sentAt": 1795194720000,
    "replies": [
     {
-     "at": 1795197600000,
+     "at": 1795398240000,
      "reply": "ack",
-     "quote": "I acknowledge that you want to cancel your subscription and possibly delete your account and any associated data."
+     "quote": "We have now triggered the deactivation and product data deletion for all your site and org products and apps."
     }
    ],
    "state": "ack",
-   "deadline": 1797786720000
+   "deadline": 1797786720000,
+   "hoops": [
+    {
+     "ask": "log_in_delete",
+     "at": 1795398240000,
+     "quote": "Once that's done, the following steps can only be completed by you directly for security purposes."
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
   },
   {
    "company": "Meetup",
@@ -305,58 +665,16 @@
     }
    ],
    "state": "other",
-   "deadline": 1797786960000
-  },
-  {
-   "company": "Miro",
-   "domain": "miro.com",
-   "ref": "ER-GXP7F",
-   "route": "form",
-   "to": null,
-   "sentAt": 1795197900000,
-   "replies": [
+   "deadline": 1797786960000,
+   "hoops": [
     {
-     "at": 1795197300000,
-     "reply": "other",
-     "quote": "If you would still like Miro’s Customer Support team to take any specific action related to your Miro profile that is connected with your email address, please respond to this message."
+     "ask": "log_in_delete",
+     "at": 1795195080000,
+     "quote": "Log in and submit the form in Request permanent deletion of your data ."
     }
    ],
-   "state": "other",
-   "deadline": 1797789900000
-  },
-  {
-   "company": "monday.com",
-   "domain": "monday.com",
-   "ref": "ER-TWVYB",
-   "route": "email",
-   "to": "privacy@monday.com",
-   "sentAt": 1795194900000,
-   "replies": [
-    {
-     "at": 1795195020000,
-     "reply": "needs_id",
-     "quote": "The form allows us to understand the nature of your request and verify that you are authorized to submit it before we take further action."
-    }
-   ],
-   "state": "needs_id",
-   "deadline": 1797786900000
-  },
-  {
-   "company": "Notion",
-   "domain": "notion.so",
-   "ref": "ER-6VN4F",
-   "route": "email",
-   "to": "privacy@makenotion.com",
-   "sentAt": 1795196940000,
-   "replies": [
-    {
-     "at": 1795196940000,
-     "reply": "needs_id",
-     "quote": "In order to make sure we follow your instructions properly, please confirm what you would like deleted?"
-    }
-   ],
-   "state": "needs_id",
-   "deadline": 1797788940000
+   "outcome": null,
+   "outcomeAt": null
   },
   {
    "company": "Prezi",
@@ -369,28 +687,14 @@
     {
      "at": 1795194960000,
      "reply": "ack",
-     "quote": "This is an automated message to let you know that we received your help request."
+     "quote": "Hello and thanks for reaching out to us."
     }
    ],
    "state": "ack",
-   "deadline": 1797786960000
-  },
-  {
-   "company": "Slack",
-   "domain": "slack.com",
-   "ref": "ER-HZ7RM",
-   "route": "email",
-   "to": "privacy@slack.com",
-   "sentAt": 1795194840000,
-   "replies": [
-    {
-     "at": 1795194900000,
-     "reply": "needs_id",
-     "quote": "To allow us to respond to your request, please complete our Privacy Form where you will be able to provide all the relevant information required in order to properly action your request (such as your country and/or state of residence) and verify your identity."
-    }
-   ],
-   "state": "needs_id",
-   "deadline": 1797786840000
+   "deadline": 1797786960000,
+   "hoops": [],
+   "outcome": null,
+   "outcomeAt": null
   },
   {
    "company": "Spotify",
@@ -407,24 +711,10 @@
     }
    ],
    "state": "needs_id",
-   "deadline": 1797786780000
-  },
-  {
-   "company": "Substack",
-   "domain": "substack.com",
-   "ref": "ER-GGJBD",
-   "route": "email",
-   "to": "privacy@substackinc.com",
-   "sentAt": 1795194600000,
-   "replies": [
-    {
-     "at": 1795194660000,
-     "reply": "ack",
-     "quote": "Thank you for reaching out to Substack Standards & Enforcement."
-    }
-   ],
-   "state": "ack",
-   "deadline": 1797786600000
+   "deadline": 1797786780000,
+   "hoops": [],
+   "outcome": "no_account",
+   "outcomeAt": 1795196160000
   },
   {
    "company": "SurveyMonkey",
@@ -441,7 +731,41 @@
     }
    ],
    "state": "needs_id",
-   "deadline": 1797786960000
+   "deadline": 1797786960000,
+   "hoops": [],
+   "outcome": null,
+   "outcomeAt": null
+  },
+  {
+   "company": "Zapier",
+   "domain": "zapier.com",
+   "ref": "ER-JJZSE",
+   "route": "email",
+   "to": "privacy@zapier.com",
+   "sentAt": 1795194780000,
+   "replies": [
+    {
+     "at": 1795398600000,
+     "reply": "ack",
+     "quote": "Thanks for sending us a verified request for deletion of your data."
+    }
+   ],
+   "state": "still_marketing",
+   "deadline": 1797786780000,
+   "hoops": [
+    {
+     "ask": "log_in_delete",
+     "at": 1795398600000,
+     "quote": "FOR YOU : We’ll need you to delete your Zapier account."
+    },
+    {
+     "ask": "still_marketing",
+     "at": 1795457640000,
+     "quote": "What teams are automating this week"
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
   },
   {
    "company": "Zoom",
@@ -452,24 +776,16 @@
    "sentAt": 1795194900000,
    "replies": [
     {
-     "at": 1795195020000,
-     "reply": "other",
-     "quote": "To request deletion of your personal data, complete the Data Subject Rights Request Form here: https://privacyportal."
+     "at": 1795445100000,
+     "reply": "needs_id",
+     "quote": "If you need to check it is me, please send a confirmation link to erased.demo.inbox@gmail.com ."
     }
    ],
-   "state": "other",
-   "deadline": 1797786900000
-  },
-  {
-   "company": "Calendly",
-   "domain": "calendly.com",
-   "ref": "ER-3UHT4",
-   "route": "form",
-   "to": null,
-   "sentAt": 1795196280000,
-   "replies": [],
-   "state": "sent",
-   "deadline": 1797788280000
+   "state": "needs_id",
+   "deadline": 1797786900000,
+   "hoops": [],
+   "outcome": "no_account",
+   "outcomeAt": 1795445100000
   },
   {
    "company": "Codecademy",
@@ -479,8 +795,17 @@
    "to": null,
    "sentAt": 1795195800000,
    "replies": [],
-   "state": "sent",
-   "deadline": 1797787800000
+   "state": "still_marketing",
+   "deadline": 1797787800000,
+   "hoops": [
+    {
+     "ask": "still_marketing",
+     "at": 1795528980000,
+     "quote": "Join the 88% of learners who achieved their goals"
+    }
+   ],
+   "outcome": null,
+   "outcomeAt": null
   },
   {
    "company": "Doist (Todoist)",
@@ -491,29 +816,10 @@
    "sentAt": 1795194840000,
    "replies": [],
    "state": "sent",
-   "deadline": 1797786840000
-  },
-  {
-   "company": "Kaggle",
-   "domain": "kaggle.com",
-   "ref": "ER-9T8TC",
-   "route": "email",
-   "to": "privacy@kaggle.com",
-   "sentAt": 1795196940000,
-   "replies": [],
-   "state": "sent",
-   "deadline": 1797788940000
-  },
-  {
-   "company": "Medium",
-   "domain": "medium.com",
-   "ref": "ER-97G4D",
-   "route": "email",
-   "to": "privacy@medium.com",
-   "sentAt": 1795194660000,
-   "replies": [],
-   "state": "sent",
-   "deadline": 1797786660000
+   "deadline": 1797786840000,
+   "hoops": [],
+   "outcome": null,
+   "outcomeAt": null
   },
   {
    "company": "TLDR",
@@ -524,7 +830,10 @@
    "sentAt": 1795194660000,
    "replies": [],
    "state": "sent",
-   "deadline": 1797786660000
+   "deadline": 1797786660000,
+   "hoops": [],
+   "outcome": null,
+   "outcomeAt": null
   }
  ]
 }

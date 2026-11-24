@@ -62,6 +62,9 @@ const RULES: Array<[Ask, RegExp]> = [
   ["log_in_delete", /(^|\b(please|you (must|need to|can|will need to)|and)\s)(sign (in|into)|log ?in)( to)? (to )?your [\w ]{0,20}account\b|\byou can (also )?delete your [\w ]{0,20}(account|profile)\b|\bsettings page\b|\bself-service\b|\bdelete (your|the) [\w ]{0,20}account (yourself|from)\b|(?<!request to )\bpermanently delete your account\b|\b(easy|simple) steps\b|\bdelete my data\b/i],
 ];
 
+/** The rules as plain patterns, for the Android app (same order, first match wins; all case-insensitive). */
+export const RULE_SOURCES = RULES.map(([ask, re]) => ({ ask, pattern: re.source }));
+
 export function sentencesWithin(text: string): string[] {
   return text.replace(/\s*\n+\s*/g, "\n").split(/(?<=[.!?])\s+|\n/).map((s) => s.trim()).filter((s) => s.length > 3);
 }
@@ -308,6 +311,8 @@ const DONE = /\b(has|have) (now )?been (permanently )?(deleted|erased|removed|pu
  */
 export function confirmsDeletion(quote: string, text: string): boolean {
   if (!DONE.test(quote)) return false;
+  // "We will let you know once the deletion is complete" promises it; it does not say it happened.
+  if (/\b(once|when|until|after|as soon as|if|before|will)\b[^.]{0,60}\b(deleted|erased|removed|purged|complete|completed|processed)\b/i.test(quote)) return false;
   if (/\baccount\b/i.test(quote)) return true;
   return NO_STEP.includes(askByRules(text).ask);
 }

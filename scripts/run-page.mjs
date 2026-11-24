@@ -3,6 +3,7 @@ import fs from "fs";
 const [, , input, out = "site/run.json"] = process.argv;
 const { requests, lastChecked } = JSON.parse(fs.readFileSync(input, "utf8"));
 const { status, GRACE_DAYS } = await import("../dist-node/requests.mjs");
+const ID_DOC = /\b(passport|driver'?s licen[cs]e|photo id|id card|identity document|government[- ]issued|copy of (your|an?) id)\b/i;
 const NOT_HOOPS = new Set(["wait", "scheduled", "no_account"]);
 // Public page: never a support agent's name ("Ed here with Zapier Support"), only what the company asked.
 const clean = (q) => (/\b(here (with|from)|my name is|stepping in for)\b/i.test(q ?? "") ? "" : String(q ?? "").slice(0, 240));
@@ -16,7 +17,9 @@ const rows = requests.map((r) => {
   // What the company made the person do, in order, each with the sentence that asked it (copied from their email).
   const hoops = [];
   for (const e of ev) {
-    const ask = e.type === "reply" ? (e.reply === "needs_id" ? "needs_id" : e.coach?.ask) : null;
+    // An ID ask counts only when the sentence names an identity document; "confirm it is you" by email is fair.
+    const idDoc = e.type === "reply" && e.reply === "needs_id" && ID_DOC.test(e.quote ?? "");
+    const ask = e.type === "reply" ? (idDoc ? "needs_id" : e.coach?.ask) : null;
     if (!ask || NOT_HOOPS.has(ask) || hoops.some((h) => h.ask === ask)) continue;
     hoops.push({ ask, at: e.at, quote: clean(e.coach?.askQuote ?? e.quote) });
   }

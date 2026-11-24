@@ -1,4 +1,4 @@
-// Runs the accuracy check (dist/eval.html) with Gemini Nano in real Google Chrome, e.g. on a GitHub-hosted runner.
+// Runs the accuracy check (dist/eval.html) with Gemini Nano in real Google Chrome on a machine that supports it.
 // Chrome is launched directly (no automation defaults that would block the model download); the extension is
 // loaded over CDP. Writes <out>/result.json and screenshots; the screen is recorded by the calling shell script.
 // Usage: node scripts/ci/nano-eval.mjs <chrome-binary> <profile-dir> <out-dir> [timeout-minutes]

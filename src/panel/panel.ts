@@ -12,7 +12,7 @@ import { buildFollowUp, buildRequest, composeUrl, newRef } from "../core/templat
 import { DAY } from "../core/time";
 import { deviceTargets, safetyScore, summarise, type Company, type Sighting } from "../core/trail";
 import { companyReplies, isResetMail, marketingEvent, mentionsCompany, replyEvent, sentEvent, watchQueries, type MailRow } from "../core/watch";
-import { answeredAt, askByRules, confirmsDeletion, nextStep, NO_STEP, stopMarketingEmail, trustedLink, type Advice } from "../core/coach";
+import { answeredAt, askByRules, confirmsDeletion, sentencesWithin, nextStep, NO_STEP, stopMarketingEmail, trustedLink, type Advice } from "../core/coach";
 import type { ReplyCoachData } from "../core/requests";
 import { firebase } from "../ai/firebase";
 import { lookupRoute } from "../ai/lookup";
@@ -507,6 +507,11 @@ async function checkReplies() {
         if (!read) continue;
         // "Deleted" only when the sentence says it was done and nothing more is asked ("when it is deleted" is not it).
         if (read.value.reply === "deleted" && !confirmsDeletion(read.value.quote, text)) read.value.reply = "other";
+        // A sentence that plainly says the account was deleted decides, whatever the model said.
+        if (read.value.reply !== "deleted") {
+          const said = sentencesWithin(text).find((x) => confirmsDeletion(x, text));
+          if (said) { read.value.reply = "deleted"; read.value.quote = said; read.quoteOk = true; }
+        }
         // Reply Coach: what they ask next. The model picks from a fixed list; the rules decide if its sentence is not in the email.
         let coachData: ReplyCoachData | undefined;
         if (read.quoteOk && read.value.reply !== "deleted" && read.value.reply !== "unrelated") {

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "798434253190",
+    "project_id": "forget-me-hybrid",
+    "storage_bucket": "forget-me-hybrid.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798434253190:android:645f5ae75d5c953b39b407",
+        "android_client_info": {
+          "package_name": "app.erased.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDjXxUN8cCglnEpWYltt_4Y1VgsfXPqcE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

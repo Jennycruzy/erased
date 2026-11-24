@@ -178,5 +178,6 @@ describe("a real deletion confirmation", () => {
     const q = "What We've Done: We've confirmed that your personal data associated with the email address you used to contact us has been deleted from our Sales and Marketing systems.";
     expect(confirmsDeletion(q, q + "\nFor Deleting Your Airtable Account: If you have an active Airtable account, you must initiate the deletion yourself by: Logging into your Airtable account")).toBe(false);
   });
+  it("a promise to tell you later is not a deletion", () => expect(confirmsDeletion("We will let you know once the deletion is complete.", "")).toBe(false));
   it("a plain confirmation counts", () => expect(confirmsDeletion("Your personal data has been permanently deleted.", "Your personal data has been permanently deleted. Thanks.")).toBe(true));
 });

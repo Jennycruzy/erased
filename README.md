@@ -52,6 +52,39 @@ extension; no remote code), Firestore (directory; board counts with rules that a
 user, company and outcome), Remote Config (cloud model list, proof timings, directory location, prompt version),
 anonymous Auth for board counts.
 
+## Accuracy
+
+`evals/replies.json` holds 66 real replies from 30 companies to deletion requests sent from the public demo inbox,
+labelled by hand with the next step each one asks for (staff names removed). `eval.html` in the extension scores
+them on the device; `scripts/ci/nano-eval.sh` runs the same check unattended in Chrome on a Linux machine with
+Gemini Nano and records the screen.
+
+| On an Apple M1, Chrome 158, `ONLY_ON_DEVICE` | Right next step |
+|---|---|
+| Held out: 29 replies that arrived after the phrase rules were written (21 Nov 2026) | Nano alone 20/29 · rules alone 17/29 · rules + Nano 21/29 |
+| All 66, Nano alone | 52/66 (quote found in the email 65/66) |
+| All 66, as shipped (rules updated after reading these, so in-sample) | 66/66 |
+| Where it ran | 66/66 on the device, median 3.1 s per email |
+
+Known phrases decide first because they are exact; Nano decides when no known phrase matches, and only with a
+sentence that is really in the email. Results: `evals/results-mac.json`.
+
+## Android
+
+`android/` is a phone app for the replies: share a company's answer to your deletion request from Gmail (or paste
+it), and Erased reads it and shows the quickest lawful next step, with a ready reply when one is needed.
+
+- **Same Coach as the extension.** `npm run android:coach` exports the phrase rules, the on-device prompt and every
+  answer from `src/core/coach.ts` into `android/app/src/main/assets/coach.json`; CI fails if it is stale, and a
+  JVM test checks the phone against all 66 hand labels in `evals/replies.json`.
+- **Firebase AI Logic hybrid on Android** (`firebase-ai` + `firebase-ai-ondevice`): `ONLY_ON_DEVICE` with Gemini
+  Nano through ML Kit by default; structured output through a KSP-generated schema (`@Generable`). The model answers
+  with a sentence number, the app copies that sentence as the quote. On a phone without Gemini Nano you can switch
+  on "let Gemini in the cloud read this one email" (`PREFER_ON_DEVICE`); otherwise only the known phrases are used.
+  The result shows where it was read.
+- **App Check** with the debug provider in this build.
+- Built and tested by `.github/workflows/android.yml`; the APK is in the run's artifacts.
+
 ## Run it
 
 Requirements: Chrome 139+ on desktop with the on-device model (Windows 10/11, macOS 13+, Linux or Chromebook

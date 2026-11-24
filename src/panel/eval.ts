@@ -1,6 +1,6 @@
 // Accuracy check page: runs the on-device model over the public eval set (evals/replies.json, 66 real company replies
 // from the demo inbox, labelled by hand) and reports how often it picks the right next step.
-// Driven by scripts/ci/nano-eval.mjs on a GitHub runner, or opened by hand in the extension.
+// Driven by scripts/ci/nano-eval.mjs, or opened by hand in the extension.
 import { ASK_SCHEMA, privateModel, readAsk } from "../ai/models";
 import { firebase } from "../ai/firebase";
 import { askByRules, type Ask } from "../core/coach";

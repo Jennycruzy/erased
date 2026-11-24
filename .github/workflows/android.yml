@@ -1,0 +1,39 @@
+name: Android
+
+# Builds the Android app, checks that it reads replies exactly like the extension (same 66 hand labels),
+# and uploads the APK.
+
+on:
+  push:
+    paths: ["android/**", "src/core/coach.ts", "src/ai/models.ts", "evals/**", "scripts/android-coach.ts", ".github/workflows/android.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Coach for the phone, from the extension's own code
+        run: npm run android:coach && git diff --exit-code android/app/src/main/assets/coach.json
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+      - uses: gradle/actions/setup-gradle@v4
+        with: { gradle-version: "9.9.2" }
+      - name: Test and build
+        working-directory: android
+        run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erased-android
+          path: |
+            android/app/build/outputs/apk/debug/*.apk
+            android/app/build/reports/tests/
+          retention-days: 30

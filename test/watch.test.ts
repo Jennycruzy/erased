@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import * as watchMod from "../src/core/watch";
 import { newRequest } from "../src/core/store";
 import { companyReplies, marketingEvent, replyEvent, sentEvent, watchQueries, mentionsCompany } from "../src/core/watch";
 
@@ -82,4 +83,16 @@ describe("companyReplies guards (live run)", () => {
   it("ignores mail from before the request was sent", () => expect(companyReplies(trello, [row("Welcome", 100 - 2 * 3600e3)])).toEqual([]));
   it("never stores an unrelated reading", () => expect(replyEvent(1, { reply: "unrelated", extension: false, quote: "Build your first Zap", quoteOk: true })).toEqual([]));
   it("searches the parent company too", () => expect(senderWords({ ...base, id: "s", ref: "ER-AAAAA", domain: "slack.com", company: "Slack", to: "feedback@slack.com" } as never)).toEqual(["slack", "salesforce"]));
+});
+
+describe("promotions and help desks", () => {
+  it("a promotion is never read as a reply", () => {
+    const { PROMO_SUBJECT } = watchMod;
+    expect(PROMO_SUBJECT.test("Erased, Your 50% Off Is Waiting For You")).toBe(true);
+    expect(PROMO_SUBJECT.test("Re: Request to delete my personal data [ER-AAAAA]")).toBe(false);
+  });
+  it("a help-desk survey is never marketing", () => {
+    expect(watchMod.marketingEvent({ from: "support@spotify.com", subject: "Spotify Support", at: 1 } as never, { marketing: true, quoteOk: true })).toBeNull();
+    expect(watchMod.marketingEvent({ from: "learn@send.zapier.com", subject: "What teams are automating this week", at: 1 } as never, { marketing: true, quoteOk: true })).not.toBeNull();
+  });
 });

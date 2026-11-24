@@ -11,7 +11,8 @@
     "test": "vitest run",
     "breaches": "node scripts/fetch-breaches.mjs",
     "verify": "node scripts/verify.mjs",
-    "directory": "node scripts/directory/build.mjs && node .cache/compile.mjs data/directory/seed.txt data/directory/entries.jsonl && node scripts/directory/export.mjs"
+    "directory": "node scripts/directory/build.mjs && node .cache/compile.mjs data/directory/seed.txt data/directory/entries.jsonl && node scripts/directory/export.mjs",
+    "android:coach": "esbuild scripts/android-coach.ts --bundle --platform=node --format=esm --outfile=dist-node/android-coach.mjs --log-level=warning && node dist-node/android-coach.mjs"
   },
   "dependencies": {
     "firebase": "^13.3.0",

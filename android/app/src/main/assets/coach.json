@@ -1,0 +1,693 @@
+{
+ "note": "Generated from src/core/coach.ts and src/ai/models.ts. Do not edit by hand.",
+ "asks": [
+  "wait",
+  "scheduled",
+  "no_account",
+  "verify_link",
+  "go_ahead",
+  "confirm_sender",
+  "clarify",
+  "provide_info",
+  "use_form",
+  "log_in_delete"
+ ],
+ "noStep": [
+  "wait",
+  "scheduled",
+  "no_account"
+ ],
+ "rules": [
+  {
+   "ask": "scheduled",
+   "pattern": "\\b(is|has been) scheduled to be (permanently )?deleted\\b|\\bwill be (permanently )?deleted (in \\d+ days|\\d+ days after)\\b"
+  },
+  {
+   "ask": "no_account",
+   "pattern": "\\b(couldn['’]?t|could not|can['’]?t|cannot|unable to|wasn['’]?t able to|were not able to|weren['’]?t able to) (find|locate|match|identify) (an?|any|your) ([\\w ]{0,20})?(account|record)s?\\b|\\b(unable to|could not|couldn['’]?t) match your email( address)? (with|to) an? [\\w ]{0,20}account\\b|\\bdon['’]?t see an account linked to\\b|\\bno account (is )?(linked|associated|registered) (to|with)\\b"
+  },
+  {
+   "ask": "verify_link",
+   "pattern": "\\b(check your email to (complete|confirm|verify)|verify my identity|verification (code|request|link)|one-time code|enter the code|confirm your identity by clicking|email verification request)\\b"
+  },
+  {
+   "ask": "confirm_sender",
+   "pattern": "\\b(respond directly from (that|this|the) email|from the email address linked to your account|third[- ]party (service|services)|confirmation that this request was (indeed )?made by you)\\b"
+  },
+  {
+   "ask": "go_ahead",
+   "pattern": "\\bplease confirm that you(['’]d| would) like (your|the) (data|account|information) to be (deleted|erased|removed)\\b|\\brespond with (either )?[\"“”\\s]*(yes|i agree)\\b|\\b(written|your) (confirmation|consent) to (proceed|move forward|go ahead)\\b|\\breply (with )?[\"“”\\s]*(yes|confirm)[\"“”\\s]* to (proceed|confirm)\\b"
+  },
+  {
+   "ask": "clarify",
+   "pattern": "\\b(confirm what (you would like|you'd like) (deleted|to delete)|what (data|information) (you would like|you'd like) (deleted|removed))\\b"
+  },
+  {
+   "ask": "provide_info",
+   "pattern": "\\b(could you please provide|please provide (us with )?the following|we (will )?need the following)\\b"
+  },
+  {
+   "ask": "log_in_delete",
+   "pattern": "\\b(log ?in|sign in) and (submit|fill|complete|request|delete)\\b|\\bwe(['’]ll| will) need you to delete your [\\w ]{0,20}account\\b|\\b(just )?log ?in to [a-z0-9-]+\\.[a-z]{2,}\\b and follow\\b|\\bcan only be completed by you\\b|\\byou must (initiate|start|request) the deletion yourself\\b"
+  },
+  {
+   "ask": "use_form",
+   "pattern": "\\bsubmit a request through our [\\w ]{0,20}form\\b|\\b((fill out|complete|submit)( our| the)?( data subject( rights)?| privacy| deletion)?( request)? (form|webform)|privacy form|request form|data subject rights request form)\\b"
+  },
+  {
+   "ask": "log_in_delete",
+   "pattern": "(^|\\b(please|you (must|need to|can|will need to)|and)\\s)(sign (in|into)|log ?in)( to)? (to )?your [\\w ]{0,20}account\\b|\\byou can (also )?delete your [\\w ]{0,20}(account|profile)\\b|\\bsettings page\\b|\\bself-service\\b|\\bdelete (your|the) [\\w ]{0,20}account (yourself|from)\\b|(?<!request to )\\bpermanently delete your account\\b|\\b(easy|simple) steps\\b|\\bdelete my data\\b"
+  }
+ ],
+ "prompt": "This email, given as numbered sentences, is a company's reply to a person who asked it to delete their data. Most such replies only confirm they received it: then answer \"wait\". Answer something else only if the email clearly tells the person to do one thing now:\n\"scheduled\" - it says the account is already scheduled to be deleted.\n\"no_account\" - it says no account was found for the person's email address.\n\"verify_link\" - click a verification link or enter a code.\n\"go_ahead\" - reply YES, I AGREE or similar to confirm they may delete.\n\"confirm_sender\" - write again from the account's own email address, or it says it cannot accept requests from third-party services.\n\"clarify\" - say what should be deleted.\n\"provide_info\" - send more details.\n\"use_form\" - fill in a privacy or request form.\n\"log_in_delete\" - sign in and delete the account themselves.\nMentions of a help center, a ticket number or logging in to view the case do not count. Give the number of the one sentence that shows the answer.",
+ "advice": {
+  "gdpr": {
+   "wait": {
+    "headline": "{company} has your request",
+    "why": "Nothing to do yet. They have until 1970-02-01 under EU General Data Protection Regulation (GDPR).",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Wait until 1970-02-01"
+    }
+   },
+   "scheduled": {
+    "headline": "{company} will delete the account",
+    "why": "Do not sign in before then: signing in cancels the deletion.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Nothing to do. Stay signed out."
+    }
+   },
+   "no_account": {
+    "headline": "{company} found no account under {email}",
+    "why": "Then there is nothing of yours to delete under this address. If you signed up with a different email, send the request again from that one.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Nothing more to do"
+    }
+   },
+   "verify_link": {
+    "headline": "{company} sent a link or code to check it is you",
+    "why": "This is a fair check, done through your own email. Click it before it runs out, or the request closes.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Open the email and use the code or link in it"
+    }
+   },
+   "go_ahead": {
+    "headline": "{company} is ready to delete and wants a written yes",
+    "why": "Reply YES and they go ahead. Their warning that it is permanent is what you asked for.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nYES. I AGREE.\nI understand the deletion is permanent and cannot be undone, and I give you my consent to go ahead and delete my {company} account and all data linked to it.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "confirm_sender": {
+    "headline": "{company} wants to know the request really comes from you",
+    "why": "It does: it was sent from {email}. One short reply from this address answers it.",
+    "legal": [
+     "Article 12(2) GDPR requires you to facilitate the exercise of my rights, and the EDPB's Guidelines 01/2022 confirm a request may be sent to a controller's official contact point instead of its preferred channel. I sent it to your privacy address."
+    ],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nThis request comes from {email}, the email address on my {company} account, and I sent it myself from this address. It was not sent by a third-party service.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\nArticle 12(2) GDPR requires you to facilitate the exercise of my rights, and the EDPB's Guidelines 01/2022 confirm a request may be sent to a controller's official contact point instead of its preferred channel. I sent it to your privacy address.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "clarify": {
+    "headline": "{company} asks what you want deleted",
+    "why": "Answer: everything. One reply settles it.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nI would like you to delete my whole {company} account and all personal data you hold about me, including any copies, backups and marketing lists.\nThe account is registered to {email}.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "provide_info": {
+    "headline": "{company} asks for more details",
+    "why": "Give only what links you to the account: your name and the account email. Nothing more is needed to find it.",
+    "legal": [
+     "The EDPB's Guidelines 01/2022 (para. 73) say it is disproportionate to ask for a copy of an identity document when the account holder is already authenticated; you can confirm it is me through this email address."
+    ],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nThe account is registered to {email}, in the name {name}, and this reply comes from that address.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\nThe EDPB's Guidelines 01/2022 (para. 73) say it is disproportionate to ask for a copy of an identity document when the account holder is already authenticated; you can confirm it is me through this email address.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "use_form": {
+    "headline": "{company} wants its own form filled in",
+    "why": "The form is usually the quickest. You do not have to use it: your email to their privacy address counts, and the reply below says so.",
+    "legal": [
+     "Article 12(2) GDPR requires you to facilitate the exercise of my rights, and the EDPB's Guidelines 01/2022 confirm a request may be sent to a controller's official contact point instead of its preferred channel. I sent it to your privacy address."
+    ],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nYou asked me to use your form. I made this request to your privacy address, which is a valid way to make it.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\nArticle 12(2) GDPR requires you to facilitate the exercise of my rights, and the EDPB's Guidelines 01/2022 confirm a request may be sent to a controller's official contact point instead of its preferred channel. I sent it to your privacy address.\nIf you need to check it is me, please send a confirmation link to {email}.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "log_in_delete": {
+    "headline": "{company} asks you to sign in and delete the account yourself",
+    "why": "This is a fair ask: signing in is how they check it is you. It is also the quickest way to get it done.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Sign in to your account and look for Delete account in the settings"
+    }
+   }
+  },
+  "uk_gdpr": {
+   "wait": {
+    "headline": "{company} has your request",
+    "why": "Nothing to do yet. They have until 1970-02-01 under UK GDPR and Data Protection Act 2018.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Wait until 1970-02-01"
+    }
+   },
+   "scheduled": {
+    "headline": "{company} will delete the account",
+    "why": "Do not sign in before then: signing in cancels the deletion.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Nothing to do. Stay signed out."
+    }
+   },
+   "no_account": {
+    "headline": "{company} found no account under {email}",
+    "why": "Then there is nothing of yours to delete under this address. If you signed up with a different email, send the request again from that one.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Nothing more to do"
+    }
+   },
+   "verify_link": {
+    "headline": "{company} sent a link or code to check it is you",
+    "why": "This is a fair check, done through your own email. Click it before it runs out, or the request closes.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Open the email and use the code or link in it"
+    }
+   },
+   "go_ahead": {
+    "headline": "{company} is ready to delete and wants a written yes",
+    "why": "Reply YES and they go ahead. Their warning that it is permanent is what you asked for.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nYES. I AGREE.\nI understand the deletion is permanent and cannot be undone, and I give you my consent to go ahead and delete my {company} account and all data linked to it.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "confirm_sender": {
+    "headline": "{company} wants to know the request really comes from you",
+    "why": "It does: it was sent from {email}. One short reply from this address answers it.",
+    "legal": [
+     "Article 12(2) UK GDPR requires you to facilitate the exercise of my rights. I sent this request to your privacy address."
+    ],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nThis request comes from {email}, the email address on my {company} account, and I sent it myself from this address. It was not sent by a third-party service.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\nArticle 12(2) UK GDPR requires you to facilitate the exercise of my rights. I sent this request to your privacy address.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "clarify": {
+    "headline": "{company} asks what you want deleted",
+    "why": "Answer: everything. One reply settles it.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nI would like you to delete my whole {company} account and all personal data you hold about me, including any copies, backups and marketing lists.\nThe account is registered to {email}.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "provide_info": {
+    "headline": "{company} asks for more details",
+    "why": "Give only what links you to the account: your name and the account email. Nothing more is needed to find it.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nThe account is registered to {email}, in the name {name}, and this reply comes from that address.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "use_form": {
+    "headline": "{company} wants its own form filled in",
+    "why": "The form is usually the quickest. You do not have to use it: your email to their privacy address counts, and the reply below says so.",
+    "legal": [
+     "Article 12(2) UK GDPR requires you to facilitate the exercise of my rights. I sent this request to your privacy address."
+    ],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nYou asked me to use your form. I made this request to your privacy address, which is a valid way to make it.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\nArticle 12(2) UK GDPR requires you to facilitate the exercise of my rights. I sent this request to your privacy address.\nIf you need to check it is me, please send a confirmation link to {email}.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "log_in_delete": {
+    "headline": "{company} asks you to sign in and delete the account yourself",
+    "why": "This is a fair ask: signing in is how they check it is you. It is also the quickest way to get it done.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Sign in to your account and look for Delete account in the settings"
+    }
+   }
+  },
+  "ccpa": {
+   "wait": {
+    "headline": "{company} has your request",
+    "why": "Nothing to do yet. They have until 1970-02-15 under California Consumer Privacy Act (CCPA), as amended by the CPRA.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Wait until 1970-02-15"
+    }
+   },
+   "scheduled": {
+    "headline": "{company} will delete the account",
+    "why": "Do not sign in before then: signing in cancels the deletion.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Nothing to do. Stay signed out."
+    }
+   },
+   "no_account": {
+    "headline": "{company} found no account under {email}",
+    "why": "Then there is nothing of yours to delete under this address. If you signed up with a different email, send the request again from that one.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Nothing more to do"
+    }
+   },
+   "verify_link": {
+    "headline": "{company} sent a link or code to check it is you",
+    "why": "This is a fair check, done through your own email. Click it before it runs out, or the request closes.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Open the email and use the code or link in it"
+    }
+   },
+   "go_ahead": {
+    "headline": "{company} is ready to delete and wants a written yes",
+    "why": "Reply YES and they go ahead. Their warning that it is permanent is what you asked for.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nYES. I AGREE.\nI understand the deletion is permanent and cannot be undone, and I give you my consent to go ahead and delete my {company} account and all data linked to it.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "confirm_sender": {
+    "headline": "{company} wants to know the request really comes from you",
+    "why": "It does: it was sent from {email}. One short reply from this address answers it.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nThis request comes from {email}, the email address on my {company} account, and I sent it myself from this address. It was not sent by a third-party service.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "clarify": {
+    "headline": "{company} asks what you want deleted",
+    "why": "Answer: everything. One reply settles it.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nI would like you to delete my whole {company} account and all personal data you hold about me, including any copies, backups and marketing lists.\nThe account is registered to {email}.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "provide_info": {
+    "headline": "{company} asks for more details",
+    "why": "Give only what links you to the account: your name and the account email. Nothing more is needed to find it.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nThe account is registered to {email}, in the name {name}, and this reply comes from that address.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "use_form": {
+    "headline": "{company} wants its own form filled in",
+    "why": "The form is usually the quickest. You do not have to use it: your email to their privacy address counts, and the reply below says so.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nYou asked me to use your form. I made this request to your privacy address, which is a valid way to make it.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\nIf you need to check it is me, please send a confirmation link to {email}.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "log_in_delete": {
+    "headline": "{company} asks you to sign in and delete the account yourself",
+    "why": "This is a fair ask: signing in is how they check it is you. It is also the quickest way to get it done.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Sign in to your account and look for Delete account in the settings"
+    }
+   }
+  },
+  "pipeda": {
+   "wait": {
+    "headline": "{company} has your request",
+    "why": "Nothing to do yet. They have until 1970-01-31 under Canada's Personal Information Protection and Electronic Documents Act (PIPEDA).",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Wait until 1970-01-31"
+    }
+   },
+   "scheduled": {
+    "headline": "{company} will delete the account",
+    "why": "Do not sign in before then: signing in cancels the deletion.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Nothing to do. Stay signed out."
+    }
+   },
+   "no_account": {
+    "headline": "{company} found no account under {email}",
+    "why": "Then there is nothing of yours to delete under this address. If you signed up with a different email, send the request again from that one.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Nothing more to do"
+    }
+   },
+   "verify_link": {
+    "headline": "{company} sent a link or code to check it is you",
+    "why": "This is a fair check, done through your own email. Click it before it runs out, or the request closes.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Open the email and use the code or link in it"
+    }
+   },
+   "go_ahead": {
+    "headline": "{company} is ready to delete and wants a written yes",
+    "why": "Reply YES and they go ahead. Their warning that it is permanent is what you asked for.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nYES. I AGREE.\nI understand the deletion is permanent and cannot be undone, and I give you my consent to go ahead and delete my {company} account and all data linked to it.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "confirm_sender": {
+    "headline": "{company} wants to know the request really comes from you",
+    "why": "It does: it was sent from {email}. One short reply from this address answers it.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nThis request comes from {email}, the email address on my {company} account, and I sent it myself from this address. It was not sent by a third-party service.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "clarify": {
+    "headline": "{company} asks what you want deleted",
+    "why": "Answer: everything. One reply settles it.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nI would like you to delete my whole {company} account and all personal data you hold about me, including any copies, backups and marketing lists.\nThe account is registered to {email}.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "provide_info": {
+    "headline": "{company} asks for more details",
+    "why": "Give only what links you to the account: your name and the account email. Nothing more is needed to find it.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nThe account is registered to {email}, in the name {name}, and this reply comes from that address.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "use_form": {
+    "headline": "{company} wants its own form filled in",
+    "why": "The form is usually the quickest. You do not have to use it: your email to their privacy address counts, and the reply below says so.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nYou asked me to use your form. I made this request to your privacy address, which is a valid way to make it.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\nIf you need to check it is me, please send a confirmation link to {email}.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "log_in_delete": {
+    "headline": "{company} asks you to sign in and delete the account yourself",
+    "why": "This is a fair ask: signing in is how they check it is you. It is also the quickest way to get it done.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Sign in to your account and look for Delete account in the settings"
+    }
+   }
+  },
+  "ndpa": {
+   "wait": {
+    "headline": "{company} has your request",
+    "why": "Nothing to do yet. They have until 1970-01-31 under the Nigeria Data Protection Act 2023 and the NDPC General Application and Implementation Directive 2025.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Wait until 1970-01-31"
+    }
+   },
+   "scheduled": {
+    "headline": "{company} will delete the account",
+    "why": "Do not sign in before then: signing in cancels the deletion.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Nothing to do. Stay signed out."
+    }
+   },
+   "no_account": {
+    "headline": "{company} found no account under {email}",
+    "why": "Then there is nothing of yours to delete under this address. If you signed up with a different email, send the request again from that one.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Nothing more to do"
+    }
+   },
+   "verify_link": {
+    "headline": "{company} sent a link or code to check it is you",
+    "why": "This is a fair check, done through your own email. Click it before it runs out, or the request closes.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Open the email and use the code or link in it"
+    }
+   },
+   "go_ahead": {
+    "headline": "{company} is ready to delete and wants a written yes",
+    "why": "Reply YES and they go ahead. Their warning that it is permanent is what you asked for.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nYES. I AGREE.\nI understand the deletion is permanent and cannot be undone, and I give you my consent to go ahead and delete my {company} account and all data linked to it.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "confirm_sender": {
+    "headline": "{company} wants to know the request really comes from you",
+    "why": "It does: it was sent from {email}. One short reply from this address answers it.",
+    "legal": [
+     "Section 34(1) of the Nigeria Data Protection Act 2023 gives me the right to obtain erasure from you without constraint or unreasonable delay, and section 35(2) requires withdrawing consent to be as easy as giving it."
+    ],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nThis request comes from {email}, the email address on my {company} account, and I sent it myself from this address. It was not sent by a third-party service.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\nSection 34(1) of the Nigeria Data Protection Act 2023 gives me the right to obtain erasure from you without constraint or unreasonable delay, and section 35(2) requires withdrawing consent to be as easy as giving it.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "clarify": {
+    "headline": "{company} asks what you want deleted",
+    "why": "Answer: everything. One reply settles it.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nI would like you to delete my whole {company} account and all personal data you hold about me, including any copies, backups and marketing lists.\nThe account is registered to {email}.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "provide_info": {
+    "headline": "{company} asks for more details",
+    "why": "Give only what links you to the account: your name and the account email. Nothing more is needed to find it.",
+    "legal": [
+     "Section 34(1) of the Nigeria Data Protection Act 2023 gives me the right to obtain erasure from you without constraint or unreasonable delay, and section 35(2) requires withdrawing consent to be as easy as giving it."
+    ],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nThe account is registered to {email}, in the name {name}, and this reply comes from that address.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\nSection 34(1) of the Nigeria Data Protection Act 2023 gives me the right to obtain erasure from you without constraint or unreasonable delay, and section 35(2) requires withdrawing consent to be as easy as giving it.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "use_form": {
+    "headline": "{company} wants its own form filled in",
+    "why": "The form is usually the quickest. You do not have to use it: your email to their privacy address counts, and the reply below says so.",
+    "legal": [
+     "Section 34(1) of the Nigeria Data Protection Act 2023 gives me the right to obtain erasure from you without constraint or unreasonable delay, and section 35(2) requires withdrawing consent to be as easy as giving it."
+    ],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nYou asked me to use your form. I made this request to your privacy address, which is a valid way to make it.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\nSection 34(1) of the Nigeria Data Protection Act 2023 gives me the right to obtain erasure from you without constraint or unreasonable delay, and section 35(2) requires withdrawing consent to be as easy as giving it.\nIf you need to check it is me, please send a confirmation link to {email}.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "log_in_delete": {
+    "headline": "{company} asks you to sign in and delete the account yourself",
+    "why": "This is a fair ask: signing in is how they check it is you. It is also the quickest way to get it done.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Sign in to your account and look for Delete account in the settings"
+    }
+   }
+  },
+  "policy": {
+   "wait": {
+    "headline": "{company} has your request",
+    "why": "Nothing to do yet. They have until 1970-01-31 under the company's own privacy policy.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Wait until 1970-01-31"
+    }
+   },
+   "scheduled": {
+    "headline": "{company} will delete the account",
+    "why": "Do not sign in before then: signing in cancels the deletion.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Nothing to do. Stay signed out."
+    }
+   },
+   "no_account": {
+    "headline": "{company} found no account under {email}",
+    "why": "Then there is nothing of yours to delete under this address. If you signed up with a different email, send the request again from that one.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Nothing more to do"
+    }
+   },
+   "verify_link": {
+    "headline": "{company} sent a link or code to check it is you",
+    "why": "This is a fair check, done through your own email. Click it before it runs out, or the request closes.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Open the email and use the code or link in it"
+    }
+   },
+   "go_ahead": {
+    "headline": "{company} is ready to delete and wants a written yes",
+    "why": "Reply YES and they go ahead. Their warning that it is permanent is what you asked for.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nYES. I AGREE.\nI understand the deletion is permanent and cannot be undone, and I give you my consent to go ahead and delete my {company} account and all data linked to it.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "confirm_sender": {
+    "headline": "{company} wants to know the request really comes from you",
+    "why": "It does: it was sent from {email}. One short reply from this address answers it.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nThis request comes from {email}, the email address on my {company} account, and I sent it myself from this address. It was not sent by a third-party service.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "clarify": {
+    "headline": "{company} asks what you want deleted",
+    "why": "Answer: everything. One reply settles it.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nI would like you to delete my whole {company} account and all personal data you hold about me, including any copies, backups and marketing lists.\nThe account is registered to {email}.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "provide_info": {
+    "headline": "{company} asks for more details",
+    "why": "Give only what links you to the account: your name and the account email. Nothing more is needed to find it.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nThe account is registered to {email}, in the name {name}, and this reply comes from that address.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "use_form": {
+    "headline": "{company} wants its own form filled in",
+    "why": "The form is usually the quickest. You do not have to use it: your email to their privacy address counts, and the reply below says so.",
+    "legal": [],
+    "action": {
+     "type": "email",
+     "label": "Write the reply",
+     "subject": "Re: {subject} [{ref}]",
+     "body": "Hello,\n\nYou asked me to use your form. I made this request to your privacy address, which is a valid way to make it.\nPlease go ahead and erase my {company} account and all personal data you hold about me.\nIf you need to check it is me, please send a confirmation link to {email}.\n\nReference: {ref}\n\nKind regards,\n{name}"
+    }
+   },
+   "log_in_delete": {
+    "headline": "{company} asks you to sign in and delete the account yourself",
+    "why": "This is a fair ask: signing in is how they check it is you. It is also the quickest way to get it done.",
+    "legal": [],
+    "action": {
+     "type": "wait",
+     "label": "Sign in to your account and look for Delete account in the settings"
+    }
+   }
+  }
+ }
+}
