@@ -30,8 +30,8 @@ Nigeria's NDPA s.34. In practice three things stop people:
 2. **The request stalls.** When we sent 30 real requests, **19 of the 27 companies that answered asked for one
    more step first**: sign in yourself, use our form, click a link, prove it's you, reply YES. Miss it and nothing
    happens.
-3. **Nobody checks.** **3 companies kept sending marketing after the request** (Grammarly, Zapier, Codecademy;
-   Zapier again on 26 Nov). "Deleted" is a promise you can't see.
+3. **Nobody checks.** **7 of the 30 companies kept sending marketing or sign-up nudges after the request**
+   (Codecademy, Grammarly, monday.com, Skillshare, Slack, Todoist, Zapier). "Deleted" is a promise you can't see.
 
 ## How Erased fixes it
 
@@ -49,7 +49,7 @@ Nigeria's NDPA s.34. In practice three things stop people:
 |---|---|---|---|
 | 0:00 | [/judge](https://forget-me-hybrid.web.app/judge.html) in desktop Chrome | **Read all 10** | Ten real company replies read in **your** browser. Each row says who read it (**Gemini Nano on this computer**, or Gemini in the cloud if your Chrome has no Nano), what it found and the sentence it points at, the decision, and ✓ against our hand label. On our M1 Mac with Nano: 10 of 10, about 3 s each. |
 | 1:30 | Any row's answer card | **Copy the reply** / **Open it in Gmail** | The reply Erased writes for that company, with the law where it applies. Open *Your details*, pick another country and press **Read it** again: the legal line changes with the law. |
-| 2:00 | [/run](https://forget-me-hybrid.web.app/run.html) | scroll | The 30 real requests: who replied, how fast, every hoop with the company's own words, and the 3 still marketing after the request. |
+| 2:00 | [/run](https://forget-me-hybrid.web.app/run.html) | scroll | The 30 real requests: who replied, how fast, every hoop with the company's own words, and the 7 still emailing after the request. |
 | 2:30 | [/evidence](https://forget-me-hybrid.web.app/evidence.html) | scroll | The measured accuracy on 66 hand-labelled replies, held-out results, and where every read ran. |
 
 **10 more minutes:** install the [extension](https://github.com/Jennycruzy/erased/releases/latest/download/erased-extension.zip) on
@@ -64,10 +64,11 @@ On 20 Nov 2026 we sent 30 real deletion requests from a public demo inbox. Erase
 - **19 of them asked for one more step before deleting anything**: sign in and delete it yourself (9), use our
   form (4), click a check-it's-you link (3), prove the request comes from you (3), reply YES (2), say what to
   delete (1). Reply Coach named each step and wrote the answer; we sent them from the demo inbox.
-- **Results so far:** Asana confirmed the account is deleted, Canva scheduled the deletion, and 4 companies
-  (Spotify, Kaggle, Typeform, Zoom) confirmed they hold no account for the address.
-- **3 companies kept sending marketing after the request**: Grammarly, Zapier and Codecademy. Erased caught each
-  one and wrote the "stop now" email with the law that requires it (GDPR and UK GDPR Art 21(3), NDPA s.36).
+- **Results so far:** Asana confirmed the account is deleted, Canva scheduled the deletion, and 5 companies
+  (Kaggle, Spotify, SurveyMonkey, Typeform, Zoom) said they hold no account for the address.
+- **7 companies kept sending marketing or sign-up nudges after the request**: Codecademy, Grammarly, monday.com,
+  Skillshare, Slack, Todoist and Zapier. Erased caught each one, quoted the email, and wrote the "stop now" letter
+  with the law that requires it (GDPR and UK GDPR Art 21(3), NDPA s.36). We sent Zapier's on 26 Nov.
 - **Some put a person-only check in front of deletion**: Medium (a "verify you are human" page before sign-in),
   Skillshare (a captcha on its deletion form) and Zapier (a fresh password check inside a short time window, even
   when you are already signed in).
