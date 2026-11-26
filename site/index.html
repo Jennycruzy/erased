@@ -4,15 +4,15 @@
 <meta name="theme-color" content="#08090d">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/site.css"><link rel="stylesheet" href="/home.css"></head><body>
 <header class="site"><div class="wrap"><a class="brand" href="/">Erased</a><nav class="links">
-<a href="/run.html">Live run</a><a href="/directory.html">Directory</a><a href="/run.html#hard">Who makes it hard</a><a href="/evidence.html">Evidence</a><a href="/judge.html">Try it</a></nav></div></header>
+<a href="/run">Live run</a><a href="/directory">Directory</a><a href="/run#hard">Who makes it hard</a><a href="/evidence">Evidence</a><a href="/judge">Try it</a></nav></div></header>
 
 <section class="hero"><div class="wrap">
   <div>
     <h1 class="reveal">Your inbox remembers every company you forgot. <span class="ink">Make them forget you.</span></h1>
     <p class="lede reveal" style="--d:.08s">Erased reads your account emails on your own device, asks each company to delete your data under the law where you live, then keeps watching what they send you, so you know whether they really did.</p>
     <div class="cta reveal" style="--d:.16s">
-      <a class="btn" href="/judge.html">Try it in 90 seconds <span class="arrow">→</span></a>
-      <a class="btn ghost" href="/run.html">See 30 real requests</a>
+      <a class="btn" href="/judge">Try it in 90 seconds <span class="arrow">→</span></a>
+      <a class="btn ghost" href="/run">See 30 real requests</a>
     </div>
     <div class="meta reveal" style="--d:.24s">
       <span class="tag device">Gemini Nano on your device</span><span class="tag">Firebase AI Logic hybrid</span><span class="tag">Chrome · Android · iPhone</span>
@@ -40,7 +40,7 @@
       <div class="big"><span data-count="19">0</span><small>of 27</small></div>
       <h3>The request stalls</h3>
       <p>Of the companies that answered our 30 real requests, 19 wanted one more step first: sign in yourself, use our form, click a link, prove it's you, reply YES. Miss it and nothing happens.</p>
-      <div class="src"><a href="/run.html">The live run</a>: every reply, word for word.</div>
+      <div class="src"><a href="/run">The live run</a>: every reply, word for word.</div>
     </div>
     <div class="card red reveal" style="--d:.16s">
       <div class="big"><span data-count="7">0</span><small>of 30</small></div>
@@ -57,7 +57,7 @@
   <div class="how">
     <div class="sticky reveal">
       <p class="muted">Your mail is read by Gemini Nano in Chrome, Gemini Nano on Android or Apple's on-device model on iPhone, all through Firebase AI Logic. A model's answer only counts when the sentence it points at is really in the email.</p>
-      <div style="margin-top:22px"><a class="btn ghost" href="/evidence.html">How accurate is it? <span class="arrow">→</span></a></div>
+      <div style="margin-top:22px"><a class="btn ghost" href="/evidence">How accurate is it? <span class="arrow">→</span></a></div>
     </div>
     <div class="rail" id="rail"><div class="fill" id="rail-fill"></div>
       <div class="step"><div class="k">01 · FIND</div><h3>Every company you hold an account with</h3>
@@ -82,7 +82,7 @@
 
 <section class="block"><div class="wrap">
   <h2 class="reveal">Watch it read a real reply</h2>
-  <p class="lede reveal">Six real replies to our deletion requests. Pick one: Erased finds what it asks of you and writes the answer. This runs Erased's own rules in your browser; <a href="/judge.html">Try it</a> adds Gemini Nano.</p>
+  <p class="lede reveal">Six real replies to our deletion requests. Pick one: Erased finds what it asks of you and writes the answer. This runs Erased's own rules in your browser; <a href="/judge">Try it</a> adds Gemini Nano.</p>
   <div class="chips reveal" id="chips"></div>
   <div class="coach-demo">
     <div class="mailcard reveal"><div class="hd" id="mail-hd">Their reply<b>Pick a company above</b></div><div class="bd" id="mail-bd"></div></div>
@@ -92,7 +92,7 @@
 
 <section class="block"><div class="wrap">
   <h2 class="reveal">30 real requests. Here's how each one is going.</h2>
-  <p class="lede reveal" id="wall-lede">Sent from a public demo inbox on 20 Nov 2026. Tap a company to see what it said. Five of them, whose own privacy page says "email us", answered our email with "sign in and do it yourself" or "use our form": <a href="/run.html#said">see both sentences</a>.</p>
+  <p class="lede reveal" id="wall-lede">Sent from a public demo inbox on 20 Nov 2026. Tap a company to see what it said. Five of them, whose own privacy page says "email us", answered our email with "sign in and do it yourself" or "use our form": <a href="/run#said">see both sentences</a>.</p>
   <div class="legend reveal" id="legend"></div>
   <div class="wall" id="wall"></div>
   <div class="detail" id="detail"><span class="muted">Tap a company to see its reply, word for word.</span></div>
@@ -118,15 +118,15 @@
   <h2 class="reveal">One Coach, four apps</h2>
   <p class="lede reveal">The same rules, prompt and answers ship to every platform, and each one is checked against the same 66 hand-labelled replies.</p>
   <div class="apps">
-    <div class="app reveal"><div class="shot"><img src="/img/panel.png" alt="The Erased side panel in Chrome" loading="lazy"></div><h3>Chrome extension</h3><p>Scans Gmail, sends the letters, watches every reply. Gemini Nano, on the device only.</p><a href="https://github.com/Jennycruzy/erased/releases/latest">Download →</a></div>
-    <div class="app reveal" style="--d:.06s"><div class="shot"><img src="/img/judge.png" alt="The Try it page reading ten replies" loading="lazy"></div><h3>Website</h3><p>Ten real replies read in your own Chrome, each checked against our hand label. No install.</p><a href="/judge.html">Try it →</a></div>
-    <div class="app reveal" style="--d:.12s"><div class="shot"><img src="/img/android.png" alt="The Erased Android app" loading="lazy"></div><h3>Android</h3><p>Share a reply from Gmail. Gemini Nano through ML Kit; the cloud reads one email only if you allow it.</p><a href="https://github.com/Jennycruzy/erased/releases/latest">Get the APK →</a></div>
-    <div class="app reveal" style="--d:.18s"><div class="shot"><img src="/img/iphone.png" alt="The Erased iPhone app" loading="lazy"></div><h3>iPhone</h3><p>Apple's on-device model through Firebase AI Logic, with Gemini as a fallback you choose.</p><a href="https://github.com/Jennycruzy/erased#iphone">Build it →</a></div>
+    <div class="app reveal"><div class="shot"><img src="/img/panel.webp" alt="The Erased side panel in Chrome" loading="lazy"></div><h3>Chrome extension</h3><p>Scans Gmail, sends the letters, watches every reply. Gemini Nano, on the device only.</p><a href="https://github.com/Jennycruzy/erased/releases/latest">Download →</a></div>
+    <div class="app reveal" style="--d:.06s"><div class="shot"><img src="/img/judge.webp" alt="The Try it page reading ten replies" loading="lazy"></div><h3>Website</h3><p>Ten real replies read in your own Chrome, each checked against our hand label. No install.</p><a href="/judge">Try it →</a></div>
+    <div class="app reveal" style="--d:.12s"><div class="shot"><img src="/img/android.webp" alt="The Erased Android app" loading="lazy"></div><h3>Android</h3><p>Share a reply from Gmail. Gemini Nano through ML Kit; the cloud reads one email only if you allow it.</p><a href="https://github.com/Jennycruzy/erased/releases/latest">Get the APK →</a></div>
+    <div class="app reveal" style="--d:.18s"><div class="shot"><img src="/img/iphone.webp" alt="The Erased iPhone app" loading="lazy"></div><h3>iPhone</h3><p>Apple's on-device model through Firebase AI Logic, with Gemini as a fallback you choose.</p><a href="https://github.com/Jennycruzy/erased#iphone">Build it →</a></div>
   </div>
 </div></section>
 
 <section class="block"><div class="wrap">
-  <div class="band reveal"><h2>See it read ten real replies in your own browser.</h2><div class="cta"><a class="btn" href="/judge.html">Try it in 90 seconds <span class="arrow">→</span></a><a class="btn ghost" href="/evidence.html">The evidence</a></div></div>
+  <div class="band reveal"><h2>See it read ten real replies in your own browser.</h2><div class="cta"><a class="btn" href="/judge">Try it in 90 seconds <span class="arrow">→</span></a><a class="btn ghost" href="/evidence">The evidence</a></div></div>
 </div></section>
 
 <footer><div class="wrap">Erased reads your mail on your device with Gemini Nano through Firebase AI Logic. Breach data: <a href="https://haveibeenpwned.com/">Have I Been Pwned</a>. <a href="https://github.com/Jennycruzy/erased">Source</a>, Apache-2.0.</div></footer>

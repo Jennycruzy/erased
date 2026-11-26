@@ -12,4 +12,4 @@ export const firebaseConfig = {
 export const RECAPTCHA_SITE_KEY = "6Le2wDMuAAAAANSUyebwEmxvOiSt5mbj0EwknS4N";
 
 /** The page that hands a fresh App Check token to the extension and the phone apps. */
-export const APPCHECK_BRIDGE_URL = "https://forget-me-hybrid.web.app/appcheck.html";
+export const APPCHECK_BRIDGE_URL = "https://forget-me-hybrid.web.app/appcheck";

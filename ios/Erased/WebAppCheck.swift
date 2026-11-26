@@ -5,7 +5,7 @@ import FirebaseCore
 import FirebaseAppCheck
 
 /// The page that hands a fresh App Check token to the apps (same as APPCHECK_BRIDGE_URL in src/ai/firebase-config.ts).
-let appCheckBridgeURL = URL(string: "https://forget-me-hybrid.web.app/appcheck.html")!
+let appCheckBridgeURL = URL(string: "https://forget-me-hybrid.web.app/appcheck")!
 
 /// App Check for a build installed without the App Store (so App Attest cannot vouch for it): a hidden web view opens
 /// the Erased website's /appcheck.html, which passes reCAPTCHA Enterprise and returns an App Check token for this

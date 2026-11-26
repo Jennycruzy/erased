@@ -49,8 +49,8 @@ nav.links { display: flex; gap: 4px; font-size: 14px; align-items: center; }
 nav.links a { text-decoration: none; color: var(--muted); padding: 7px 12px; border-radius: 9px; transition: color 0.2s, background 0.2s; }
 nav.links a:hover { color: var(--fg); background: var(--panel-2); }
 nav.links a.on { color: var(--fg); background: var(--panel-2); }
-nav.links a[href="/judge.html"] { color: var(--mint-ink); background: var(--mint); font-weight: 600; margin-left: 6px; }
-nav.links a[href="/judge.html"]:hover { background: #8af0d2; }
+nav.links a[href="/judge"] { color: var(--mint-ink); background: var(--mint); font-weight: 600; margin-left: 6px; }
+nav.links a[href="/judge"]:hover { background: #8af0d2; }
 
 /* Buttons */
 .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 12px; background: var(--mint); color: var(--mint-ink); text-decoration: none; font: inherit; font-weight: 600; border: 1px solid transparent; cursor: pointer;

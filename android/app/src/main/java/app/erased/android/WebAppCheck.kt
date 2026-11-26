@@ -18,7 +18,7 @@ import com.google.firebase.appcheck.AppCheckToken
 import org.json.JSONObject
 
 /** The page that hands a fresh App Check token to the apps (same as APPCHECK_BRIDGE_URL in src/ai/firebase-config.ts). */
-const val APPCHECK_BRIDGE_URL = "https://forget-me-hybrid.web.app/appcheck.html"
+const val APPCHECK_BRIDGE_URL = "https://forget-me-hybrid.web.app/appcheck"
 
 private class WebToken(private val token: String, private val expires: Long) : AppCheckToken() {
     override fun getToken() = token

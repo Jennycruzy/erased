@@ -3,9 +3,9 @@
 **Make every company you forgot forget you, and prove they did.**
 
 **Live:** [forget-me-hybrid.web.app](https://forget-me-hybrid.web.app) ·
-**Try it in 90 s:** [/judge](https://forget-me-hybrid.web.app/judge.html) ·
-**Live run:** [/run](https://forget-me-hybrid.web.app/run.html) ·
-**Evidence:** [/evidence](https://forget-me-hybrid.web.app/evidence.html) ·
+**Try it in 90 s:** [/judge](https://forget-me-hybrid.web.app/judge) ·
+**Live run:** [/run](https://forget-me-hybrid.web.app/run) ·
+**Evidence:** [/evidence](https://forget-me-hybrid.web.app/evidence) ·
 **Downloads:** [Chrome extension](https://github.com/Jennycruzy/erased/releases/latest/download/erased-extension.zip),
 [Android APK](https://github.com/Jennycruzy/erased/releases/latest/download/erased-android.apk)
 ([SHA-256](https://github.com/Jennycruzy/erased/releases/latest/download/SHA256SUMS.txt)), iPhone: [build it](#iphone)
@@ -51,10 +51,10 @@ Luxembourg authorities, erasure "requests account for around 19% of the total nu
 
 | Time | Open | Press | What you should see |
 |---|---|---|---|
-| 0:00 | [/judge](https://forget-me-hybrid.web.app/judge.html) in desktop Chrome | **Read all 10** | Ten real company replies read in **your** browser. Each row says who read it (**Gemini Nano on this computer**, or Gemini in the cloud if your Chrome has no Nano), what it found and the sentence it points at, the decision, and ✓ against our hand label. On our M1 Mac with Nano: 10 of 10, about 3 s each. |
+| 0:00 | [/judge](https://forget-me-hybrid.web.app/judge) in desktop Chrome | **Read all 10** | Ten real company replies read in **your** browser. Each row says who read it (**Gemini Nano on this computer**, or Gemini in the cloud if your Chrome has no Nano), what it found and the sentence it points at, the decision, and ✓ against our hand label. On our M1 Mac with Nano: 10 of 10, about 3 s each. |
 | 1:30 | Any row's answer card | **Copy the reply** / **Open it in Gmail** | The reply Erased writes for that company, with the law where it applies. Open *Your details*, pick another country and press **Read it** again: the legal line changes with the law. |
-| 2:00 | [/run](https://forget-me-hybrid.web.app/run.html) | scroll | The 30 real requests: who replied, how fast, every hoop with the company's own words, and the 7 still emailing after the request. |
-| 2:30 | [/evidence](https://forget-me-hybrid.web.app/evidence.html) | scroll | The measured accuracy on 66 hand-labelled replies, held-out results, and where every read ran. |
+| 2:00 | [/run](https://forget-me-hybrid.web.app/run) | scroll | The 30 real requests: who replied, how fast, every hoop with the company's own words, and the 7 still emailing after the request. |
+| 2:30 | [/evidence](https://forget-me-hybrid.web.app/evidence) | scroll | The measured accuracy on 66 hand-labelled replies, held-out results, and where every read ran. |
 
 **10 more minutes:** install the [extension](https://github.com/Jennycruzy/erased/releases/latest/download/erased-extension.zip) on
 your own Gmail, the [Android APK](https://github.com/Jennycruzy/erased/releases/latest/download/erased-android.apk) (tap *Try a real
@@ -81,7 +81,7 @@ On 20 Nov 2026 we sent 30 real deletion requests from a public demo inbox. Erase
   delete (1). Reply Coach named each step and wrote the answer; we sent them from the demo inbox.
 - **5 of the 10 companies whose own privacy page says to email them about your rights answered our email by
   telling us to sign in or use their form instead** (Airtable, Box, Figma, Loom, Slack); both sentences, from the
-  page and from the reply, are on the [live run](https://forget-me-hybrid.web.app/run.html#said).
+  page and from the reply, are on the [live run](https://forget-me-hybrid.web.app/run#said).
 - **Results so far:** Asana confirmed the account is deleted, Canva scheduled the deletion, and 5 companies
   (Kaggle, Spotify, SurveyMonkey, Typeform, Zoom) said they hold no account for the address.
 - **7 companies kept sending marketing or sign-up nudges after the request**: Codecademy, Grammarly, monday.com,
@@ -91,7 +91,7 @@ On 20 Nov 2026 we sent 30 real deletion requests from a public demo inbox. Erase
   Skillshare (a captcha on its deletion form) and Zapier (a fresh password check inside a short time window, even
   when you are already signed in).
 
-Every company, reply and quote is on the [live run](https://forget-me-hybrid.web.app/run.html).
+Every company, reply and quote is on the [live run](https://forget-me-hybrid.web.app/run).
 
 ## Why hybrid
 
