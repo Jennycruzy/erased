@@ -1,12 +1,60 @@
 # Erased
 
-**Your inbox already knows every company that holds your data. Erased reads it on your device, shows you who has
-your data and who was breached after you joined, asks them to delete it under the law where you live, and then
-proves whether they did, by watching what they send you next.**
+**Make every company you forgot forget you, and prove they did.**
 
-Built with [Firebase AI Logic](https://firebase.google.com/docs/ai-logic) hybrid inference on four platforms: a
-Chrome extension and a website (Gemini Nano), an Android app (Gemini Nano) and an iPhone app (Apple's on-device
-model), with Gemini in the cloud only for public pages, or for one email when you allow it.
+**Live:** [forget-me-hybrid.web.app](https://forget-me-hybrid.web.app) ·
+**Try it in 90 s:** [/judge](https://forget-me-hybrid.web.app/judge.html) ·
+**Live run:** [/run](https://forget-me-hybrid.web.app/run.html) ·
+**Evidence:** [/evidence](https://forget-me-hybrid.web.app/evidence.html) ·
+**Downloads:** [Chrome extension](https://github.com/Jennycruzy/erased/releases/latest/download/erased-extension.zip),
+[Android APK](https://github.com/Jennycruzy/erased/releases/latest/download/erased-android.apk)
+([SHA-256](https://github.com/Jennycruzy/erased/releases/latest/download/SHA256SUMS.txt)), iPhone: [build it](#iphone)
+
+Built with [Firebase AI Logic](https://firebase.google.com/docs/ai-logic) hybrid inference: Gemini Nano in Chrome
+and on Android, Apple's on-device model on iPhone, and Gemini in the cloud only for public pages, or for one email
+when you allow it.
+
+## The problem
+
+Every sign-up leaves a copy of you behind. One real inbox (the maker's, 8,771 emails, counted on the device from
+headers only on 19 Nov 2026) holds account emails from **845 companies**; **365** have not written in three years,
+and **4** were breached *after* the sign-up (Substack, LinkedIn, Crunchyroll, Vimeo). The public
+[Have I Been Pwned](https://haveibeenpwned.com/) catalogue lists **1,052 breaches and 17.9 billion breached
+accounts**.
+
+The law already says you can make them delete it: GDPR and UK GDPR Art 17, California's CCPA, Canada's PIPEDA,
+Nigeria's NDPA s.34. In practice three things stop people:
+
+1. **You don't know who has your data.** Nobody remembers 845 sign-ups, and tools that find them for you usually
+   want your whole inbox on their servers.
+2. **The request stalls.** When we sent 30 real requests, **19 of the 27 companies that answered asked for one
+   more step first**: sign in yourself, use our form, click a link, prove it's you, reply YES. Miss it and nothing
+   happens.
+3. **Nobody checks.** **3 companies kept sending marketing after the request** (Grammarly, Zapier, Codecademy;
+   Zapier again on 26 Nov). "Deleted" is a promise you can't see.
+
+## How Erased fixes it
+
+| Step | What Erased does | Where it runs |
+|---|---|---|
+| **Find** | Reads welcome, verify, password-reset and receipt emails in Gmail and lists every company you hold an account with, and when you joined. | **Gemini Nano on your computer** (`ONLY_ON_DEVICE`). Your mail never leaves it. |
+| **Flag** | Matches each company against the breach catalogue: red if it was breached after you joined, grey if it has been silent for 3+ years. | On your computer (bundled catalogue). |
+| **Ask** | Writes the legal deletion (or stop-marketing) letter for the law where you live, to the right privacy team from a public directory of 2,189 companies; Gmail opens it and you press Send. | Directory built once in the **cloud** from public privacy pages (Gemini, URL context); matched on your computer. |
+| **Coach** | Reads each reply, names the one step it asks for, quotes the sentence, and writes your answer, with the legal line that backs you. | **On the device** (Gemini Nano, or Apple's model on iPhone). Rules decide first. |
+| **Prove** | Keeps watching: marketing after the request turns the company red, with a "stop now" letter and a dated complaint pack. | On the device. |
+
+## Judges: 3 minutes, no install
+
+| Time | Open | Press | What you should see |
+|---|---|---|---|
+| 0:00 | [/judge](https://forget-me-hybrid.web.app/judge.html) in desktop Chrome | **Read all 10** | Ten real company replies read in **your** browser. Each row says who read it (**Gemini Nano on this computer**, or Gemini in the cloud if your Chrome has no Nano), what it found and the sentence it points at, the decision, and ✓ against our hand label. On our M1 Mac with Nano: 10 of 10, about 3 s each. |
+| 1:30 | Any row's answer card | **Copy the reply** / **Open it in Gmail** | The reply Erased writes for that company, with the law where it applies. Open *Your details*, pick another country and press **Read it** again: the legal line changes with the law. |
+| 2:00 | [/run](https://forget-me-hybrid.web.app/run.html) | scroll | The 30 real requests: who replied, how fast, every hoop with the company's own words, and the 3 still marketing after the request. |
+| 2:30 | [/evidence](https://forget-me-hybrid.web.app/evidence.html) | scroll | The measured accuracy on 66 hand-labelled replies, held-out results, and where every read ran. |
+
+**10 more minutes:** install the [extension](https://github.com/Jennycruzy/erased/releases/latest/download/erased-extension.zip) on
+your own Gmail, the [Android APK](https://github.com/Jennycruzy/erased/releases/latest/download/erased-android.apk) (tap *Try a real
+reply*), or build the [iPhone app](#iphone). Steps under [Run it](#run-it).
 
 ## What happened when we used it
 
@@ -15,24 +63,16 @@ On 20 Nov 2026 we sent 30 real deletion requests from a public demo inbox. Erase
 - **27 of 30 companies replied**, the median one within a minute.
 - **19 of them asked for one more step before deleting anything**: sign in and delete it yourself (9), use our
   form (4), click a check-it's-you link (3), prove the request comes from you (3), reply YES (2), say what to
-  delete (1). Miss the step and the request quietly stalls. Reply Coach names the step, quotes the sentence that
-  asks for it, and writes the answer, with the legal line where the law backs you.
+  delete (1). Reply Coach named each step and wrote the answer; we sent them from the demo inbox.
+- **Results so far:** Asana confirmed the account is deleted, Canva scheduled the deletion, and 4 companies
+  (Spotify, Kaggle, Typeform, Zoom) confirmed they hold no account for the address.
 - **3 companies kept sending marketing after the request**: Grammarly, Zapier and Codecademy. Erased caught each
   one and wrote the "stop now" email with the law that requires it (GDPR and UK GDPR Art 21(3), NDPA s.36).
+- **Some put a person-only check in front of deletion**: Medium (a "verify you are human" page before sign-in),
+  Skillshare (a captcha on its deletion form) and Zapier (a fresh password check inside a short time window, even
+  when you are already signed in).
 
-Every company, reply and quote is on the [live run](https://forget-me-hybrid.web.app/run.html), with who made
-deletion hard.
-
-## Judges: 90 seconds, no install
-
-1. Open **[forget-me-hybrid.web.app/judge.html](https://forget-me-hybrid.web.app/judge.html)** in desktop Chrome.
-2. Press **Read all 10**. Ten real company replies are read in your own browser, by Gemini Nano if your Chrome has
-   it, otherwise by Gemini in the cloud (a checkbox). Each shows what the model said and the sentence it pointed
-   at, what the known phrases said, the decision, whether it matches our hand label, what Nano said on our Mac,
-   and the reply Erased writes for you.
-3. Paste any reply of your own at the bottom.
-
-The full extension on your own Gmail, the Android APK and the iPhone app are under [Run it](#run-it).
+Every company, reply and quote is on the [live run](https://forget-me-hybrid.web.app/run.html).
 
 ## Why hybrid
 
@@ -149,7 +189,17 @@ it), and Erased reads it and shows the quickest lawful next step, with a ready r
 
 ## Run it
 
-Requirements: Chrome 139+ on desktop with the on-device model (Windows 10/11, macOS 13+, Linux or Chromebook
+**Chrome extension, no build:** download [erased-extension.zip](https://github.com/Jennycruzy/erased/releases/latest/download/erased-extension.zip)
+and unzip it. Open `chrome://extensions`, switch on **Developer mode**, choose **Load unpacked** and pick the
+`erased-extension` folder. Open Gmail, click the Erased icon, press **Get on-device AI ready** once (the first run
+downloads the model, which can take 20 minutes or more), then **Scan my inbox**.
+
+**Android:** download [erased-android.apk](https://github.com/Jennycruzy/erased/releases/latest/download/erased-android.apk) on the
+phone, allow installing from your browser, open **Erased** and tap a company under *Try a real reply*, then
+**Read it**. Gemini Nano is used on phones that support it (for example Pixel 9 and 10, Galaxy S25); on others, switch on
+the cloud option for that email.
+
+**From source.** Requirements: Chrome 139+ on desktop with the on-device model (Windows 10/11, macOS 13+, Linux or Chromebook
 Plus; a GPU with more than 4 GB VRAM, or 16 GB RAM and 4 CPU cores; 22 GB free disk).
 
 ```bash

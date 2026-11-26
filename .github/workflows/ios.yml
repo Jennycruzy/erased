@@ -32,8 +32,21 @@ jobs:
         working-directory: ios
         run: |
           set -o pipefail
-          xcodebuild test -project Erased.xcodeproj -scheme Erased -destination "id=${{ steps.sim.outputs.udid }}" \
+          xcodebuild test -skip-testing:ErasedUITests -parallel-testing-enabled NO -project Erased.xcodeproj -scheme Erased -destination "id=${{ steps.sim.outputs.udid }}" \
             -resultBundlePath build/tests.xcresult CODE_SIGNING_ALLOWED=NO | tail -120
+      - name: Recorded run of one real reply (UI test on the same simulator)
+        working-directory: ios
+        run: |
+          set -o pipefail
+          UDID=${{ steps.sim.outputs.udid }}
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl ui "$UDID" appearance light
+          xcrun simctl io "$UDID" recordVideo --codec=h264 --force demo.mp4 & REC=$!
+          sleep 2
+          xcodebuild test -project Erased.xcodeproj -scheme Erased -destination "id=$UDID" -only-testing:ErasedUITests \
+            -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO | tail -30
+          sleep 2; kill -INT $REC; wait $REC || true
       - name: Build app for the simulator
         working-directory: ios
         run: |
@@ -60,6 +73,7 @@ jobs:
           path: |
             ios/Erased-simulator.zip
             ios/screen-*.png
+            ios/demo.mp4
             ios/build/tests.xcresult
             ios/Erased.xcodeproj
           retention-days: 30

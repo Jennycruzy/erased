@@ -743,5 +743,19 @@
    "rules": "scheduled",
    "final": "scheduled"
   }
- ]
+ ],
+ "repeat": {
+  "ranAt": "2026-11-26T21:49:03.860Z",
+  "what": "Same 66 replies, same Mac, build of 26 Nov 2026",
+  "nanoAlone": "51/66",
+  "nanoQuoteFound": "66/66",
+  "onDevice": "66/66",
+  "medianMs": 3221,
+  "file": "evals/results-mac-26nov.json"
+ },
+ "judge": {
+  "ranAt": "2026-11-26T20:22:00Z",
+  "what": "Read all 10 on /judge in Chrome 158 on an Apple M1, cloud box off",
+  "result": "10/10 match the hand label \u00b7 10/10 read by Gemini Nano on the computer \u00b7 about 3 s each after a 28.5 s first call"
+ }
 }

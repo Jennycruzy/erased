@@ -49,9 +49,20 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         SWIFT_VERSION: "5.0"
         SWIFT_STRICT_CONCURRENCY: minimal
+  ErasedUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [ErasedUITests]
+    dependencies:
+      - target: Erased
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.0"
+        TEST_TARGET_NAME: Erased
 schemes:
   Erased:
     build:
-      targets: { Erased: all, ErasedTests: [test] }
+      targets: { Erased: all, ErasedTests: [test], ErasedUITests: [test] }
     test:
-      targets: [ErasedTests]
+      targets: [ErasedTests, ErasedUITests]

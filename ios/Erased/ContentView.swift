@@ -47,6 +47,8 @@ struct ContentView: View {
     @State private var cloudOk = false
     @State private var busy = false
     @State private var youOpen = false
+    /// Set when a read had to go past Apple's model: the device said "ready" but did not answer.
+    @State private var deviceDidNotAnswer = false
     @State private var result: (advice: Coach.Advice, read: Read?, found: Coach.Found)?
     @Environment(\.openURL) private var openURL
 
@@ -81,11 +83,11 @@ struct ContentView: View {
 
     private var top: some View {
         let s = Reader.status()
-        let ready = s == "ready"
+        let ready = s == "ready" && !deviceDidNotAnswer
         return HStack {
             Text("Erased").font(.system(size: 18, weight: .heavy))
             Spacer()
-            Pill(text: ready ? "Apple's on-device model" : "On-device model: \(s)", fg: ready ? .green : .amber, bg: ready ? .greenBg : .amberBg)
+            Pill(text: ready ? "Apple's on-device model" : deviceDidNotAnswer ? "On-device model didn't answer here" : "On-device model: \(s)", fg: ready ? .green : .amber, bg: ready ? .greenBg : .amberBg)
                 .accessibilityIdentifier("status")
         }
         .padding(.horizontal, 16).padding(.vertical, 14)
@@ -160,6 +162,7 @@ struct ContentView: View {
         let rules = coach.byRules(mailText)
         let read = await Reader(coach: coach).read(from: from, subject: subject, body: mailText, whereTo: cloudOk ? .cloudAllowed : .deviceOnly)
         let (found, _) = coach.decide(rules: rules, model: read.found)
+        if !read.onDevice && Reader.status() == "ready" { deviceDidNotAnswer = true }
         let domain = from.split(separator: "@").last.map(String.init) ?? ""
         let ref = subject.range(of: "\\bER-[A-Z0-9]{5}\\b", options: .regularExpression).map { String(subject[$0]) } ?? ""
         let fill = ["company": company.isEmpty ? "The company" : company, "email": email.isEmpty ? "my email address" : email, "name": name,

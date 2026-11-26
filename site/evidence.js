@@ -11,4 +11,6 @@ document.getElementById("acc").innerHTML = [
   ["All 66, Nano alone", `${ev.all66.nanoAlone} (quote found ${ev.all66.nanoQuoteFound})`],
   ["All 66, as shipped (" + ev.all66.shippedNote + ")", ev.all66.shipped],
   ["Where it ran", `${ev.all66.onDevice} on the device · median ${(ev.all66.medianMs / 1000).toFixed(1)} s · ${ev.device}`],
+  ...(ev.repeat ? [["Repeat, " + ev.repeat.ranAt.slice(0, 10) + " (" + ev.repeat.what + ")", `Nano alone ${ev.repeat.nanoAlone} · quote found ${ev.repeat.nanoQuoteFound} · ${ev.repeat.onDevice} on the device · median ${(ev.repeat.medianMs / 1000).toFixed(1)} s`]] : []),
+  ...(ev.judge ? [["Try it page, " + ev.judge.ranAt.slice(0, 10) + " (" + ev.judge.what + ")", ev.judge.result]] : []),
 ].map(([a, b]) => `<tr><td>${esc(a)}</td><td><b>${esc(b)}</b></td></tr>`).join("");
