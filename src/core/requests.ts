@@ -115,7 +115,10 @@ export function status(r: Request, now: number): Status {
     return { state: "confirmed", deadline, evidence: confirmed, reason: `Confirmed · ${days} day${days === 1 ? "" : "s"} clean${checkWaiting ? " · sign-in check running" : ""}.` };
   }
 
-  const refused = ev.find((e) => e.type === "reply" && e.reply === "refused");
+  // Reply Coach's reading wins over the first classifier: a reply that asks for a step (sign in, use our form, prove
+  // it's you) is not a refusal, and "we found no account" or "it is scheduled" asks nothing of you.
+  const asks = (e: RequestEvent) => (e.type === "reply" ? e.coach?.ask : undefined);
+  const refused = ev.find((e) => e.type === "reply" && e.reply === "refused" && (!asks(e) || asks(e) === "wait"));
   if (refused) {
     return { state: "complaint_ready", result: "REFUSED_WITH_REASON", deadline, evidence: refused, reason: `Refused on ${fmt(refused.at)}.` };
   }
@@ -143,7 +146,9 @@ export function status(r: Request, now: number): Status {
     return { state: "followed_up", deadline, reason: `Followed up on ${fmt(followUp.at)}.` };
   }
 
-  const needsId = ev.find((e) => e.type === "reply" && e.reply === "needs_id");
+  // A check-it's-you ask you have already answered (you replied, signed in, used the link) no longer waits on you.
+  const answered = (e: RequestEvent) => ev.some((x) => x.type === "step_done" && x.at >= e.at);
+  const needsId = ev.find((e) => e.type === "reply" && e.reply === "needs_id" && asks(e) !== "no_account" && asks(e) !== "scheduled" && !answered(e));
   if (needsId) {
     if (ev.some((e) => e.type === "user_skipped_id")) {
       return { state: "complaint_ready", result: "NEEDS_ID_USER_SKIPPED", deadline, reason: "You chose not to send the identity check they asked for." };

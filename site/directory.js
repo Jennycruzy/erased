@@ -1,7 +1,7 @@
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const d = await (await fetch("/directory.json")).json();
 const routes = d.entries.filter((e) => e.request_route !== "unknown" && e.request_route !== "none");
-document.getElementById("meta").textContent = `${d.count.toLocaleString()} companies checked, ${routes.length.toLocaleString()} with a deletion route. Updated ${new Date(d.generatedAt).toLocaleDateString()}.`;
+document.getElementById("meta").textContent = `${d.count.toLocaleString()} companies checked, ${routes.length.toLocaleString()} with a deletion route. Updated ${new Date(d.generatedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}.`;
 const label = { email: "Email", form: "Form", portal: "Portal", account_settings: "Account settings" };
 function render(q) {
   const rows = routes.filter((e) => !q || (e.company + " " + e.domain).toLowerCase().includes(q)).slice(0, 400);

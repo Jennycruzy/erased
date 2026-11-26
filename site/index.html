@@ -1,31 +1,133 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Erased</title><meta name="description" content="Find every company holding your data from your own inbox, ask them to delete it, and prove whether they did. Your mail is read on your device.">
-<link rel="stylesheet" href="/site.css"></head><body>
+<title>Erased · Make them forget you, and prove it</title>
+<meta name="description" content="Erased finds every company holding your data from your own inbox, on your own device, asks each one to delete it under the law where you live, and proves whether they did.">
+<meta name="theme-color" content="#08090d">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/site.css"><link rel="stylesheet" href="/home.css"></head><body>
 <header class="site"><div class="wrap"><a class="brand" href="/">Erased</a><nav class="links">
-<a href="/run.html">Live run</a>
-<a href="/directory.html">Directory</a><a href="/board.html">Who deletes</a><a href="/evidence.html">Evidence</a><a href="/judge.html">Try it</a></nav></div></header>
+<a href="/run.html">Live run</a><a href="/directory.html">Directory</a><a href="/run.html#hard">Who makes it hard</a><a href="/evidence.html">Evidence</a><a href="/judge.html">Try it</a></nav></div></header>
+
 <section class="hero"><div class="wrap">
-<h1>Your inbox remembers every company you forgot. Make them forget you, and prove they did.</h1>
-<p class="lead">Erased reads your account emails on your own computer, shows who holds your data and who was breached after you joined, sends legal deletion requests from your own Gmail, then watches what each company sends you next.</p>
-<a class="btn" href="/judge.html">Try it on your inbox</a> <a class="btn ghost" href="/evidence.html">See the evidence</a>
-<div class="stats">
-<div><div class="num">845</div><div class="cap">companies with account emails</div></div>
-<div><div class="num">13</div><div class="cap">on the public breach list</div></div>
-<div><div class="num red">4</div><div class="cap">breached after sign-up: Substack, LinkedIn, Crunchyroll, Vimeo</div></div>
-<div><div class="num">365</div><div class="cap">silent for 3+ years</div></div>
-</div>
-<p class="source">One real inbox (the maker's: 8,771 emails), counted in the browser on 19 Nov 2026 from email headers only. Nothing left the computer.</p>
+  <div>
+    <h1 class="reveal">Your inbox remembers every company you forgot. <span class="ink">Make them forget you.</span></h1>
+    <p class="lede reveal" style="--d:.08s">Erased reads your account emails on your own device, asks each company to delete your data under the law where you live, then keeps watching what they send you, so you know whether they really did.</p>
+    <div class="cta reveal" style="--d:.16s">
+      <a class="btn" href="/judge.html">Try it in 90 seconds <span class="arrow">→</span></a>
+      <a class="btn ghost" href="/run.html">See 30 real requests</a>
+    </div>
+    <div class="meta reveal" style="--d:.24s">
+      <span class="tag device">Gemini Nano on your device</span><span class="tag">Firebase AI Logic hybrid</span><span class="tag">Chrome · Android · iPhone</span>
+    </div>
+  </div>
+  <div class="console reveal" style="--d:.12s" aria-label="An inbox being scanned">
+    <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="tag device">Reading on this computer</span></div>
+    <div class="count"><span class="n mono" id="scan-n">0</span><span class="l">companies hold an account in one real inbox</span></div>
+    <div class="sub"><div class="red"><b id="scan-b">0</b>breached after sign-up</div><div><b id="scan-s">0</b>silent for 3+ years</div></div>
+    <ul id="scan-rows"></ul>
+  </div>
 </div></section>
-<section class="block"><div class="wrap"><h2>Why it needs both your device and the cloud</h2>
-<table><tr><th>Job</th><th>Where</th><th>Why</th></tr>
-<tr><td>Read your emails: real account? what did the company reply? is this marketing?</td><td><span class="tag device">Your device</span></td><td>The list of companies you use is private. Gemini Nano reads it on your computer; it is never uploaded.</td></tr>
-<tr><td>Read each company's privacy policy to find how to ask for deletion</td><td><span class="tag">Cloud</span></td><td>The pages are public and long, and the device can't browse the web. Built once, shared with everyone.</td></tr>
-<tr><td>Deadlines, verdicts, complaints</td><td><span class="tag">Plain rules</span></td><td>The AI only extracts facts, each with a quote found word for word in the email. The law decides.</td></tr>
-</table></div></section>
-<section class="block"><div class="wrap"><h2>From "they have my data" to proof</h2>
-<ol class="steps">
-<li><b>Scan.</b> Welcome, verify, password-reset and receipt emails reveal every account you hold and when you opened it.</li>
-<li><b>Flag.</b> Breaches that happened after you joined, from the public Have I Been Pwned catalogue, matched on your device.</li>
-<li><b>Ask.</b> A fixed legal letter (erase my data, or stop marketing and keep my account) opens in Gmail, addressed to the company's privacy team. You press Send.</li>
-<li><b>Prove.</b> A company that confirms and then stays quiet for 30 days is marked <b>Erased</b>. One that says "deleted" and then emails you a promotion is marked <b>Not erased</b>, with the complaint pack ready.</li>
-</ol></div></section><footer><div class="wrap">Erased reads your mail on your device with Gemini Nano through Firebase AI Logic. Breach data: <a href="https://haveibeenpwned.com/">Have I Been Pwned</a>. Apache-2.0.</div></footer></body></html>
+
+<section class="block problem"><div class="wrap">
+  <h2 class="reveal">The right to be deleted is the law. Getting it done isn't easy.</h2>
+  <p class="lede reveal">GDPR, UK GDPR, California's CCPA, Canada's PIPEDA and Nigeria's NDPA all say a company must erase your data when you ask. Almost nobody does: when 32 European regulators reviewed 764 organisations in 2025, most "had not received a single request for erasure in the last two years" (<a href="https://www.edpb.europa.eu/system/files/2026-02/edpb_cef-report_2025_right-to-erasure_en.pdf">EDPB, Feb 2026</a>, p. 11). Three things get in the way.</p>
+  <div class="nums">
+    <div class="card reveal" style="--d:0s">
+      <div class="big"><span data-count="845">0</span></div>
+      <h3>You don't know who has it</h3>
+      <p>One real inbox held account emails from 845 companies. Nobody remembers that many sign-ups, and the usual tools want your whole inbox on their servers to find them.</p>
+      <div class="src">The maker's inbox, 8,771 emails, counted on the device from headers only, 19 Nov 2026.</div>
+    </div>
+    <div class="card amber reveal" style="--d:.08s">
+      <div class="big"><span data-count="19">0</span><small>of 27</small></div>
+      <h3>The request stalls</h3>
+      <p>Of the companies that answered our 30 real requests, 19 wanted one more step first: sign in yourself, use our form, click a link, prove it's you, reply YES. Miss it and nothing happens.</p>
+      <div class="src"><a href="/run.html">The live run</a>: every reply, word for word.</div>
+    </div>
+    <div class="card red reveal" style="--d:.16s">
+      <div class="big"><span data-count="7">0</span><small>of 30</small></div>
+      <h3>Nobody checks</h3>
+      <p>Seven companies kept sending marketing or sign-up nudges after the request. "We've received your request" is a promise you can't see being kept.</p>
+      <div class="src">Codecademy, Grammarly, monday.com, Skillshare, Slack, Todoist, Zapier.</div>
+    </div>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <h2 class="reveal">How Erased fixes it</h2>
+  <p class="lede reveal">Five steps. The private ones run on your device; only public knowledge comes from the cloud. The model reads, plain rules decide.</p>
+  <div class="how">
+    <div class="sticky reveal">
+      <p class="muted">Your mail is read by Gemini Nano in Chrome, Gemini Nano on Android or Apple's on-device model on iPhone, all through Firebase AI Logic. A model's answer only counts when the sentence it points at is really in the email.</p>
+      <div style="margin-top:22px"><a class="btn ghost" href="/evidence.html">How accurate is it? <span class="arrow">→</span></a></div>
+    </div>
+    <div class="rail" id="rail"><div class="fill" id="rail-fill"></div>
+      <div class="step"><div class="k">01 · FIND</div><h3>Every company you hold an account with</h3>
+        <p>Welcome, verify, password-reset and receipt emails reveal each account and the day you opened it.</p>
+        <div class="where"><span class="tag device">On your device · ONLY_ON_DEVICE</span></div>
+        <div class="vis"><div class="ln"><span>A welcome email</span><span class="tag device">account</span></div><div class="ln"><span>A "verify your email" message</span><span class="tag device">account</span></div><div class="ln"><span>A password reset</span><span class="tag device">account</span></div><div class="ln"><span>A newsletter you never signed up for</span><span class="tag">not an account</span></div></div></div>
+      <div class="step"><div class="k">02 · FLAG</div><h3>Breached after you joined, or long forgotten</h3>
+        <p>Each company is checked against the public Have I Been Pwned catalogue of 1,052 breaches, on your device.</p>
+        <div class="where"><span class="tag red">Breached after you joined</span> <span class="tag">Silent 3+ years</span></div></div>
+      <div class="step"><div class="k">03 · ASK</div><h3>A legal letter, to the right inbox</h3>
+        <p>The deletion or stop-marketing letter for the law where you live, addressed to the privacy team from a public directory of 2,189 companies. Gmail opens it; you press Send.</p>
+        <div class="where"><span class="tag cloud">Directory built in the cloud from public pages</span> <span class="tag device">Matched on your device</span></div></div>
+      <div class="step"><div class="k">04 · COACH</div><h3>The one step their reply hides</h3>
+        <p>Erased names what the company wants, quotes the sentence that asks for it, and writes your answer.</p>
+        <div class="vis"><div class="quote">"Before I make any permanent changes, please confirm that you'd like your data to be deleted per GDPR."</div><div class="ans"><b>Substack wants a written yes.</b> <span class="muted">Reply ready: "YES. I AGREE…"</span></div></div></div>
+      <div class="step"><div class="k">05 · PROVE</div><h3>Then it keeps watching</h3>
+        <p>Marketing that arrives after the request turns the company red, with a "stop now" letter citing the law and a dated complaint pack.</p>
+        <div class="vis"><div class="tl"><span class="pt"></span><span class="seg"></span><span class="pt m"></span><span class="seg"></span><span class="pt r"></span></div><div class="tl-l"><span>20 Nov · request sent</span><span>reply: "received"</span><span>23 Nov · Zapier marketing</span></div></div></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <h2 class="reveal">Watch it read a real reply</h2>
+  <p class="lede reveal">Six real replies to our deletion requests. Pick one: Erased finds what it asks of you and writes the answer. This runs Erased's own rules in your browser; <a href="/judge.html">Try it</a> adds Gemini Nano.</p>
+  <div class="chips reveal" id="chips"></div>
+  <div class="coach-demo">
+    <div class="mailcard reveal"><div class="hd" id="mail-hd">Their reply<b>Pick a company above</b></div><div class="bd" id="mail-bd"></div></div>
+    <div class="coachcard reveal" id="coachcard"><p class="ph">Erased's answer appears here.</p></div>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <h2 class="reveal">30 real requests. Here's how each one is going.</h2>
+  <p class="lede reveal" id="wall-lede">Sent from a public demo inbox on 20 Nov 2026. Tap a company to see what it said. Five of them, whose own privacy page says "email us", answered our email with "sign in and do it yourself" or "use our form": <a href="/run.html#said">see both sentences</a>.</p>
+  <div class="legend reveal" id="legend"></div>
+  <div class="wall" id="wall"></div>
+  <div class="detail" id="detail"><span class="muted">Tap a company to see its reply, word for word.</span></div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <h2 class="reveal">Why it needs both your device and the cloud</h2>
+  <p class="lede reveal">Your list of companies is private, so it never leaves. Privacy pages are public and long, so the cloud reads them once for everyone.</p>
+  <div class="split reveal">
+    <div class="zone dev"><h3><span class="tag device">Your device</span></h3><ul>
+      <li>Reads your account emails and finds every company</li><li>Reads each company's reply and what it asks of you</li><li>Spots marketing after a request</li><li>Matches the breach catalogue and the directory</li></ul>
+      <div class="mailbits" aria-hidden="true"><i></i><i></i><i></i></div></div>
+    <div class="wire" aria-hidden="true">
+      <svg viewBox="0 0 190 200" preserveAspectRatio="none"><line x1="0" y1="80" x2="190" y2="80" stroke="rgba(255,255,255,.12)" stroke-dasharray="3 5"/><line x1="0" y1="120" x2="190" y2="120" stroke="rgba(255,255,255,.12)" stroke-dasharray="3 5"/>
+        <circle class="packet" cx="6" cy="80" r="4" fill="#86a8ff" style="--dx:178px"/><circle class="packet back" cx="184" cy="120" r="4" fill="#6ee7c2" style="--dx:-178px"/></svg>
+      <span class="lbl" style="top:52px">a company name →</span><span class="lbl" style="top:132px">← its deletion route</span></div>
+    <div class="zone cld"><h3><span class="tag cloud">Gemini in the cloud</span></h3><ul>
+      <li>Reads public privacy pages to find how each company takes deletion requests (URL context)</li><li>Keeps a route only if the proving sentence is on the page word for word</li><li>On a phone with no on-device model, reads one email only if you say yes</li></ul></div>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <h2 class="reveal">One Coach, four apps</h2>
+  <p class="lede reveal">The same rules, prompt and answers ship to every platform, and each one is checked against the same 66 hand-labelled replies.</p>
+  <div class="apps">
+    <div class="app reveal"><div class="shot"><img src="/img/panel.png" alt="The Erased side panel in Chrome" loading="lazy"></div><h3>Chrome extension</h3><p>Scans Gmail, sends the letters, watches every reply. Gemini Nano, on the device only.</p><a href="https://github.com/Jennycruzy/erased/releases/latest">Download →</a></div>
+    <div class="app reveal" style="--d:.06s"><div class="shot"><img src="/img/judge.png" alt="The Try it page reading ten replies" loading="lazy"></div><h3>Website</h3><p>Ten real replies read in your own Chrome, each checked against our hand label. No install.</p><a href="/judge.html">Try it →</a></div>
+    <div class="app reveal" style="--d:.12s"><div class="shot"><img src="/img/android.png" alt="The Erased Android app" loading="lazy"></div><h3>Android</h3><p>Share a reply from Gmail. Gemini Nano through ML Kit; the cloud reads one email only if you allow it.</p><a href="https://github.com/Jennycruzy/erased/releases/latest">Get the APK →</a></div>
+    <div class="app reveal" style="--d:.18s"><div class="shot"><img src="/img/iphone.png" alt="The Erased iPhone app" loading="lazy"></div><h3>iPhone</h3><p>Apple's on-device model through Firebase AI Logic, with Gemini as a fallback you choose.</p><a href="https://github.com/Jennycruzy/erased#iphone">Build it →</a></div>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <div class="band reveal"><h2>See it read ten real replies in your own browser.</h2><div class="cta"><a class="btn" href="/judge.html">Try it in 90 seconds <span class="arrow">→</span></a><a class="btn ghost" href="/evidence.html">The evidence</a></div></div>
+</div></section>
+
+<footer><div class="wrap">Erased reads your mail on your device with Gemini Nano through Firebase AI Logic. Breach data: <a href="https://haveibeenpwned.com/">Have I Been Pwned</a>. <a href="https://github.com/Jennycruzy/erased">Source</a>, Apache-2.0.</div></footer>
+<script type="module" src="/home.js"></script></body></html>

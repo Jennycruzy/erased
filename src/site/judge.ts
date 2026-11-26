@@ -16,7 +16,8 @@ import type { StoredRequest } from "../core/store";
 import replies from "../../evals/replies.json";
 import macRun from "../../site/evals.json";
 
-const CLOUD_MODEL = "gemini-3.5-flash-lite";
+/** Cloud models in order. Free-tier limits are counted per model, so a second model answers when the first is spent. */
+const CLOUD_MODELS = ["gemini-3.5-flash-lite", "gemini-3.5-flash"];
 /** One reply for each kind of ask, including two where Nano alone was wrong on our Mac and the rules were right. */
 const PRACTICE = [2, 3, 23, 4, 19, 25, 50, 66, 59, 1];
 
@@ -44,16 +45,15 @@ const onDeviceParams = {
   createOptions: { expectedInputs: [{ type: "text", languages: ["en"] }], expectedOutputs: [{ type: "text", languages: ["en"] }] },
   promptOptions: { responseConstraint: ASK_SCHEMA },
 };
-const models: Record<"device" | "hybrid", GenerativeModel> = {
-  // What the extension uses for your own mail: the computer's model or nothing.
-  device: getGenerativeModel(ai, { mode: InferenceMode.ONLY_ON_DEVICE, onDeviceParams } as never),
-  // Practice emails are public, so here the cloud may step in when this Chrome has no Gemini Nano.
-  hybrid: getGenerativeModel(ai, {
-    mode: InferenceMode.PREFER_ON_DEVICE,
-    onDeviceParams,
-    inCloudParams: { model: CLOUD_MODEL, generationConfig: { responseMimeType: "application/json", responseJsonSchema: ASK_SCHEMA } },
-  } as never),
-};
+// What the extension uses for your own mail: the computer's model or nothing.
+const deviceModel: GenerativeModel = getGenerativeModel(ai, { mode: InferenceMode.ONLY_ON_DEVICE, onDeviceParams } as never);
+// Practice emails are public, so here the cloud may step in when this Chrome has no Gemini Nano.
+const hybridModels: GenerativeModel[] = CLOUD_MODELS.map((model) => getGenerativeModel(ai, {
+  mode: InferenceMode.PREFER_ON_DEVICE,
+  onDeviceParams,
+  inCloudParams: { model, generationConfig: { responseMimeType: "application/json", responseJsonSchema: ASK_SCHEMA } },
+} as never));
+const busy = (e: unknown) => /\b429\b|quota|RESOURCE_EXHAUSTED|\b503\b|overloaded/i.test(String((e as Error)?.message ?? e));
 
 type LMApi = { availability: (o?: object) => Promise<string>; create: (o?: object) => Promise<{ destroy: () => void }> };
 const LM = () => (self as unknown as { LanguageModel?: LMApi }).LanguageModel;
@@ -72,7 +72,8 @@ async function showStatus() {
     downloading: "Gemini Nano is downloading", unavailable: "No Gemini Nano in this browser",
   };
   pill.textContent = words[s] ?? `Gemini Nano: ${s}`;
-  pill.className = "tag " + (s === "available" ? "device" : s === "unavailable" ? "" : "amber");
+  pill.className = "tag " + (s === "available" ? "device" : "amber");
+  $("appcheck").className = "tag " + (RECAPTCHA_SITE_KEY ? "device" : "");
   $("get").hidden = !(s === "downloadable" || s === "downloading");
   $("appcheck").textContent = RECAPTCHA_SITE_KEY ? "App Check: reCAPTCHA Enterprise" : "App Check: off on this page";
   if (s === "unavailable" && !$<HTMLInputElement>("cloud").checked) $("hint").textContent = "This browser cannot run Gemini Nano. Switch on the cloud option above to read the practice emails with Gemini in the cloud.";
@@ -106,13 +107,24 @@ async function read(from: string, subject: string, text: string) {
   const t0 = performance.now();
   let model: Ask | null = null, quote = "", where = "rules only", error = "";
   try {
-    const r = await (useCloud ? models.hybrid : models.device).generateContent(`${ASK_PROMPT}\n\nFrom: ${from}\nSubject: ${subject}\n\n${numbered(sents)}`);
+    const prompt = `${ASK_PROMPT}\n\nFrom: ${from}\nSubject: ${subject}\n\n${numbered(sents)}`;
+    let r;
+    if (!useCloud) r = await deviceModel.generateContent(prompt);
+    else {
+      // Try each cloud model in turn when one is out of its free daily allowance.
+      for (const [i, m] of hybridModels.entries()) {
+        try { r = await m.generateContent(prompt); break; }
+        catch (e) { if (!busy(e) || i === hybridModels.length - 1) throw e; }
+      }
+    }
+    if (!r) throw new Error("no answer");
     const raw = JSON.parse(r.response.text()) as { ask?: string; proof?: unknown };
     model = ASKS.includes(raw.ask as Ask) ? (raw.ask as Ask) : null;
     quote = pick(sents, raw.proof);
     where = r.response.inferenceSource === "on_device" ? "Gemini Nano on this computer" : r.response.inferenceSource === "in_cloud" ? "Gemini in the cloud" : String(r.response.inferenceSource ?? "unknown");
   } catch (e) {
-    error = (e as Error).message;
+    // Say it plainly: the known phrases still answer, and Gemini Nano in Chrome needs no cloud at all.
+    error = busy(e) ? "Gemini in the cloud has reached its free limit for now, so the known phrases answered this one. With Gemini Nano in Chrome nothing goes to the cloud." : (e as Error).message;
   }
   const ms = Math.round(performance.now() - t0);
   const rules = askByRules(text);
@@ -151,7 +163,7 @@ async function runOne(rep: Reply | null) {
   const text = rep?.text ?? $<HTMLTextAreaElement>("ptext").value;
   if (!text.trim()) return;
   const out = $(pasted ? "presult" : "result");
-  out.innerHTML = `<p class="muted">Reading…</p>`;
+  out.innerHTML = `<p class="reading">Reading${$<HTMLInputElement>("cloud").checked ? "" : " on this computer"}…</p>`;
   const r = await read(from, subject, text);
   const at = rep ? Date.parse(rep.receivedAt) : Date.now();
   const a = adviceFor(company, from, subject, text, r.final, r.finalQuote, at);
@@ -159,7 +171,7 @@ async function runOne(rep: Reply | null) {
   const ok = rep ? (r.final === rep.label ? `<span class="tag device">matches our hand label</span>` : `<span class="tag red">our hand label: ${ASK_WORDS[rep.label]}</span>`) : "";
   out.innerHTML = `
     <div class="pills"><span class="tag ${r.where.includes("Nano") ? "device" : ""}">${esc(r.where)}${r.ms ? ` · ${r.ms} ms` : ""}</span>${ok}</div>
-    ${r.error ? `<p class="q">Model: ${esc(r.error.slice(0, 220))}</p>` : ""}
+    ${r.error ? `<p class="q">${esc(r.error.slice(0, 260))}</p>` : ""}
     <table class="mini"><tr><th>Who</th><th>Says they ask you to</th><th>Shown by</th></tr>
       <tr><td>Model</td><td>${r.model ? ASK_WORDS[r.model] : "–"}</td><td class="q">${r.quote ? "“" + esc(r.quote) + "”" : ""}</td></tr>
       <tr><td>Known phrases</td><td>${ASK_WORDS[r.rules.ask]}</td><td class="q">${r.rules.quote ? "“" + esc(r.rules.quote) + "”" : ""}</td></tr>
@@ -172,7 +184,23 @@ async function runOne(rep: Reply | null) {
   if (rep) markInbox(rep.id, r.final === rep.label);
 }
 
+function renderScore() {
+  const lab = runs.filter((r) => r.label);
+  if (!lab.length) return;
+  const set = (id: string, v: string, good: boolean) => { const el = $(id); if (el.textContent !== v) { el.textContent = v; el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); } el.classList.toggle("good", good); };
+  const right = lab.filter((r) => r.label === r.final).length;
+  const dev = runs.filter((r) => r.where.includes("Nano")).length;
+  const ms = runs.map((r) => r.ms).filter(Boolean).sort((a, b) => a - b);
+  set("sc-right", `${right} / ${lab.length}`, right === lab.length);
+  const cloud = runs.filter((r) => r.where.includes("cloud")).length;
+  const onCloud = dev === 0 && cloud > 0;
+  set("sc-dev", `${onCloud ? cloud : dev} / ${runs.length}`, dev === runs.length);
+  ($("sc-dev").nextElementSibling as HTMLElement).textContent = onCloud ? "read by Gemini in the cloud (no Gemini Nano in this browser)" : "read by Gemini Nano on this computer";
+  set("sc-ms", ms.length ? `${(ms[Math.floor(ms.length / 2)] / 1000).toFixed(1)} s` : "–", false);
+}
+
 function renderRuns() {
+  renderScore();
   const right = runs.filter((r) => r.label).length;
   $("runs").innerHTML = runs.length ? `<table class="cards"><thead><tr><th>Reply</th><th>Read by</th><th>Time</th><th>Model said</th><th>Decision</th><th>Hand label</th></tr></thead><tbody>${runs.map((r) => `<tr>
     <td data-label="Reply">${esc(r.company)}${r.id === "yours" ? " (yours)" : ""}</td><td data-label="Read by">${esc(r.where)}</td><td data-label="Time">${r.ms} ms</td>

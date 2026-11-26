@@ -8,7 +8,7 @@ import { lawFor, type RequestKind } from "../core/laws";
 import { morningCard } from "../core/morning";
 import { status } from "../core/requests";
 import { chromeKV, newRequest, Store, type StoredRequest } from "../core/store";
-import { buildFollowUp, buildRequest, composeUrl, newRef } from "../core/templates";
+import { buildFollowUp, buildRequest, composeUrl, letterLanguage, newRef } from "../core/templates";
 import { DAY } from "../core/time";
 import { deviceTargets, safetyScore, summarise, type Company, type Sighting } from "../core/trail";
 import { companyReplies, isResetMail, marketingEvent, mentionsCompany, replyEvent, sentEvent, watchQueries, type MailRow } from "../core/watch";
@@ -82,7 +82,15 @@ async function loadDirectory() {
 // ---------- Trail ----------
 function recompute() {
   const now = Date.now();
-  companies = [...sightings].map(([d, s]) => summarise(d, s, breaches.get(d) ?? [], now));
+  if (sightings.size) companies = [...sightings].map(([d, s]) => summarise(d, s, breaches.get(d) ?? [], now));
+  else {
+    // No scan in this session (the panel was reopened): keep the restored companies and apply the newest breach list.
+    companies = companies.map((c) => {
+      const bs = breaches.get(c.domain) ?? [];
+      const joined = c.signedUp ?? c.firstSeen;
+      return { ...c, breaches: bs, breachedAfterJoining: bs.filter((b) => Date.parse(b.date) > joined) };
+    });
+  }
   companies.sort((a, b) => b.breachedAfterJoining.length - a.breachedAfterJoining.length || Number(b.stale) - Number(a.stale) || b.emails - a.emails);
   $("count").textContent = companies.length.toLocaleString();
   $("score").textContent = companies.length ? String(safetyScore(companies)) : "–";
@@ -187,37 +195,42 @@ async function scan() {
     const rows = await search(ACCOUNT_SEARCH, 200, (r, page) => { addRows(r); $("progress").textContent = `Reading page ${page}…`; });
     $("progress").textContent = `${rows.length.toLocaleString()} account emails read`;
     await saveTrail();
-    // Phase 2: read one email per company on this device; an account counts only with a sentence found in the email.
-    if (deviceReady) {
-      const m = privateModel(fb().ai, ACCOUNT_SCHEMA);
-      // Second round: a company whose first email proved nothing gets its next-best email read.
-      let n = 0;
-      const tried = new Set<Sighting>();
-      for (let round = 0; round < 2 && n < DEVICE_READS_PER_SCAN; round++) {
-      const targets = deviceTargets(sightings, companies, DEVICE_READS_PER_SCAN - n, tried);
-      for (const t of targets) {
-        n++;
-        tried.add(t.sighting);
-        $("progress").textContent = `Reading ${n} on this device: ${t.domain}…`;
-        const text = await threadText(t.sighting.threadId!, t.sighting.from);
-        if (!text) continue;
-        const r = await readAccountEmail(m, t.sighting.from ?? "", t.sighting.subject ?? "", text).catch(() => null);
-        if (!r) continue;
-        t.sighting.device = { isAccount: !!r.value.is_account, quote: r.value.quote, quoteOk: r.quoteOk };
-        if (n % 10 === 0) recompute();
-      }
-      recompute();
-      }
-      await saveTrail();
-      const proven = companies.filter((c) => c.account === "confirmed").length;
-      $("progress").textContent = `${rows.length.toLocaleString()} account emails read · ${proven} accounts proven on this device`;
-    }
+    // Phase 2 runs now if Gemini Nano is ready, or by itself as soon as the download finishes.
+    if (deviceReady) await proveOnDevice(rows.length);
+    else $("progress").textContent = `${companies.length} companies found from ${rows.length.toLocaleString()} account emails (headers only). Press "Get on-device AI ready": Gemini Nano then proves each one on this computer.`;
     await chromeKV.set("lastScan", Date.now());
   } catch (e) {
     $("progress").textContent = String((e as Error).message);
   } finally {
     $<HTMLButtonElement>("scan").disabled = false;
   }
+}
+
+/** Phase 2: read one email per company on this device; an account counts only with a sentence found in the email. */
+async function proveOnDevice(emailsRead: number) {
+  if (!sightings.size) return;
+  const m = privateModel(fb().ai, ACCOUNT_SCHEMA);
+  // Second round: a company whose first email proved nothing gets its next-best email read.
+  let n = 0;
+  const tried = new Set<Sighting>();
+  for (let round = 0; round < 2 && n < DEVICE_READS_PER_SCAN; round++) {
+    const targets = deviceTargets(sightings, companies, DEVICE_READS_PER_SCAN - n, tried);
+    for (const t of targets) {
+      n++;
+      tried.add(t.sighting);
+      $("progress").textContent = `Reading ${n} on this device: ${t.domain}…`;
+      const text = await threadText(t.sighting.threadId!, t.sighting.from);
+      if (!text) continue;
+      const r = await readAccountEmail(m, t.sighting.from ?? "", t.sighting.subject ?? "", text).catch(() => null);
+      if (!r) continue;
+      t.sighting.device = { isAccount: !!r.value.is_account, quote: r.value.quote, quoteOk: r.quoteOk };
+      if (n % 10 === 0) recompute();
+    }
+    recompute();
+  }
+  await saveTrail();
+  const proven = companies.filter((c) => c.account === "confirmed").length;
+  $("progress").textContent = `${emailsRead.toLocaleString()} account emails read · ${proven} accounts proven on this device`;
 }
 
 /** Company records only (no email text); the proof sentence stays in this browser. */
@@ -286,7 +299,8 @@ function cleanRow(c: Company): HTMLLIElement {
       look.disabled = true;
       look.textContent = "Reading their privacy page…";
       try {
-        const e = await lookupRoute(fb().ai, c.domain);
+        // Free-tier limits count per model: when the first is spent, the second reads the page.
+        const e = await lookupRoute(fb().ai, c.domain).catch((err) => (/\b429\b|quota|RESOURCE_EXHAUSTED/i.test(String(err?.message ?? err)) ? lookupRoute(fb().ai, c.domain, "gemini-3.5-flash") : Promise.reject(err)));
         directory.set(c.domain, e);
         const extra = ((await chromeKV.get("lookups")) as DirectoryEntry[] | undefined) ?? [];
         await chromeKV.set("lookups", [...extra.filter((x) => x.domain !== c.domain), e]);
@@ -313,7 +327,7 @@ async function writeRequest(c: Company, dir: DirectoryEntry) {
   const r = newRequest({ id: `${c.domain}:${ref}`, ref, domain: c.domain, company: dir.company || c.domain, kind, law: law.id, route: dir.request_route,
     to: dir.dsar_email, formUrl: dir.form_url, accountEmail: s.accountEmail, now });
   await store.upsert(r);
-  const letter = buildRequest({ kind, law: law.id, company: r.company, fullName: s.fullName, accountEmail: s.accountEmail, ref, sentAt: now });
+  const letter = buildRequest({ kind, law: law.id, company: r.company, fullName: s.fullName, accountEmail: s.accountEmail, ref, sentAt: now, lang: letterLanguage(s.region, law.id) });
   if (dir.dsar_email) {
     await chrome.tabs.create({ url: composeUrl(dir.dsar_email, letter.subject, letter.body) });
   } else {
@@ -368,7 +382,7 @@ async function renderWatch() {
       const again = el("button", "", "Open the request again");
       again.onclick = async () => {
         const st = await store.settings();
-        const letter = buildRequest({ kind: r.kind, law: r.law, company: r.company, fullName: st.fullName, accountEmail: r.accountEmail, ref: r.ref, sentAt: r.createdAt });
+        const letter = buildRequest({ kind: r.kind, law: r.law, company: r.company, fullName: st.fullName, accountEmail: r.accountEmail, ref: r.ref, sentAt: r.createdAt, lang: letterLanguage(st.region, r.law) });
         await chrome.tabs.create({ url: r.to ? composeUrl(r.to, letter.subject, letter.body) : (r.formUrl ?? `https://${r.domain}/privacy`) });
       };
       acts.append(again);
@@ -589,7 +603,14 @@ async function renderMorning() {
   const card = morningCard(reqs, Date.now(), last);
   const box = $("morning");
   box.hidden = !card.lines.length;
-  box.replaceChildren(...card.lines.map((l) => el("div", "", l)));
+  const SHOW = 4;
+  const rows: HTMLElement[] = card.lines.map((l, i) => { const d = el("div", "", l); if (i >= SHOW) d.hidden = true; return d; });
+  if (card.lines.length > SHOW) {
+    const more = el("button", "morning-more", `Show all ${card.lines.length}`) as HTMLButtonElement;
+    more.onclick = () => { rows.forEach((d) => (d.hidden = false)); more.remove(); };
+    rows.push(more);
+  }
+  box.replaceChildren(...rows);
   await chromeKV.set("lastSeenMorning", Date.now());
   await chrome.action.setBadgeText({ text: "" });
 }
@@ -610,6 +631,8 @@ async function getReady() {
   const pill = $("ai-status");
   await model.initializeDeviceModel((p) => { pill.textContent = `Downloading on-device AI ${Math.round(p * 100)}%`; });
   await deviceStatus();
+  // A scan made before the model was ready gets proven now, without scanning again.
+  if (deviceReady && sightings.size) await proveOnDevice([...sightings.values()].reduce((n, l) => n + l.length, 0));
 }
 
 // ---------- Settings and tabs ----------

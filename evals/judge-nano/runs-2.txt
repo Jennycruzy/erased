@@ -1,0 +1,15 @@
+Read all 10 on https://forget-me-hybrid.web.app/judge.html, cloud box off, 2026-11-26T22:27:42.917Z, 53 s
+
+Reply	Read by	Time	Model said	Decision	Hand label
+Substack	Gemini Nano on this computer	2482 ms	nothing yet: wait	nothing yet: wait (rules)	✓ nothing yet: wait
+Notion	Gemini Nano on this computer	2702 ms	say what to delete	say what to delete (rules)	✓ say what to delete
+Canva	Gemini Nano on this computer	3274 ms	already scheduled	already scheduled (rules)	✓ already scheduled
+Asana	Gemini Nano on this computer	2524 ms	click a check-it's-you link	click a check-it's-you link (rules)	✓ click a check-it's-you link
+Slack	Gemini Nano on this computer	2612 ms	use their form	use their form (rules)	✓ use their form
+Spotify	Gemini Nano on this computer	2984 ms	no account found	no account found (rules)	✓ no account found
+Medium	Gemini Nano on this computer	3583 ms	sign in and delete it	sign in and delete it (rules)	✓ sign in and delete it
+Vimeo	Gemini Nano on this computer	2734 ms	nothing yet: wait	confirm it's really you (rules)	✓ confirm it's really you
+Medium	Gemini Nano on this computer	4089 ms	sign in and delete it	confirm it's really you (rules)	✓ confirm it's really you
+Substack	Gemini Nano on this computer	24608 ms	reply YES	reply YES (rules)	✓ reply YES
+
+10 of 10 practice reads match the hand label.

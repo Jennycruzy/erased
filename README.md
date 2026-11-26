@@ -23,7 +23,11 @@ and **4** were breached *after* the sign-up (Substack, LinkedIn, Crunchyroll, Vi
 accounts**.
 
 The law already says you can make them delete it: GDPR and UK GDPR Art 17, California's CCPA, Canada's PIPEDA,
-Nigeria's NDPA s.34. In practice three things stop people:
+Nigeria's NDPA s.34. Almost nobody uses it. In 2025, 32 European data protection authorities reviewed how 764
+organisations handle erasure, and found that "the majority of the enquired controllers had not received a single
+request for erasure in the last two years"; where people do ask, it often ends with the regulator: at the Dutch and
+Luxembourg authorities, erasure "requests account for around 19% of the total number of complaints received"
+([EDPB, Feb 2026](https://www.edpb.europa.eu/system/files/2026-02/edpb_cef-report_2025_right-to-erasure_en.pdf), pp. 11 and 24). Three things stop people:
 
 1. **You don't know who has your data.** Nobody remembers 845 sign-ups, and tools that find them for you usually
    want your whole inbox on their servers.
@@ -39,9 +43,9 @@ Nigeria's NDPA s.34. In practice three things stop people:
 |---|---|---|
 | **Find** | Reads welcome, verify, password-reset and receipt emails in Gmail and lists every company you hold an account with, and when you joined. | **Gemini Nano on your computer** (`ONLY_ON_DEVICE`). Your mail never leaves it. |
 | **Flag** | Matches each company against the breach catalogue: red if it was breached after you joined, grey if it has been silent for 3+ years. | On your computer (bundled catalogue). |
-| **Ask** | Writes the legal deletion (or stop-marketing) letter for the law where you live, to the right privacy team from a public directory of 2,189 companies; Gmail opens it and you press Send. | Directory built once in the **cloud** from public privacy pages (Gemini, URL context); matched on your computer. |
+| **Ask** | Writes the legal deletion (or stop-marketing) letter for the law where you live (for GDPR countries in Spanish, French or German where that is your language), to the right privacy team from a public directory of 2,189 companies; Gmail opens it and you press Send. | Directory built once in the **cloud** from public privacy pages (Gemini, URL context); matched on your computer. |
 | **Coach** | Reads each reply, names the one step it asks for, quotes the sentence, and writes your answer, with the legal line that backs you. | **On the device** (Gemini Nano, or Apple's model on iPhone). Rules decide first. |
-| **Prove** | Keeps watching: marketing after the request turns the company red, with a "stop now" letter and a dated complaint pack. | On the device. |
+| **Prove** | Keeps watching: marketing after the request turns the company red, with a "stop now" letter and a dated complaint pack addressed to the right regulator (ICO, CNIL, the Irish DPC, the Dutch AP, the Garante, the AEPD, the CPPA, Canada's OPC or Nigeria's NDPC), with a link to its complaint page. | On the device. |
 
 ## Judges: 3 minutes, no install
 
@@ -56,6 +60,17 @@ Nigeria's NDPA s.34. In practice three things stop people:
 your own Gmail, the [Android APK](https://github.com/Jennycruzy/erased/releases/latest/download/erased-android.apk) (tap *Try a real
 reply*), or build the [iPhone app](#iphone). Steps under [Run it](#run-it).
 
+## What you see
+
+| | |
+|---|---|
+| ![The Erased home page: a live inbox scan, 845 companies in one real inbox, breached after sign-up in red](docs/img/home.png) | ![The Try it page on Gemini Nano in Chrome on an Apple M1: 10 of 10 right, 10 of 10 read on the computer, 3.0 s median](docs/img/judge-nano.png) |
+| **Home.** One real inbox, counted on the device: 845 companies, 4 breached after sign-up. | **Try it, on Gemini Nano** (Chrome 158, Apple M1, cloud box off): 10/10 right, 10/10 read on the computer, 3.0 s median. |
+| ![Reply Coach on a real Substack reply: the sentence that asks for a step is highlighted, and the written YES is ready](docs/img/coach.png) | ![The Erased side panel in Chrome after scanning the demo inbox: 27 companies, and the companies still sending marketing listed first](docs/img/extension.png) |
+| **Reply Coach** on Substack's real reply: the sentence that asks for a step, and the answer it writes. | **The extension** after scanning the demo inbox: 27 companies; what needs you first. |
+| ![The Erased Android app](docs/img/android.png) | ![The Erased iPhone app](docs/img/iphone.png) |
+| **Android** (Firebase Test Lab virtual phone, recorded run). | **iPhone** (simulator, CI). |
+
 ## What happened when we used it
 
 On 20 Nov 2026 we sent 30 real deletion requests from a public demo inbox. Erased read every reply on the device:
@@ -64,6 +79,9 @@ On 20 Nov 2026 we sent 30 real deletion requests from a public demo inbox. Erase
 - **19 of them asked for one more step before deleting anything**: sign in and delete it yourself (9), use our
   form (4), click a check-it's-you link (3), prove the request comes from you (3), reply YES (2), say what to
   delete (1). Reply Coach named each step and wrote the answer; we sent them from the demo inbox.
+- **5 of the 10 companies whose own privacy page says to email them about your rights answered our email by
+  telling us to sign in or use their form instead** (Airtable, Box, Figma, Loom, Slack); both sentences, from the
+  page and from the reply, are on the [live run](https://forget-me-hybrid.web.app/run.html#said).
 - **Results so far:** Asana confirmed the account is deleted, Canva scheduled the deletion, and 5 companies
   (Kaggle, Spotify, SurveyMonkey, Typeform, Zoom) said they hold no account for the address.
 - **7 companies kept sending marketing or sign-up nudges after the request**: Codecademy, Grammarly, monday.com,

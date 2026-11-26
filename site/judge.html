@@ -1,11 +1,11 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Try it · Erased</title><meta name="description" content="Try Erased's Reply Coach on real company replies to deletion requests, in your own Chrome, with no Gmail and no install.">
-<link rel="stylesheet" href="/site.css"></head><body>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/site.css"><meta name="theme-color" content="#08090d"></head><body>
 <header class="site"><div class="wrap"><a class="brand" href="/">Erased</a><nav class="links">
 <a href="/run.html">Live run</a>
-<a href="/directory.html">Directory</a><a href="/board.html">Who deletes</a><a href="/evidence.html">Evidence</a><a href="/judge.html" class="on">Try it</a></nav></div></header>
+<a href="/directory.html">Directory</a><a href="/run.html#hard">Who makes it hard</a><a href="/evidence.html">Evidence</a><a href="/judge.html" class="on">Try it</a></nav></div></header>
 
-<section class="block"><div class="wrap">
+<section class="block" style="padding-top:56px"><div class="wrap">
 <h2>Try Reply Coach in 90 seconds</h2>
 <p class="muted">When you ask a company to delete your data, its reply often hides one small step: reply YES, prove it's you, use a form. Miss it and the request quietly dies. Below are ten real replies to deletion requests sent from our public demo inbox. Pick one and press <b>Read it</b>: your Chrome reads it and Erased tells you the one thing to do, with the reply already written. No Gmail, no install.</p>
 <div class="pills status"><span id="nano" class="tag">Checking Gemini Nano…</span><span id="appcheck" class="tag"></span>
@@ -16,10 +16,12 @@
 <div class="row"><input id="name" class="search" placeholder="Your name"><input id="email" class="search" placeholder="Account email (default ada@example.com)">
 <select id="law" class="search"><option value="gdpr">EU (GDPR)</option><option value="uk_gdpr">UK (UK GDPR)</option><option value="ccpa">California (CCPA)</option><option value="pipeda">Canada (PIPEDA)</option><option value="ndpa">Nigeria (NDPA 2023)</option><option value="policy">Anywhere else</option></select></div>
 </details>
-</div></section>
-
-<section class="block"><div class="wrap">
-<div class="judge">
+<div class="score" id="score" aria-live="polite">
+  <div><b class="mono" id="sc-right">–</b><span>right, against our hand labels</span></div>
+  <div><b class="mono" id="sc-dev">–</b><span>read by Gemini Nano on this computer</span></div>
+  <div><b class="mono" id="sc-ms">–</b><span>median time per reply</span></div>
+</div>
+<div class="judge" style="margin-top:28px">
 <div><h3 class="side">Practice inbox <button id="all" class="btn small ghost">Read all 10</button></h3><ul id="inbox" class="inbox"></ul></div>
 <div><div id="mailview" class="emailbox"></div><button id="read" class="btn">Read it</button><div id="result" class="result"></div></div>
 </div>

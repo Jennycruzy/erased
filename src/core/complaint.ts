@@ -1,4 +1,5 @@
 import { LAWS } from "./laws";
+import { regulatorFor } from "./regulators";
 import { status, type RequestEvent } from "./requests";
 import type { StoredRequest } from "./store";
 
@@ -20,8 +21,9 @@ function describe(e: RequestEvent): string {
 }
 
 /** A printable complaint pack, built on the device from the request's own record. */
-export function complaintHtml(r: StoredRequest, fullName: string, now: number): string {
+export function complaintHtml(r: StoredRequest, fullName: string, now: number, region = ""): string {
   const law = LAWS[r.law];
+  const reg = regulatorFor(r.law, region);
   const s = status(r, now);
   const events = [...r.events].sort((a, b) => a.at - b.at);
   const what = r.kind === "delete" ? `erasure of my personal data (${law.deleteArticle})` : `an end to direct marketing (${law.objectArticle})`;
@@ -31,6 +33,7 @@ export function complaintHtml(r: StoredRequest, fullName: string, now: number): 
 <button onclick="print()">Save as PDF</button>
 <h1>Complaint about ${esc(r.company)} (${esc(r.domain)})</h1>
 <p>To: ${esc(law.complaintTo)}</p>
+${reg ? `<div class="box"><b>Send it to ${esc(reg.name)}.</b> Save this page as a PDF, then attach it on their page: <a href="${esc(reg.url)}">${esc(reg.how)}</a>.</div>` : ""}
 <div class="box"><b>Summary.</b> On ${day(events.find((e) => e.type === "sent")?.at ?? r.createdAt)} I asked ${esc(r.company)} for ${esc(what)} under ${esc(law.name)}.
 ${esc(s.reason)} The law required a response within ${esc(law.deadlineText)}.</div>
 <p><b>Complainant:</b> ${esc(fullName || "(your name)")}, account email ${esc(r.accountEmail)}. <b>Reference:</b> ${esc(r.ref)}.</p>

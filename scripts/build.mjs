@@ -14,5 +14,7 @@ await build({ ...common, entryPoints: ["src/panel/complaint-page.ts"], outfile: 
 cpSync("public", "dist", { recursive: true });
 // The hosted /judge page (site/judge.js), built from the extension's own Reply Coach code.
 await build({ ...common, entryPoints: ["src/site/judge.ts"], outfile: "site/judge.js", format: "esm" });
+// The home page's demo, counters and wall of real requests.
+await build({ ...common, entryPoints: ["src/site/home.ts"], outfile: "site/home.js", format: "esm" });
 // App Check tokens for the extension and the phone apps (they cannot run reCAPTCHA themselves).
 await build({ ...common, entryPoints: ["src/site/appcheck.ts"], outfile: "site/appcheck.js", format: "esm" });

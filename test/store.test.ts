@@ -61,3 +61,36 @@ describe("complaint pack", () => {
     expect(h).not.toContain("<script>");
   });
 });
+
+describe("morning card follows Reply Coach", () => {
+  const reply = (at: number, reply: "needs_id" | "refused" | "ack", ask: import("../src/core/coach").Ask) => ({ type: "reply" as const, at, reply, quote: "q", coach: { ask, askQuote: "q", by: "rules" as const, from: "privacy@x.com", subject: "s", text: "", links: [] } });
+  const req = (company: string, ev: ReturnType<typeof reply>) => ({ ...newRequest({ id: company, ...base, company, now: d("2026-11-20") }), events: [{ type: "sent" as const, at: d("2026-11-20") }, ev] });
+  it("says no account, not confirm it's you", () => {
+    const c = morningCard([req("Kaggle", reply(d("2026-11-21"), "needs_id", "no_account"))], d("2026-11-26"), d("2026-11-25"));
+    expect(c.lines[0]).toBe("Kaggle found no account under your address. Nothing to delete.");
+    expect(c.badge).toBe(0);
+  });
+  it("treats a third-party-services reply as a step, not a refusal", () => {
+    const c = morningCard([req("Medium", reply(d("2026-11-21"), "refused", "confirm_sender"))], d("2026-11-26"), d("2026-11-25"));
+    expect(c.lines[0]).toBe("Medium wants to know the request really comes from you.");
+    expect(c.lines.join(" ")).not.toContain("complaint");
+  });
+  it("still calls a real refusal a refusal", () => {
+    const c = morningCard([req("Acme", reply(d("2026-11-21"), "refused", "wait"))], d("2026-11-26"), d("2026-11-25"));
+    expect(c.lines[0]).toBe("Acme: complaint pack ready.");
+  });
+});
+
+describe("morning card: newest reply by date, and answered steps", () => {
+  const reply = (at: number, reply: "needs_id" | "refused" | "other", ask: import("../src/core/coach").Ask) => ({ type: "reply" as const, at, reply, quote: "q", coach: { ask, askQuote: "q", by: "rules" as const, from: "p@x.com", subject: "s", text: "", links: [] } });
+  it("uses the newest reply even when an older one is stored last", () => {
+    const r = { ...newRequest({ id: "a", ...base, company: "Airtable", now: d("2026-11-20") }), events: [{ type: "sent" as const, at: d("2026-11-20") }, reply(d("2026-11-24"), "other", "log_in_delete"), reply(d("2026-11-20"), "refused", "wait")] };
+    expect(morningCard([r], d("2026-11-26"), d("2026-11-25")).lines[0]).toBe("Airtable wants you to sign in and delete the account yourself.");
+  });
+  it("says it is their turn once you have answered", () => {
+    const r = { ...newRequest({ id: "s", ...base, company: "Substack", now: d("2026-11-20") }), events: [{ type: "sent" as const, at: d("2026-11-20") }, reply(d("2026-11-20"), "needs_id", "go_ahead"), { type: "step_done" as const, at: d("2026-11-26"), ask: "go_ahead" as const }] };
+    const c = morningCard([r], d("2026-11-26"), d("2026-11-25"));
+    expect(c.lines[0]).toBe("Substack has your answer. Nothing to do until they reply.");
+    expect(c.badge).toBe(0);
+  });
+});

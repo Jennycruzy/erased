@@ -8,7 +8,7 @@ const r = reqs.find((x) => x.id === id);
 if (!r) {
   document.body.textContent = "Request not found.";
 } else {
-  const html = complaintHtml(r, s.fullName, Date.now());
+  const html = complaintHtml(r, s.fullName, Date.now(), s.region);
   const doc = new DOMParser().parseFromString(html, "text/html");
   document.title = doc.title;
   doc.querySelectorAll("button").forEach((b) => b.removeAttribute("onclick"));

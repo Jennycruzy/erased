@@ -86,3 +86,4 @@ input:not([type]), input[type="text"] { font: inherit; padding: 8px; border: 1px
 .coach-by.late { color: var(--red); }
 .coach-wait { font-size: 12px; color: var(--muted); }
 .coach .row-actions { margin-top: 8px; }
+.morning-more { margin-top: 6px; padding: 4px 10px; font-size: 12px; border-radius: 999px; }

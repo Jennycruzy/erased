@@ -1,0 +1,57 @@
+{
+ "generatedAt": "2026-11-26T22:56:54.796Z",
+ "rule": "Their privacy page offers email for privacy requests; after we emailed, their reply sent us to sign in or to their form instead.",
+ "checked": 10,
+ "rows": [
+  {
+   "company": "Airtable",
+   "domain": "airtable.com",
+   "page": "https://www.airtable.com/company/privacy",
+   "pageQuote": "To submit a request to exercise your access, deletion, correction privacy rights or to appeal a refusal to take action on a request, please email us at privacy@airtable.com with the subject line “Privacy Rights Request” and let us know in which state you live, or complete this form .",
+   "pageEmail": "privacy@airtable.com",
+   "told": "Sign in and delete it yourself",
+   "toldQuote": "For Deleting Your Airtable Account: If you have an active Airtable account, you must initiate the deletion yourself by:",
+   "toldAt": 1795542180000
+  },
+  {
+   "company": "Box",
+   "domain": "box.com",
+   "page": "https://www.box.com/legal/privacypolicy",
+   "pageQuote": "You may update, correct, or delete your personal information at any time by logging into your account and modifying your personal information or by emailing us at privacy@box.com.",
+   "pageEmail": "privacy@box.com",
+   "told": "Sign in and delete it yourself",
+   "toldQuote": "Visit: https://app.box.com/account and sign into your personal Box account.",
+   "toldAt": 1795195980000
+  },
+  {
+   "company": "Slack",
+   "domain": "slack.com",
+   "page": "https://slack.com/intl/en-ie/trust/privacy/privacy-policy",
+   "pageQuote": "California consumers may make a request pursuant to their rights under the CCPA by contacting us at privacy@slack.com or by filling in this form .",
+   "pageEmail": "privacy@slack.com",
+   "told": "Use our form instead",
+   "toldQuote": "To allow us to respond to your request, please complete our Privacy Form where you will be able to provide all the relevant information required in order to properly action your request (such as your country and/or state of residence) and v",
+   "toldAt": 1795194900000
+  },
+  {
+   "company": "Figma",
+   "domain": "figma.com",
+   "page": "https://www.figma.com/legal/privacy/",
+   "pageQuote": "If you have any questions about this Privacy Policy or our privacy practices, or if you wish to submit a request to exercise your rights as detailed in this Privacy Policy, please contact us at:",
+   "pageEmail": "privacy@figma.com",
+   "told": "Sign in and delete it yourself",
+   "toldQuote": "You can delete your Figma account (and thus your personal data processed by Figma) by following the instructions here: How to Delete Your Figma Account ( https://help.figma.com/hc/en- us/articles/360039826814- Delete-your-Figma-account ).",
+   "toldAt": 1795194720000
+  },
+  {
+   "company": "Loom",
+   "domain": "loom.com",
+   "page": "https://www.atlassian.com/legal/privacy-policy",
+   "pageQuote": "If you have questions or concerns about how your information is handled, or if you wish to exercise your rights, please direct your inquiry to Atlassian Pty Ltd, which we have appointed to be responsible for facilitating such inquiries:",
+   "pageEmail": "privacy@atlassian.com",
+   "told": "Sign in and delete it yourself",
+   "toldQuote": "Once that's done, the following steps can only be completed by you directly for security purposes.",
+   "toldAt": 1795398240000
+  }
+ ]
+}

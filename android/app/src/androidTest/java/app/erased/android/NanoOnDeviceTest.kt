@@ -34,6 +34,13 @@ class NanoOnDeviceTest {
     private val testCtx = InstrumentationRegistry.getInstrumentation().context
     private val out = File(ctx.getExternalFilesDir(null), "nano").apply { mkdirs() }
     private fun log(line: String) { Log.i(TAG, line); File(out, "log.txt").appendText(line + "\n") }
+    private val args = InstrumentationRegistry.getArguments()
+    /** Saves what the phone shows right now (pulled from Test Lab with the logs). */
+    private fun shot(name: String) {
+        val bmp = InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot() ?: return
+        File(out, "$name.png").outputStream().use { bmp.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }
+        log("screenshot: $name.png")
+    }
 
     private fun name(s: OnDeviceModelStatus) = when (s) {
         OnDeviceModelStatus.AVAILABLE -> "AVAILABLE"; OnDeviceModelStatus.DOWNLOADABLE -> "DOWNLOADABLE"
@@ -64,6 +71,7 @@ class NanoOnDeviceTest {
 
     @Test
     fun b_readsOneReplyOnScreen() = DebugAppCheckTestHelper.fromInstrumentationArgs().withDebugProvider<Throwable> {
+        compose.waitForIdle(); Thread.sleep(1500); shot("01-start")
         if (!ready()) { log("screen: Nano not available on this phone, switching on the cloud fallback"); compose.onNode(isToggleable()).performScrollTo().performClick() }
         compose.onNodeWithText("Company").performTextInput("Substack")
         compose.onNodeWithText("Their email address").performTextInput("privacy@substackinc.com")
@@ -75,13 +83,18 @@ class NanoOnDeviceTest {
         val where = compose.onAllNodes(hasText("Read ", substring = true) and !hasText("Read it")).fetchSemanticsNodes()
             .flatMap { n -> n.config.getOrElseNullable(androidx.compose.ui.semantics.SemanticsProperties.Text) { null }?.map { it.text } ?: emptyList() }
         log("screen: ${where.joinToString(" | ")}")
-        Thread.sleep(4000) // keep the answer on screen for the recording
+        // Hide the keyboard and show the answer card for the recording and the screenshot.
+        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("input keyevent 111").close()
+        compose.onAllNodes(hasText("Read ", substring = true) and !hasText("Read it")).onFirst().performScrollTo()
+        Thread.sleep(2500); shot("02-answer")
+        Thread.sleep(5000)
     }
 
     @Test
     fun c_readsEveryLabelledReply() = DebugAppCheckTestHelper.fromInstrumentationArgs().withDebugProvider<Throwable> { runBlocking {
         // With Gemini Nano: on-device only. Without it: the hybrid setting the app uses when you allow the cloud.
         val where = if (ready()) Where.DEVICE_ONLY else Where.CLOUD_ALLOWED
+        if (args.getString("erasedScreensOnly") == "1") { log("eval: skipped (screens only)"); return@runBlocking }
         log("eval: mode=$where")
         val coach = Coach(ctx.assets.open("coach.json").bufferedReader().readText())
         val reader = Reader(coach)
