@@ -28,12 +28,13 @@ jobs:
         with: { gradle-version: "9.9.2" }
       - name: Test and build
         working-directory: android
-        run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug
+        run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: erased-android
           path: |
             android/app/build/outputs/apk/debug/*.apk
+            android/app/build/outputs/apk/androidTest/debug/*.apk
             android/app/build/reports/tests/
           retention-days: 30

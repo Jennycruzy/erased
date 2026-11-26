@@ -12,3 +12,7 @@ if (existsSync("src/panel/m0.ts")) await build({ ...common, entryPoints: ["src/p
 await build({ ...common, entryPoints: ["src/panel/eval.ts"], outfile: "dist/eval.js", format: "esm" });
 await build({ ...common, entryPoints: ["src/panel/complaint-page.ts"], outfile: "dist/complaint.js", format: "esm" });
 cpSync("public", "dist", { recursive: true });
+// The hosted /judge page (site/judge.js), built from the extension's own Reply Coach code.
+await build({ ...common, entryPoints: ["src/site/judge.ts"], outfile: "site/judge.js", format: "esm" });
+// App Check tokens for the extension and the phone apps (they cannot run reCAPTCHA themselves).
+await build({ ...common, entryPoints: ["src/site/appcheck.ts"], outfile: "site/appcheck.js", format: "esm" });

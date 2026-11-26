@@ -1,0 +1,65 @@
+name: iOS
+
+# Builds the iPhone app (Firebase AI Logic hybrid: Apple's on-device Foundation Model first, Gemini only if
+# you allow it) and checks that it reads replies exactly like the extension (same hand labels).
+
+on:
+  push:
+    paths: ["ios/**", "android/app/src/main/assets/coach.json", "evals/**", ".github/workflows/ios.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.6.app && xcodebuild -version
+      - name: Project
+        working-directory: ios
+        run: brew install xcodegen && xcodegen
+      - name: Simulator
+        id: sim
+        run: |
+          xcrun simctl list devices available
+          UDID=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in d.items() if 'iOS-26' in k for x in v if x['name'].startswith('iPhone')))")
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+      - name: Test
+        working-directory: ios
+        run: |
+          set -o pipefail
+          xcodebuild test -project Erased.xcodeproj -scheme Erased -destination "id=${{ steps.sim.outputs.udid }}" \
+            -resultBundlePath build/tests.xcresult CODE_SIGNING_ALLOWED=NO | tail -120
+      - name: Build app for the simulator
+        working-directory: ios
+        run: |
+          set -o pipefail
+          xcodebuild build -project Erased.xcodeproj -scheme Erased -sdk iphonesimulator -configuration Debug \
+            -derivedDataPath build/dd CODE_SIGNING_ALLOWED=NO | tail -40
+          cd build/dd/Build/Products/Debug-iphonesimulator && zip -qr ../../../../../Erased-simulator.zip Erased.app
+      - name: Screenshots (light and dark)
+        working-directory: ios
+        run: |
+          UDID=${{ steps.sim.outputs.udid }}
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl install "$UDID" build/dd/Build/Products/Debug-iphonesimulator/Erased.app
+          for mode in light dark; do
+            xcrun simctl ui "$UDID" appearance $mode
+            xcrun simctl launch --terminate-running-process "$UDID" app.erased.ios
+            sleep 8
+            xcrun simctl io "$UDID" screenshot "screen-$mode.png"
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erased-ios
+          path: |
+            ios/Erased-simulator.zip
+            ios/screen-*.png
+            ios/build/tests.xcresult
+            ios/Erased.xcodeproj
+          retention-days: 30

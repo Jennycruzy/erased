@@ -689,5 +689,55 @@
     }
    }
   }
- }
+ },
+ "samples": [
+  {
+   "id": 2,
+   "company": "Substack",
+   "from": "privacy@substackinc.com",
+   "subject": "Request to delete my personal data [ER-GGJBD]",
+   "text": "##- Please type your reply above this line -##\n\nHi there,\n\n[agent] from Substack Standards & Enforcement here. Thanks for writing in!\n\nBefore I make any permanent changes, please confirm that you'd like your data to be deleted per GDPR and I'll be more than happy to complete your request.\n\nThanks for your patience!\n\n[agent] @ Substack\n\n[60LDP3-027P2]",
+   "label": "go_ahead"
+  },
+  {
+   "id": 3,
+   "company": "Medium",
+   "from": "privacy@medium.zendesk.com",
+   "subject": "Our subject access request process is self-service",
+   "text": "Hello,\nThanks for writing in.\nOur subject access request and account deletion process is self-service. For security and verification reasons, we are unable to process requests made by third-party services.\nTo access your personal data\nAll you need to do is sign into your account, which you can do using your email address or linked social media account if you have one. Then follow these instructions to download your personal data from the settings page.\nTo delete your personal data\nDeletion can be performed by the user from the Settings page, following these instructions.\nTo delete your account yourself, you can use your email address to sign in to Medium and delete the Medium account following the steps below.\nOn the web, go to your Settings page and click Delete account at the bottom of the page.\nIn the app, go to the You (👤) tab and tap Settings > Account > Delete account.\nPlease be aware that this deletion is permanent , and any stories, drafts, notes, recommends, and publication relationships you have on the account will be gone forever.\nShould you wish to have Medium delete the account on your behalf, for verification reasons we require the request to be made directly by the user, from the email address on file. To protect the security of your account, we will not accept deletion requests made by parties other than the account holder directly.\nFor reference, our Privacy Policy, including a EU data protection statement, is accessible here:\nMedium Privacy Policy\nOur Help Center also has some supplemental information at the link below:\nData Protection FAQ for European Users\nThanks,\nThe Medium Support Team\n\nSent by Medium\n·\n3500 South DuPont Highway , Suite IQ-101, Dover, DE 19901\n\nHelp center\n·\nPrivacy policy\n\n[MWPKX7-2YYD1]",
+   "label": "confirm_sender"
+  },
+  {
+   "id": 50,
+   "company": "Asana",
+   "from": "noreply@privacy-central.securiti.ai",
+   "subject": "DSR Request received. Verify your email to process request.",
+   "text": "Hi erased demo , Thank you for submitting the following data subject rights requests: Erasure Request In order to verify your identity we ask that you use the email verification link in this email. After confirming your identity we will process your inquiry promptly and respond within the legal time limits. Confirm Email Please do not hesitate to contact us if you have any further questions. For security purposes, the above link will expire in 1 day(s). With kind regards Asana",
+   "label": "verify_link"
+  },
+  {
+   "id": 25,
+   "company": "Slack",
+   "from": "noreply-privacy@salesforce.com",
+   "subject": "Salesforce Privacy Request",
+   "text": "Dear erased,\n\nWe are writing with regards to your request regarding your personal data. To allow us to respond to your request, please complete our Privacy Form where you will be able to provide all the relevant information required in order to properly action your request (such as your country and/or state of residence) and verify your identity. You will also be able to specify which Salesforce products you want to include in your request (such as Slack, Tableau, Heroku, etc.).\n\nIf you would like to unsubscribe to marketing from Salesforce, you can unsubscribe here and you can opt out of marketing communications via our online form .\n\nBest regards,\n\nSalesforce Privacy",
+   "label": "use_form"
+  },
+  {
+   "id": 66,
+   "company": "Canva",
+   "from": "no-reply@account.canva.com",
+   "subject": "Your Canva account will be deleted in 14 days",
+   "text": "You’ve got 14 days to restore your account\n\nYour Canva account is scheduled to be deleted\n\nWe've received a request to delete your Canva account. Your account is scheduled to be permanently deleted in 14 days, and you will also lose access to Affinity.\n\nOnce your account is deleted, you will lose:\n\nAccess to Canva and all products by Canva\n\nAll created designs, templates, folders, uploaded media and designs in Canva\n\nAny teams that you created\n\nApps that you created\n\nRestoring your account\n\nLog in to your account within 14 days to restore it. Please note you need an active Canva account to continue using Affinity.\n\nNot sure why you're getting this email?\n\nIf you think there's been a mistake, contact support .\n\nThank you for using Canva.\n\nYou're receiving this email because you have a Canva account. This email is not a marketing or promotional email. That is why this email does not contain an unsubscribe link. You will receive this email even if you have unsubscribed from Canva's marketing emails.\n\nCanva Pty Ltd, 110 Kippax St, NSW 2010, Australia\n\nABN 80 158 929 938 | Privacy Policy",
+   "label": "scheduled"
+  },
+  {
+   "id": 19,
+   "company": "Spotify",
+   "from": "support@spotify.com",
+   "subject": "Spotify Support [ thread::jp62FnxYeDSKOK7HXMatpx4:: ]",
+   "text": "Hello,\n\nThanks for your message. We understand you want ti erase your account's information.\n\nWe don't see an account linked to the email address you are contacting us from.\n\nTo check, send us a message from the email address linked to your account and we'll help you to erase your information.\n\n[agent],\n\nSpotify Customer Support\n\nDid you know we have an extensive help section on our website ?\n\nOur support team will never ask for your password, full credit or debit card details, or CVV. In some cases, we may require certain payment information to help with your request.\n\nThis e-mail (including any attachments) may contain information that is confidential and/or privileged. It is intended only for the recipient(s). If you have reason to believe that you are not the intended recipient of this e-mail, please contact the sender immediately and delete the e-mail from your device.",
+   "label": "no_account"
+  }
+ ]
 }

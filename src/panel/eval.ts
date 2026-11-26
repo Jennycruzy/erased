@@ -21,7 +21,7 @@ async function run() {
   out.started = new Date().toISOString();
   out.availability = String(await LM()?.availability(opts).catch((e) => "error: " + e) ?? "no LanguageModel");
   show();
-  const { ai } = firebase({ debugToken: localStorage.getItem("appcheckDebug") || true });
+  const { ai } = firebase({ debugToken: localStorage.getItem("appcheckDebug") || undefined });
   const m = privateModel(ai, ASK_SCHEMA);
   for (const it of set as Item[]) {
     const rules = askByRules(it.text).ask;

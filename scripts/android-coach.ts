@@ -6,6 +6,10 @@ import { ASKS, coach, RULE_SOURCES, NO_STEP } from "../src/core/coach";
 import { ASK_PROMPT } from "../src/ai/models";
 import type { LawId } from "../src/core/laws";
 import type { StoredRequest } from "../src/core/store";
+import replies from "../evals/replies.json";
+
+/** Real replies a judge can try on the phone in one tap (same set as the website's /judge page). */
+const SAMPLE_IDS = [2, 3, 50, 25, 66, 19];
 
 const LAWS: LawId[] = ["gdpr", "uk_gdpr", "ccpa", "pipeda", "ndpa", "policy"];
 const req = (law: LawId): StoredRequest => ({
@@ -28,6 +32,8 @@ const out = {
   rules: RULE_SOURCES,
   prompt: ASK_PROMPT,
   advice,
+  samples: SAMPLE_IDS.map((id) => (replies as Array<{ id: number; company: string; from: string; subject: string; text: string; label: string }>).find((r) => r.id === id)!)
+    .map(({ id, company, from, subject, text, label }) => ({ id, company, from, subject, text, label })),
 };
 mkdirSync("android/app/src/main/assets", { recursive: true });
 writeFileSync("android/app/src/main/assets/coach.json", JSON.stringify(out, null, 1));

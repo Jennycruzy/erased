@@ -17,7 +17,10 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    // The on-device test reads the same hand-labelled replies as every other check.
+    sourceSets["androidTest"].assets.srcDir("../../evals")
     buildFeatures { compose = true }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -43,4 +46,12 @@ dependencies {
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.json:json:20250517")
+
+    androidTestImplementation(platform("androidx.compose:compose-bom:2026.11.01"))
+    androidTestImplementation("androidx.test:runner:1.7.0")
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
+    androidTestImplementation("com.google.firebase:firebase-appcheck-debug-testing:20.1.0")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }

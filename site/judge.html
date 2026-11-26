@@ -1,15 +1,46 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Try it · Erased</title><meta name="description" content="Find every company holding your data from your own inbox, ask them to delete it, and prove whether they did. Your mail is read on your device.">
+<title>Try it · Erased</title><meta name="description" content="Try Erased's Reply Coach on real company replies to deletion requests, in your own Chrome, with no Gmail and no install.">
 <link rel="stylesheet" href="/site.css"></head><body>
 <header class="site"><div class="wrap"><a class="brand" href="/">Erased</a><nav class="links">
 <a href="/run.html">Live run</a>
 <a href="/directory.html">Directory</a><a href="/board.html">Who deletes</a><a href="/evidence.html">Evidence</a><a href="/judge.html" class="on">Try it</a></nav></div></header>
-<section class="block"><div class="wrap"><h2>Try it on your own inbox</h2>
+
+<section class="block"><div class="wrap">
+<h2>Try Reply Coach in 90 seconds</h2>
+<p class="muted">When you ask a company to delete your data, its reply often hides one small step: reply YES, prove it's you, use a form. Miss it and the request quietly dies. Below are ten real replies to deletion requests sent from our public demo inbox. Pick one and press <b>Read it</b>: your Chrome reads it and Erased tells you the one thing to do, with the reply already written. No Gmail, no install.</p>
+<div class="pills status"><span id="nano" class="tag">Checking Gemini Nano…</span><span id="appcheck" class="tag"></span>
+<button id="get" class="btn small" hidden>Get Gemini Nano ready</button></div>
+<label class="check"><input type="checkbox" id="cloud" checked> If this browser has no Gemini Nano, let Gemini in the cloud read these practice emails (Firebase AI Logic, prefer on-device). In the extension your own mail is read only on your computer.</label>
+<p id="hint" class="q"></p>
+<details class="you"><summary>Your details for the written reply (optional)</summary>
+<div class="row"><input id="name" class="search" placeholder="Your name"><input id="email" class="search" placeholder="Account email (default ada@example.com)">
+<select id="law" class="search"><option value="gdpr">EU (GDPR)</option><option value="uk_gdpr">UK (UK GDPR)</option><option value="ccpa">California (CCPA)</option><option value="pipeda">Canada (PIPEDA)</option><option value="ndpa">Nigeria (NDPA 2023)</option><option value="policy">Anywhere else</option></select></div>
+</details>
+</div></section>
+
+<section class="block"><div class="wrap">
+<div class="judge">
+<div><h3 class="side">Practice inbox <button id="all" class="btn small ghost">Read all 10</button></h3><ul id="inbox" class="inbox"></ul></div>
+<div><div id="mailview" class="emailbox"></div><button id="read" class="btn">Read it</button><div id="result" class="result"></div></div>
+</div>
+</div></section>
+
+<section class="block"><div class="wrap"><h2>What you've read</h2><div id="runs"></div>
+<p class="q">The full 66-reply check is on the <a href="/evidence.html">evidence page</a>: Gemini Nano alone 52 of 66 on an M1 Mac, rules first then Nano 66 of 66 (the rules were written after reading these replies), and 21 of 29 on replies that arrived after the rules were frozen.</p></div></section>
+
+<section class="block"><div class="wrap"><h2>Paste a reply of your own</h2>
+<div class="row"><input id="pcompany" class="search" placeholder="Company"><input id="pfrom" class="search" placeholder="Their email address"></div>
+<textarea id="ptext" class="search" rows="7" placeholder="Paste the company's reply here"></textarea>
+<button id="pread" class="btn">Read it</button><div id="presult" class="result"></div></div></section>
+
+<section class="block"><div class="wrap"><h2>The whole thing on your own inbox</h2>
 <ol class="steps">
 <li>Use Chrome 139+ on a desktop that can run Gemini Nano (a GPU with more than 4 GB of memory, or 16 GB RAM and 4 cores; 22 GB free disk).</li>
 <li>Download the extension, open <code>chrome://extensions</code>, switch on Developer mode, choose <b>Load unpacked</b> and pick the folder.</li>
 <li>Open Gmail, click the Erased icon, press <b>Get on-device AI ready</b> once, then <b>Scan my inbox</b>. Your number appears as the scan runs.</li>
 <li>Open <b>Clean up</b> to see companies breached after you joined and ones you no longer use, each with the route from the <a href="/directory.html">directory</a>.</li>
 </ol>
-<p class="muted">Your emails are read in your browser by the on-device model. The only things that leave are: the name of a company you ask Erased to look up, and, if you switch it on, anonymous outcome counts for the board.</p>
-</div></section><footer><div class="wrap">Erased reads your mail on your device with Gemini Nano through Firebase AI Logic. Breach data: <a href="https://haveibeenpwned.com/">Have I Been Pwned</a>. Apache-2.0.</div></footer></body></html>
+<p class="muted">On your phone: the Android and iPhone apps read a reply you share or paste, with Gemini Nano or Apple's on-device model, and the same answers.</p>
+</div></section>
+<footer><div class="wrap">Erased reads your mail on your device with Gemini Nano through Firebase AI Logic. Practice replies: <code>evals/replies.json</code> in the repo, staff names removed. Apache-2.0.</div></footer>
+<script type="module" src="/judge.js"></script></body></html>

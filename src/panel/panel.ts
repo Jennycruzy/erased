@@ -46,7 +46,7 @@ const fmtDay = (t: number) => new Date(t).toLocaleDateString(undefined, { day: "
 // A registered debug token saved in this browser (extension pages share one origin) wins; otherwise the SDK makes a
 // new one and prints it to the console for registering.
 const savedToken = (() => { try { return localStorage.getItem("appcheckDebug"); } catch { return null; } })();
-const fb = () => firebase({ debugToken: savedToken || true });
+const fb = () => firebase({ debugToken: savedToken || undefined });
 
 async function loadDirectory() {
   let url = "https://forget-me-hybrid.web.app/directory.json";
