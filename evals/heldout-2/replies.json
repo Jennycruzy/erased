@@ -1,0 +1,29 @@
+[
+ {
+  "id": 1,
+  "company": "monday.com",
+  "from": "privacy@monday.zendesk.com",
+  "subject": "Re: Request to delete my personal data [ER-TWVYB] (#5340856)",
+  "receivedAt": "2026-11-26T22:55:00Z",
+  "text": "##- Please type your reply above this line -##\n\n\n\n\n\n\t\n\n[agent] (monday.com)\n\nNov 26, 2026, 5:55 PM EST\n\nDear erased,\n \nThank you for your request, and for taking the time to exercise your privacy rights.\n \nWe received your email concerning data associated with monday.com. We are happy to inform you that your request is in progress in relation to the data we independently hold about you, and we will update you once completed.\n \nAs a user of monday.com, we may also process your personal data on your organization’s’ behalf (the organization being the data controller, with monday.com serving as their data processor). Please reach out to your organization directly for any requests relating to data they control, including your user account or any of your personal data submitted to the monday.com platform.\n \nIf you are your organization’s admin, you can delete any of your account's users, or the entire account (including your own user), as part of the account's data deletion process - click here for instructions on how to do that!\n \nPlease let me know if you have any questions, and I will be happy to assist you further.\n \nAll the best,\nmonday.com Legal Team\n\n\n\t\n\nerased demo\n\nNov 26, 2026, 2:24 PM EST\n\nHello,\n\nThis request comes from erased.demo.inbox@gmail.com, the email address on my monday.com account, and I sent it myself from this address. It was not sent by a third-party service.\nPlease go ahead and erase my monday.com account and all personal data you hold about me.\nSection 34(1) of the Nigeria Data Protection Act 2023 gives me the right to obtain erasure from you without constraint or unreasonable delay, and section 35(2) requires withdrawing consent to be as easy as giving it.\n\nReference: ER-TWVYB\n\nKind regards,\nerased demo\n\n[Quoted text hidden]\n\nThis email is a service from monday.com.\n[DD076M-0X9XP]",
+  "label": "log_in_delete"
+ },
+ {
+  "id": 2,
+  "company": "Zapier",
+  "from": "privacy@zapier.com",
+  "subject": "Request to delete my personal data [ER-JJZSE]",
+  "receivedAt": "2026-11-27T00:06:00Z",
+  "text": "Hi there,\n \n[agent] from Zapier Support here, stepping in for Ed. I've reviewed your escalation and want to address this directly.\n \nRegarding your data erasure request: as [agent] mentioned, we need you to delete your Zapier account via https://zapier.com/app/settings/advanced/delete for the account deletion to be finalized. Once that's complete (or if you confirm you're unable to do so), I'll follow up with our internal teams to ensure all associated personal data is fully erased within our 30-day obligation window.\n \nWe're treating this with appropriate urgency.\nThere are two steps to the process, one for you and one for us:\n \n \nFOR YOU: We’ll need you to delete your Zapier account.  For security reasons, we can’t do this for you.  It doesn't take long, though: just login to zapier.com and follow the instructions at: https://zapier.com/app/settings/advanced/delete.\n\nOnce you’ve completed this process, your account and any Zap Workflows or developer integrations built on it will be deleted. This action is irreversible.\nPlease note that until you delete your Zapier account, personal data of yours will remain on our systems.\n\n \nFOR US: We'll review our internal records and delete personal data of yours consistent with our obligations.\n\nThis process may take us up to one month and we’ll write you back once it has been completed.\nDeletion of your personal data includes removal from Zapier marketing subscriptions and other related communications that you may be currently receiving. If you choose to reengage with Zapier in the future, then we will once again have personal data about you in our records.\n \nWe’re sad to see you go but grateful that you’ve given Zapier a try! If there’s anything we can do to help with this situation, please let us know.\n \nBest,\n\n\n--\n[agent] - Zapier Support\n\nP.S. Have you heard about Next Gen Zaps? Describe what you want in plain language inside AI tools like Claude, Cursor or ChatGPT and deploy it directly to Zapier. Learn more at zapier.com/workflow/early-access\n\n[GP42XX-7VNV9]",
+  "label": "log_in_delete"
+ },
+ {
+  "id": 3,
+  "company": "Vimeo",
+  "from": "privacy@vimeo.com",
+  "subject": "Support Request [28952538] Share your feedback with us",
+  "receivedAt": "2026-11-27T13:02:00Z",
+  "text": "Hello erased demo, we'd love to hear how we did on your recent request Request to delete my personal data [ER-CDSXS]. Take a moment to answer a few questions. We really appreciate it.\n\nHow would you rate the support you received for your ticket?\n\n👍 Satisfied\n👎 Dissatisfied\n[LE9MLY-J7DVJ]",
+  "label": "wait"
+ }
+]

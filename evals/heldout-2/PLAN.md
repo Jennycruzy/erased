@@ -25,3 +25,11 @@ Automatic copies of our own messages and marketing are not replies and are left 
    - **As shipped**: rules first, Nano when no phrase matches, only with a sentence found in the email
 3. Results are published here and on the [evidence page](https://forget-me-hybrid.web.app/evidence.html), whatever
    they are.
+
+## Collection closed early (added 2026-11-27, before any model read these replies)
+
+The test machine (the Apple M1 that runs Gemini Nano) was released on 27 Nov 2026, so collection closed at
+**2026-11-27 14:30 UTC** instead of 30 Nov 18:00 UTC. Every company message about the 30 requests that arrived
+after the freeze and before that time is in `replies.json` (3 replies: monday.com, Zapier, Vimeo; one marketing
+email from Skillshare left out as the plan says). They were labelled by hand and committed before any reader ran.
+Rules and prompt are unchanged since the freeze: `coach.ts` `c3654b20c23f1f68`, `models.ts` `4207aef3b09e05ef`.
