@@ -118,7 +118,7 @@
         <circle class="packet" cx="6" cy="80" r="4" fill="#86a8ff" style="--dx:178px"/><circle class="packet back" cx="184" cy="120" r="4" fill="#6ee7c2" style="--dx:-178px"/></svg>
       <span class="lbl" style="top:52px">a company name →</span><span class="lbl" style="top:132px">← its deletion route</span></div>
     <div class="zone cld"><h3><span class="tag cloud">Gemini in the cloud</span></h3><ul>
-      <li>Reads public privacy pages to find how each company takes deletion requests (URL context)</li><li>Keeps a route only if the proving sentence is on the page word for word</li><li>On a phone with no on-device model, reads one email only if you say yes</li></ul></div>
+      <li>Reads public privacy pages to find how each company takes deletion requests (URL context)</li><li>Keeps a route only if the proving sentence is on the page word for word</li><li>On a computer or phone with no on-device model, reads companies' replies only if you say yes</li></ul></div>
   </div>
 </div></section>
 
@@ -137,7 +137,7 @@
   <h2 class="reveal" id="firebase">Built on Firebase, every piece live</h2>
   <p class="lede reveal">Seven Firebase products, each doing real work in the extension, the website and both phones today.</p>
   <div class="fb-grid">
-    <div class="fb reveal"><h3><span class="tag device">AI Logic</span>Hybrid inference</h3><p>One SDK runs Gemini Nano in Chrome and on Android and Apple's on-device model on iPhone. Your mail is read only on the device; cloud Gemini reads public privacy pages, or one email if you allow it.</p><a class="live" href="/judge">Run it: /judge →</a></div>
+    <div class="fb reveal"><h3><span class="tag device">AI Logic</span>Hybrid inference</h3><p>One SDK runs Gemini Nano in Chrome and on Android and Apple's on-device model on iPhone. Your inbox scan stays on the device; cloud Gemini reads public privacy pages, and companies' replies on a computer without Nano if you allow it.</p><a class="live" href="/judge">Run it: /judge →</a></div>
     <div class="fb reveal" style="--d:.04s"><h3><span class="tag device">App Check</span>Enforced</h3><p>Every Gemini call must carry an App Check token, and enforcement is on, so calls that don't come from Erased are refused. reCAPTCHA Enterprise on the website; the extension and both phones take their token from it.</p><a class="live" href="/evidence">Evidence →</a></div>
     <div class="fb reveal" style="--d:.08s"><h3><span class="tag">Remote Config</span>One template, four apps</h3><p>The cloud model order and the rule timings (grace, proof and follow-up days) come from one template, read by the extension, the website, Android and iPhone. Each checks the values before using them.</p><a class="live" href="https://github.com/Jennycruzy/erased/blob/main/src/ai/remote.ts">src/ai/remote.ts →</a></div>
     <div class="fb reveal" style="--d:.12s"><h3><span class="tag">Firestore</span>Directory and board</h3><p>The public deletion directory, and anonymous "who actually deletes" counts with rules that allow one count per user, company and outcome.</p><a class="live" href="/directory">The directory →</a></div>

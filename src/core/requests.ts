@@ -18,10 +18,12 @@ export interface ReplyCoachData {
 /** Words a real refusal uses ("we must retain", "we are unable to", "we cannot delete", "no"). */
 export const REFUSAL_WORDS = /\b(unable|cannot|can ?not|can't|won't|will not|decline[ds]?|not able|refuse[ds]?|reject(ed)?|retain(ed)?|keep|not possible|not delete|deny|denied)\b|^\s*no\b|\bno(?! longer)\b(?= \w+ (to|can|will|may))/i;
 export type ReplyKind = "ack" | "deleted" | "needs_id" | "refused" | "other";
+/** Where a reply was read: on this device, or by Gemini in the cloud because the person allowed it. */
+export type ReadWhere = "on_device" | "in_cloud";
 
 export type RequestEvent =
   | { type: "sent"; at: number }
-  | { type: "reply"; at: number; reply: ReplyKind; quote: string; coach?: ReplyCoachData }
+  | { type: "reply"; at: number; reply: ReplyKind; quote: string; coach?: ReplyCoachData; read?: ReadWhere }
   | { type: "extension_notice"; at: number; quote: string }
   | { type: "marketing"; at: number; subject: string }
   | { type: "followed_up"; at: number }

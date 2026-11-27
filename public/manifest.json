@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Erased",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Find every company holding your data from your inbox, ask them to delete it, and prove they did. Your mail is read on this device.",
   "minimum_chrome_version": "139",
   "permissions": [

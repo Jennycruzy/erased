@@ -18,9 +18,11 @@ export interface Settings {
   fullName: string;
   accountEmail: string;
   shareOutcomes: boolean;
+  /** Off unless the person turns it on: with no on-device model, Gemini in the cloud may read companies' replies. */
+  cloudReplies: boolean;
 }
 
-export const DEFAULT_SETTINGS: Settings = { region: "GB", fullName: "", accountEmail: "", shareOutcomes: false };
+export const DEFAULT_SETTINGS: Settings = { region: "GB", fullName: "", accountEmail: "", shareOutcomes: false, cloudReplies: false };
 
 /** Minimal key-value surface (chrome.storage.local in the extension, a Map in tests). */
 export interface KV {

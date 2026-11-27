@@ -70,6 +70,24 @@ export function privateModel(ai: AI, schema: object): GenerativeModel {
   });
 }
 
+/**
+ * A company's reply to the person's own request, read on this device when it has a model and by Gemini in the cloud
+ * only when it has none (PREFER_ON_DEVICE). Used only after the person switches on "let the cloud read replies".
+ */
+export function replyModelAllowingCloud(ai: AI, schema: object, cloudModel: string): GenerativeModel {
+  return getGenerativeModel(ai, {
+    mode: InferenceMode.PREFER_ON_DEVICE,
+    onDeviceParams: {
+      createOptions: {
+        expectedInputs: [{ type: "text", languages: ["en"] }],
+        expectedOutputs: [{ type: "text", languages: ["en"] }],
+      },
+      promptOptions: { responseConstraint: schema },
+    },
+    inCloudParams: { model: cloudModel, generationConfig: { responseMimeType: "application/json", responseJsonSchema: schema } },
+  } as never);
+}
+
 /** Public pages only (privacy policies, breach records). */
 export function publicCloudModel(ai: AI, model = "gemini-3.5-flash-lite"): GenerativeModel {
   return getGenerativeModel(ai, { mode: InferenceMode.ONLY_IN_CLOUD, inCloudParams: { model } });

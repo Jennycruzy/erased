@@ -16,7 +16,7 @@ import type { ReplyCoachData } from "../core/requests";
 import { firebase } from "../ai/firebase";
 import { lookupRoute } from "../ai/lookup";
 import { loadRemote, withCloudModels } from "../ai/remote";
-import { ACCOUNT_SCHEMA, ASK_SCHEMA, isMarketing, MARKETING_SCHEMA, privateModel, readAccountEmail, readAsk, readReply, REPLY_SCHEMA } from "../ai/models";
+import { ACCOUNT_SCHEMA, ASK_SCHEMA, isMarketing, MARKETING_SCHEMA, privateModel, readAccountEmail, readAsk, readReply, REPLY_SCHEMA, replyModelAllowingCloud } from "../ai/models";
 import { shareOutcome } from "../ai/board";
 import { boardLine, type BoardCounts } from "../core/board";
 import { accountAliveEvent, resetPage, signInQuery } from "../core/signin";
@@ -392,6 +392,7 @@ async function renderWatch() {
     mid.append(el("div", "name", r.company), el("div", "why", s.reason));
     const ev = s.evidence;
     if (ev && (ev.type === "reply" || ev.type === "extension_notice")) mid.append(el("div", "quote", `“${ev.quote}”`));
+    if (ev && ev.type === "reply" && ev.read) mid.append(el("div", "read-where " + (ev.read === "in_cloud" ? "cloud" : "device"), ev.read === "in_cloud" ? "Read by Gemini in the cloud (you allowed it)" : "Read by Gemini Nano on this computer"));
     if (ev && ev.type === "marketing") mid.append(el("div", "quote", `${s.state === "still_marketing" ? "Marketing after your request" : "Marketing after deletion"}: “${ev.subject}”`));
     const acts = el("div", "row-actions");
     const step = nextStep(r, fullNameCache);
@@ -500,6 +501,14 @@ async function checkReplies() {
   const replyModel = deviceReady ? privateModel(fb().ai, REPLY_SCHEMA) : null;
   const mktModel = deviceReady ? privateModel(fb().ai, MARKETING_SCHEMA) : null;
   const askModel = deviceReady ? privateModel(fb().ai, ASK_SCHEMA) : null;
+  // Hybrid fallback, only if the person allowed it: with no on-device model, Gemini in the cloud reads the company's
+  // reply (PREFER_ON_DEVICE, so a computer that has the model still reads it here). The inbox scan never uses this.
+  const cloudOk = !deviceReady && (await store.settings()).cloudReplies;
+  const readR = (from: string, subject: string, text: string) => replyModel ? readReply(replyModel, from, subject, text)
+    : withCloudModels((m) => readReply(replyModelAllowingCloud(fb().ai, REPLY_SCHEMA, m), from, subject, text));
+  const readA = (from: string, subject: string, text: string) => askModel ? readAsk(askModel, from, subject, text)
+    : withCloudModels((m) => readAsk(replyModelAllowingCloud(fb().ai, ASK_SCHEMA, m), from, subject, text));
+  const canRead = !!replyModel || cloudOk;
   try {
     for (const r of await store.requests()) {
       const q0 = watchQueries(r);
@@ -518,7 +527,7 @@ async function checkReplies() {
       if (!r.events.some((e) => e.type === "sent")) continue;
       $("progress").textContent = `Checking ${r.company}…`;
       for (const row of companyReplies(r, await search(q0.replies, 3))) {
-        if (!row.threadId || !replyModel || isResetMail(row.subject)) continue;
+        if (!row.threadId || !canRead || isResetMail(row.subject)) continue;
         const seen = r.events.find((e): e is Extract<StoredRequest["events"][number], { type: "reply" }> => e.type === "reply" && e.at === row.at);
         if (seen) {
           // Already read. Only look again if it asked something you may have answered since by email.
@@ -535,7 +544,7 @@ async function checkReplies() {
         const text = full.text;
         if (!text) continue;
         if (row.vendor && !mentionsCompany(r, text)) continue;
-        const read = await readReply(replyModel, row.from, row.subject, text).catch(() => null);
+        const read = await readR(row.from, row.subject, text).catch(() => null);
         if (!read) continue;
         // "Deleted" only when the sentence says it was done and nothing more is asked ("when it is deleted" is not it).
         if (read.value.reply === "deleted" && !confirmsDeletion(read.value.quote, text)) read.value.reply = "other";
@@ -547,7 +556,7 @@ async function checkReplies() {
         // Reply Coach: what they ask next. The model picks from a fixed list; the rules decide if its sentence is not in the email.
         let coachData: ReplyCoachData | undefined;
         if (read.quoteOk && read.value.reply !== "deleted" && read.value.reply !== "unrelated") {
-          const m = askModel ? await readAsk(askModel, row.from, row.subject, text).catch(() => null) : null;
+          const m = await readA(row.from, row.subject, text).catch(() => null);
           let rules = askByRules(text);
           let askText = text;
           let askAt = full.at ?? row.at;
@@ -564,7 +573,8 @@ async function checkReplies() {
             from: row.from, subject: row.subject, text: (byModel ? text : askText).slice(0, 3000), links: full.links.filter((l) => trustedLink(r, l.url, row.from)).slice(0, 12),
           };
         }
-        for (const ev of replyEvent(row.at, { ...read.value, quoteOk: read.quoteOk }, coachData)) await store.addEvent(r.id, ev);
+        const where = read.source === "in_cloud" ? "in_cloud" as const : read.source === "on_device" ? "on_device" as const : undefined;
+        for (const ev of replyEvent(row.at, { ...read.value, quoteOk: read.quoteOk, where }, coachData)) await store.addEvent(r.id, ev);
         const answered = coachData ? answeredAt(coachData.ask, coachData.askAt ?? row.at, full.mine) : null;
         if (answered && coachData) { const ev = { type: "step_done" as const, at: answered, ask: coachData.ask }; await store.addEvent(r.id, ev); r.events.push(ev); }
       }
@@ -595,7 +605,7 @@ async function checkReplies() {
       await maybeShare(fresh.id);
     }
     await chromeKV.set("lastChecked", Date.now());
-    $("progress").textContent = deviceReady ? "Checked." : "Checked sent mail. Turn on on-device AI to read replies.";
+    $("progress").textContent = deviceReady ? "Checked." : cloudOk ? "Checked. Replies were read by Gemini in the cloud, as you allowed." : "Checked sent mail. To read replies, get on-device AI ready, or allow the cloud for replies in You.";
   } catch (e) {
     $("progress").textContent = String((e as Error).message);
   } finally {
@@ -637,10 +647,11 @@ async function renderMorning() {
 async function deviceStatus() {
   const pill = $("ai-status");
   const LM = (globalThis as unknown as { LanguageModel?: { availability: (o?: object) => Promise<string> } }).LanguageModel;
-  if (!LM) { pill.textContent = "On-device AI not in this Chrome"; pill.className = "pill off"; return; }
+  if (!LM) { pill.textContent = "On-device AI not in this Chrome" + ((await store.settings()).cloudReplies ? " · replies: cloud (you allowed it)" : ""); pill.className = "pill off"; return; }
   const a = await LM.availability({ expectedInputs: [{ type: "text", languages: ["en"] }] }).catch(() => "unavailable");
   deviceReady = a === "available";
-  pill.textContent = deviceReady ? "On-device AI ready" : a === "unavailable" ? "On-device AI unavailable" : "On-device AI: download needed";
+  const cloud = !deviceReady && (await store.settings()).cloudReplies;
+  pill.textContent = deviceReady ? "On-device AI ready" : (a === "unavailable" ? "On-device AI unavailable" : "On-device AI: download needed") + (cloud ? " · replies: cloud (you allowed it)" : "");
   pill.className = "pill " + (deviceReady ? "device" : "off");
 }
 
@@ -666,9 +677,11 @@ async function initSettings() {
   $<HTMLInputElement>("name").value = s.fullName;
   $<HTMLSelectElement>("region").value = s.region;
   $<HTMLInputElement>("share").checked = s.shareOutcomes;
+  $<HTMLInputElement>("cloud").checked = s.cloudReplies;
   $("name").addEventListener("change", (e) => void store.saveSettings({ fullName: (e.target as HTMLInputElement).value.trim() }));
   $("region").addEventListener("change", (e) => void store.saveSettings({ region: (e.target as HTMLSelectElement).value }));
   $("share").addEventListener("change", (e) => void store.saveSettings({ shareOutcomes: (e.target as HTMLInputElement).checked }));
+  $("cloud").addEventListener("change", (e) => void store.saveSettings({ cloudReplies: (e.target as HTMLInputElement).checked }).then(() => deviceStatus()));
   const tab = await gmailTab();
   if (tab?.id) {
     const who = (await tabAsk(tab.id, { type: "whoami" })) as { email: string | null } | null;

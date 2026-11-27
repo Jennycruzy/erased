@@ -768,6 +768,10 @@
  },
  "more": [
   [
+   "Chrome extension with no Gemini Nano (Chrome 158 on the Mac with the on-device model switched off), real demo inbox, 27 Nov",
+   "Cloud switch off: no reply read · switch on: 11/12 real company replies read by Gemini in the cloud (PREFER_ON_DEVICE) · Reply Coach step same as on-device Gemini Nano 11/11, including the deletion confirmation"
+  ],
+  [
    "Android, Firebase Test Lab virtual phone, 26 Nov (no Gemini Nano there, so PREFER_ON_DEVICE went to the cloud)",
    "Gemini alone 58/66 · rules + Gemini 62-64/66 across two runs · 66/66 read in the cloud"
   ],

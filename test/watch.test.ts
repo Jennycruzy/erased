@@ -24,6 +24,9 @@ describe("watcher", () => {
   it("drops a reply reading whose quote was not found", () => {
     expect(replyEvent(1, { reply: "deleted", extension: false, quote: "made up", quoteOk: false })).toEqual([]);
     expect(replyEvent(1, { reply: "ack", extension: true, quote: "We need more time", quoteOk: true }).map((e) => e.type)).toEqual(["reply", "extension_notice"]);
+    // Where it was read is kept with the reply, so the Watch tab can say "read by Gemini in the cloud (you allowed it)".
+    expect(replyEvent(1, { reply: "ack", extension: false, quote: "Received", quoteOk: true, where: "in_cloud" })[0]).toMatchObject({ type: "reply", read: "in_cloud" });
+    expect(replyEvent(1, { reply: "ack", extension: false, quote: "Received", quoteOk: true })[0]).not.toHaveProperty("read");
   });
   it("marketing: device decides, subject rules otherwise", () => {
     const row = { from: "news@acme.com", subject: "This week: 20% off", at: 5 };

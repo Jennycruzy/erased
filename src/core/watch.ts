@@ -1,6 +1,6 @@
 import { companyDomain } from "./domain";
 import { kindFromSubject } from "./headers";
-import type { ReplyCoachData, RequestEvent, ReplyKind } from "./requests";
+import type { ReadWhere, ReplyCoachData, RequestEvent, ReplyKind } from "./requests";
 import type { StoredRequest } from "./store";
 import { PRIVACY_VENDORS } from "./coach";
 
@@ -104,9 +104,9 @@ export function mentionsCompany(r: StoredRequest, text: string): boolean {
 }
 
 /** Turns an on-device reply reading into an event, only if its quote was found in the email. */
-export function replyEvent(at: number, read: { reply: ReplyKind | "unrelated"; extension: boolean; quote: string; quoteOk: boolean }, coach?: ReplyCoachData): RequestEvent[] {
+export function replyEvent(at: number, read: { reply: ReplyKind | "unrelated"; extension: boolean; quote: string; quoteOk: boolean; where?: ReadWhere }, coach?: ReplyCoachData): RequestEvent[] {
   if (!read.quoteOk || read.reply === "unrelated") return [];
-  const out: RequestEvent[] = [{ type: "reply", at, reply: read.reply, quote: read.quote, ...(coach ? { coach } : {}) }];
+  const out: RequestEvent[] = [{ type: "reply", at, reply: read.reply, quote: read.quote, ...(coach ? { coach } : {}), ...(read.where ? { read: read.where } : {}) }];
   if (read.extension) out.push({ type: "extension_notice", at, quote: read.quote });
   return out;
 }

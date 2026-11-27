@@ -89,3 +89,7 @@ input:not([type]), input[type="text"] { font: inherit; padding: 8px; border: 1px
 .morning-more { margin-top: 6px; padding: 4px 10px; font-size: 12px; border-radius: 999px; }
 .list li.group { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 16px; font-size: 13px; font-weight: 600; color: var(--muted); background: var(--chip); border-bottom: 1px solid var(--line); }
 .list li.group button { font-size: 12px; padding: 4px 12px; }
+.read-where { display: inline-block; margin-top: 6px; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--chip); color: var(--muted); }
+.read-where.cloud { color: #2f5bd3; background: rgba(47, 91, 211, 0.09); }
+.read-where.device { color: var(--green); }
+@media (prefers-color-scheme: dark) { .read-where.cloud { color: #86a8ff; background: rgba(134, 168, 255, 0.12); } }

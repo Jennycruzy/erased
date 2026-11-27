@@ -19,7 +19,7 @@ describe("store", () => {
   it("settings merge with defaults", async () => {
     const s = new Store(mem());
     await s.saveSettings({ fullName: "Ada Example" });
-    expect(await s.settings()).toMatchObject({ fullName: "Ada Example", region: "GB", shareOutcomes: false });
+    expect(await s.settings()).toMatchObject({ fullName: "Ada Example", region: "GB", shareOutcomes: false, cloudReplies: false });
   });
 });
 

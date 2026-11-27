@@ -32,11 +32,24 @@ Zapier, Medium and Skillshare each put a step in front of deletion that only a p
 check that looped back to Google sign-in, a "verify you are human" page, and a captcha on the deletion form.
 Reply Coach named each step, and all three were cleared on 27 Nov.
 
+## No Gemini Nano on your laptop? Erased still works
+
+Gemini Nano needs a strong computer, and many judges' laptops don't have it. That is exactly what hybrid inference is
+for. In the extension's **You** tab, switch on **"If this computer has no on-device AI, let Gemini in the cloud read
+companies' replies to my requests"**. Erased then reads each company's reply with Firebase AI Logic in
+`PREFER_ON_DEVICE` mode: on Gemini Nano when this computer has it, otherwise in the cloud, following Remote Config's
+model order. Every reply says which model read it: *Read by Gemini Nano on this computer* or *Read by Gemini in the
+cloud (you allowed it)*. The switch is off unless you turn it on, and your inbox scan never leaves the computer.
+
+**Tested on 27 Nov 2026** in Chrome with the on-device model switched off, on the real demo inbox: with the switch off
+nothing was read; with it on, Gemini in the cloud read **11 of 12** real company replies, and Reply Coach named the
+**same next step as on-device Gemini Nano for all 11**, including Asana's deletion confirmation.
+
 ## Built on Firebase, every piece live
 
 | Firebase product | What it does in Erased | See it |
 |---|---|---|
-| **AI Logic, hybrid inference** | One SDK runs Gemini Nano in Chrome and on Android and Apple's on-device model on iPhone. Mail is read `ONLY_ON_DEVICE`; cloud Gemini reads public privacy pages (`ONLY_IN_CLOUD`, URL context), or one email if you allow it (`PREFER_ON_DEVICE`). | [/judge](https://forget-me-hybrid.web.app/judge) |
+| **AI Logic, hybrid inference** | One SDK runs Gemini Nano in Chrome and on Android and Apple's on-device model on iPhone. Your inbox scan is read `ONLY_ON_DEVICE`; cloud Gemini reads public privacy pages (`ONLY_IN_CLOUD`, URL context), and companies' replies fall back to the cloud on a computer or phone without an on-device model if you allow it (`PREFER_ON_DEVICE`). | [/judge](https://forget-me-hybrid.web.app/judge) |
 | **App Check, enforced** | Every Gemini call must carry a token and enforcement is on: calls that don't come from Erased are refused. reCAPTCHA Enterprise on the website; the extension and both phones take their token from it. | [/evidence](https://forget-me-hybrid.web.app/evidence) |
 | **Remote Config** | One template sets the cloud model order and the rule timings for the extension, the website, Android and iPhone; each checks the values before use. | [`src/ai/remote.ts`](src/ai/remote.ts) |
 | **Cloud Firestore** | The deletion directory, and anonymous "who actually deletes" counts with rules that allow one count per user, company and outcome. | [`firestore.rules`](firestore.rules) |
@@ -134,7 +147,7 @@ Every company, reply and quote is on the [live run](https://forget-me-hybrid.web
 | What | Where it runs | Why |
 |---|---|---|
 | Reading your emails (is this a real account? what did the company reply? what does it ask you to do? is this marketing?) | **On your device only** (`InferenceMode.ONLY_ON_DEVICE`) | The list of companies you use is private. It never leaves your computer or phone. |
-| One reply on a phone with no on-device model | **Cloud, only if you switch it on** (`PREFER_ON_DEVICE`) | Your choice, for that one email. The answer card says where it was read. |
+| Companies' replies on a computer or phone with no on-device model | **Cloud, only if you switch it on** (`PREFER_ON_DEVICE`) | Your choice. Each reply says where it was read. The inbox scan never uses this. |
 | Reading companies' public privacy pages to find how to ask for deletion | **Cloud** (`InferenceMode.ONLY_IN_CLOUD`, URL context) | The pages are public and long; the device can't fetch the web. Built once, shared with everyone. |
 | Deadlines, request states, verdicts, every answer's wording | **Plain code** | The model only picks what was asked and points at the sentence. Rules decide. A model's quote counts only if it appears word for word in the email. |
 
@@ -142,7 +155,7 @@ Every company, reply and quote is on the [live run](https://forget-me-hybrid.web
 
 | | Model on the device | Cloud fallback | App Check |
 |---|---|---|---|
-| Chrome extension (`src/`) | Gemini Nano, `ONLY_ON_DEVICE` for mail | public pages only | reCAPTCHA Enterprise, via the website |
+| Chrome extension (`src/`) | Gemini Nano, `ONLY_ON_DEVICE` for the inbox scan | public pages; companies' replies with `PREFER_ON_DEVICE` if you allow it | reCAPTCHA Enterprise, via the website |
 | Website `/judge` (`src/site/`) | Gemini Nano | Gemini, `PREFER_ON_DEVICE` (practice emails are public) | reCAPTCHA Enterprise |
 | Android (`android/`) | Gemini Nano through ML Kit, `ONLY_ON_DEVICE` | Gemini, `PREFER_ON_DEVICE`, if you allow it | reCAPTCHA Enterprise, via the website |
 | iPhone (`ios/`) | Apple Foundation Models (`SystemLanguageModel`) | Gemini through `geminiLanguageModel` (Firebase 13), if you allow it | reCAPTCHA Enterprise, via the website |
@@ -169,7 +182,8 @@ Attest cannot vouch for them: each takes its App Check token from the website's 
   copied and the form opened. For a company the directory doesn't know, *Find how to remove* sends only that
   company's name to cloud Gemini, which reads its public privacy page.
 - **Watch.** Each request shows its deadline ring and state. *Check for replies* finds your sent copy and the
-  company's replies by the request's reference, reads them with the on-device model, and watches for marketing
+  company's replies by the request's reference, reads them with the on-device model (or, if you allowed it and this
+  computer has none, with Gemini in the cloud), and watches for marketing
   after a confirmed deletion. Verdicts: **ERASED** (confirmed, then 30 quiet days) or **NOT ERASED** (marketing
   more than 3 days after "deleted"). Overdue requests get a follow-up letter; refusals, silence after the
   follow-up and broken promises get a printable **complaint pack**, built on the device with dated quotes.
