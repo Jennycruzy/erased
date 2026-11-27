@@ -16,6 +16,17 @@ for (const d of wrongOwner) { const e = latest.get(d); if (e) latest.set(d, { ..
 // Quotes are shown on the site: decode HTML entities left by the page, and drop non-quotes ("none", a bare address).
 const decode = (s) => s.replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16))).replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&nbsp;/g, " ").replace(/&ndash;/g, "–").replace(/&mdash;/g, "—").replace(/&rsquo;/g, "’").replace(/&lsquo;/g, "‘").replace(/&ldquo;/g, "“").replace(/&rdquo;/g, "”");
 for (const [d, e] of latest) if (typeof e.route_quote === "string") { const q = decode(e.route_quote).trim(); latest.set(d, { ...e, route_quote: q.length >= 20 && !/^[\w.+-]+@[\w-]+(\.[\w-]+)+$/.test(q) ? q : null }); }
+// Links are opened as given: keep only real web addresses. A path is resolved on the company's own site, a bare
+// "example.com/form" gets https://, and text such as "here" is dropped (the privacy page, where that form is, opens instead).
+const webUrl = (u, base) => {
+  if (typeof u !== "string" || !u.trim()) return null;
+  const s = u.trim().replace(/&amp;/g, "&");
+  if (/^https?:\/\//i.test(s)) return s;
+  if (s.startsWith("/") && base) { try { return new URL(s, base).href; } catch { return null; } }
+  if (/^(www\.)?[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}(\/\S*)?$/i.test(s)) return "https://" + s;
+  return null;
+};
+for (const [d, e] of latest) { const privacy_url = webUrl(e.privacy_url, null); latest.set(d, { ...e, privacy_url, form_url: webUrl(e.form_url, privacy_url) }); }
 const FIELDS = ["domain", "company", "privacy_url", "request_route", "dsar_email", "form_url", "laws_named", "route_quote", "verified", "verified_at", "method"];
 const routed = (e) => e.request_route !== "unknown" && e.request_route !== "none";
 // "verified" means a usable route proven by a quote on the company's own page; no route is never "verified".
