@@ -21,6 +21,8 @@ const rows = requests.map((r) => {
     const idDoc = e.type === "reply" && e.reply === "needs_id" && ID_DOC.test(e.quote ?? "");
     const ask = e.type === "reply" ? (idDoc ? "needs_id" : e.coach?.ask) : null;
     if (!ask || NOT_HOOPS.has(ask) || hoops.some((h) => h.ask === ask)) continue;
+    // Mail from before the request (a code from deleting in the app ourselves) is not something the reply asked for.
+    if (sent && e.at < sent.at) continue;
     hoops.push({ ask, at: e.at, quote: clean(e.coach?.askQuote ?? e.quote) });
   }
   const mkt = sent && ev.find((e) => e.type === "marketing" && e.at > sent.at + GRACE_DAYS * 864e5);

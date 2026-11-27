@@ -58,6 +58,15 @@ describe("companyReplies on thread rows", () => {
     const out = companyReplies(r, [{ from: "me@gmail.com", senders: ["me@gmail.com", "privacy@makenotion.com"], subject: "Request", at: 5, threadId: "t" }]);
     expect(out.map((x) => x.from)).toEqual(["privacy@makenotion.com"]);
   });
+  it("skips a newsletter from a bulk-mail subdomain but keeps the privacy desk and our reference", () => {
+    const r = { id: "x", ref: "ER-AAAAA", domain: "codecademy.com", company: "Codecademy", kind: "delete", law: "gdpr", route: "email", to: "privacy@codecademy.com", formUrl: null, accountEmail: "me@gmail.com", createdAt: 0, events: [] } as never;
+    const out = companyReplies(r, [
+      { from: "learn@itr.mail.codecademy.com", subject: "Build skills you can use now", at: 5 },
+      { from: "privacy@mail.codecademy.com", subject: "Your request", at: 6 },
+      { from: "learn@itr.mail.codecademy.com", subject: "Re: Request [ER-AAAAA]", at: 7 },
+    ]);
+    expect(out.map((x) => x.at)).toEqual([6, 7]);
+  });
 });
 
 import { replyQuery, senderWords } from "../src/core/watch";

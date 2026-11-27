@@ -15,6 +15,8 @@ export interface ReplyCoachData {
   links: Array<{ text: string; url: string }>;
 }
 
+/** Words a real refusal uses ("we must retain", "we are unable to", "we cannot delete", "no"). */
+export const REFUSAL_WORDS = /\b(unable|cannot|can ?not|can't|won't|will not|decline[ds]?|not able|refuse[ds]?|reject(ed)?|retain(ed)?|keep|not possible|not delete|deny|denied)\b|^\s*no\b|\bno(?! longer)\b(?= \w+ (to|can|will|may))/i;
 export type ReplyKind = "ack" | "deleted" | "needs_id" | "refused" | "other";
 
 export type RequestEvent =
@@ -118,7 +120,10 @@ export function status(r: Request, now: number): Status {
   // Reply Coach's reading wins over the first classifier: a reply that asks for a step (sign in, use our form, prove
   // it's you) is not a refusal, and "we found no account" or "it is scheduled" asks nothing of you.
   const asks = (e: RequestEvent) => (e.type === "reply" ? e.coach?.ask : undefined);
-  const refused = ev.find((e) => e.type === "reply" && e.reply === "refused" && (!asks(e) || asks(e) === "wait"));
+  // A refusal counts only when the sentence it rests on actually refuses: a model can call "we're busy, your ticket
+  // is in the queue" a refusal, and that must not turn into a complaint.
+  const refuses = (e: RequestEvent) => e.type === "reply" && REFUSAL_WORDS.test(e.quote ?? "");
+  const refused = ev.find((e) => e.type === "reply" && e.reply === "refused" && (!asks(e) || asks(e) === "wait") && refuses(e));
   if (refused) {
     return { state: "complaint_ready", result: "REFUSED_WITH_REASON", deadline, evidence: refused, reason: `Refused on ${fmt(refused.at)}.` };
   }

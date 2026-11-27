@@ -72,6 +72,8 @@ export const isResetMail = (subject: string) => /reset (your )?password|password
 
 /** Subjects that only promotions use. */
 export const PROMO_SUBJECT = /\b\d{1,2}% off\b|\bwelcome (offer|gift)\b|\b(flash )?sale\b|\bdiscount\b|\bblack friday\b|\bcyber monday\b|\bdeal(s)? (inside|ends|for you)\b/i;
+/** Newsletter systems on their own subdomain: a reply never comes from these. */
+export const BULK_SENDER = /@(?:[a-z0-9-]+\.)*(?:mail|email|em|e|news|newsletter|send|marketing|mkt|itr|mailer|campaign)\.[a-z0-9-]+\.[a-z.]+$/i;
 /** Support and privacy desks: their mail (tickets, surveys) is never marketing. */
 export const DESK_SENDER = /^(support|privacy|help|dpo|gdpr|legal|customer|customercare|customer_support|assist|advocates|notifications-support|noreply-privacy|privacy-noreply)[@+._-]/i;
 
@@ -84,6 +86,8 @@ export function companyReplies(r: StoredRequest, rows: MailRow[]): MailRow[] {
     if (refs.length && !refs.includes(r.ref)) return [];
     // A promotion from the company's own domain is marketing, never a reply ("Your 50% Off Is Waiting For You").
     if (!refs.length && PROMO_SUBJECT.test(x.subject)) return [];
+    // Bulk-mail senders (learn@itr.mail.codecademy.com, news@email.x.com) send newsletters, not answers.
+    if (!refs.length && BULK_SENDER.test(x.from) && !DESK_SENDER.test(x.from)) return [];
     const who = [x.from, ...(x.senders ?? [])].find((s) => isCompanySender(r, s));
     if (who) return [{ ...x, from: who }];
     // Privacy-request services (Ketch, OneTrust…) write for many companies: kept only if the email names this one.

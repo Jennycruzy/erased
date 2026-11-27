@@ -63,7 +63,7 @@ describe("complaint pack", () => {
 });
 
 describe("morning card follows Reply Coach", () => {
-  const reply = (at: number, reply: "needs_id" | "refused" | "ack", ask: import("../src/core/coach").Ask) => ({ type: "reply" as const, at, reply, quote: "q", coach: { ask, askQuote: "q", by: "rules" as const, from: "privacy@x.com", subject: "s", text: "", links: [] } });
+  const reply = (at: number, reply: "needs_id" | "refused" | "ack", ask: import("../src/core/coach").Ask) => ({ type: "reply" as const, at, reply, quote: reply === "refused" ? "We are unable to delete your data." : "q", coach: { ask, askQuote: "q", by: "rules" as const, from: "privacy@x.com", subject: "s", text: "", links: [] } });
   const req = (company: string, ev: ReturnType<typeof reply>) => ({ ...newRequest({ id: company, ...base, company, now: d("2026-11-20") }), events: [{ type: "sent" as const, at: d("2026-11-20") }, ev] });
   it("says no account, not confirm it's you", () => {
     const c = morningCard([req("Kaggle", reply(d("2026-11-21"), "needs_id", "no_account"))], d("2026-11-26"), d("2026-11-25"));
@@ -82,7 +82,7 @@ describe("morning card follows Reply Coach", () => {
 });
 
 describe("morning card: newest reply by date, and answered steps", () => {
-  const reply = (at: number, reply: "needs_id" | "refused" | "other", ask: import("../src/core/coach").Ask) => ({ type: "reply" as const, at, reply, quote: "q", coach: { ask, askQuote: "q", by: "rules" as const, from: "p@x.com", subject: "s", text: "", links: [] } });
+  const reply = (at: number, reply: "needs_id" | "refused" | "other", ask: import("../src/core/coach").Ask) => ({ type: "reply" as const, at, reply, quote: reply === "refused" ? "We are unable to delete your data." : "q", coach: { ask, askQuote: "q", by: "rules" as const, from: "p@x.com", subject: "s", text: "", links: [] } });
   it("uses the newest reply even when an older one is stored last", () => {
     const r = { ...newRequest({ id: "a", ...base, company: "Airtable", now: d("2026-11-20") }), events: [{ type: "sent" as const, at: d("2026-11-20") }, reply(d("2026-11-24"), "other", "log_in_delete"), reply(d("2026-11-20"), "refused", "wait")] };
     expect(morningCard([r], d("2026-11-26"), d("2026-11-25")).lines[0]).toBe("Airtable wants you to sign in and delete the account yourself.");

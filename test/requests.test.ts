@@ -72,5 +72,6 @@ describe("still marketing after the request", () => {
     expect([s.state, s.result]).toEqual(["still_marketing", "STILL_MARKETING_AFTER_REQUEST"]);
     expect(s.reason).toContain("7 days after you told them to stop");
   });
+  it("a holding message the model called a refusal is not one", () => expect(status(req([sent, mkt("2026-11-08"), { type: "reply", at: d("2026-11-03"), reply: "refused", quote: "Our Support team is currently responding to a higher volume of messages than usual, but your ticket is in queue and important to us." }]), d("2026-11-09")).state).toBe("still_marketing"));
   it("a refusal still wins", () => expect(status(req([sent, mkt("2026-11-08"), { type: "reply", at: d("2026-11-03"), reply: "refused", quote: "no" }]), d("2026-11-09")).state).toBe("complaint_ready"));
 });
