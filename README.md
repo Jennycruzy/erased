@@ -82,6 +82,10 @@ On 20 Nov 2026 we sent 30 real deletion requests from a public demo inbox. Erase
 - **5 of the 10 companies whose own privacy page says to email them about your rights answered our email by
   telling us to sign in or use their form instead** (Airtable, Box, Figma, Loom, Slack); both sentences, from the
   page and from the reply, are on the [live run](https://forget-me-hybrid.web.app/run#said).
+- **Most privacy pages never say when you will hear back.** Of 240 company privacy pages we read in full,
+  204 (85%) give no time to answer, though GDPR and UK GDPR set one month and California 45 days.
+  Every promise we did find, and every ID or sign-in-only demand, is quoted on the
+  [directory](https://forget-me-hybrid.web.app/directory#promises).
 - **Results so far:** Asana confirmed the account is deleted, Canva scheduled the deletion, and 5 companies
   (Kaggle, Spotify, SurveyMonkey, Typeform, Zoom) said they hold no account for the address.
 - **7 companies kept sending marketing or sign-up nudges after the request**: Codecademy, Grammarly, monday.com,

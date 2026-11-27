@@ -176,3 +176,9 @@ table.mini { font-size: 14px; margin: 10px 0 14px; }
   table.cards td[data-label]::before { content: attr(data-label) ": "; color: var(--dim); font-size: 13px; }
 }
 header.site + section.block { padding-top: 56px; }
+
+button.tag { cursor: pointer; font: inherit; font-size: 12px; }
+button.tag.on { background: var(--mint-bg); color: var(--mint); border-color: rgba(110, 231, 194, 0.32); }
+.promise + .promise { margin-top: 8px; }
+table.cards td { overflow-wrap: anywhere; }
+table.cards td .q a { white-space: nowrap; }

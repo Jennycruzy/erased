@@ -1,0 +1,20 @@
+# Domains whose fetched privacy page belongs to another company (a Google sign-in or embed, a parked-domain
+# seller, a third-party widget). Checked by hand on 27 Nov 2026; exported with no route so nobody is sent to the
+# wrong company, and Erased looks the route up again when someone needs it.
+8fit.com
+abovedomains.com
+angelone.in
+artvalue.com
+dev.dota2.com
+gemini.com
+gemotest.ru
+hallmark.com
+knuddels.de
+lanacion.com.ar
+stackadapt.com
+thishabboforum.com
+time.com
+vtightgel.com
+webmd.com
+wiiuiso.com
+wiredbucks.com

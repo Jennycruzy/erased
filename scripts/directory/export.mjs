@@ -10,6 +10,12 @@ for (const line of readFileSync("data/directory/entries.jsonl", "utf8").split("\
   if (e.error || !e.request_route) continue;
   latest.set(e.domain, e);
 }
+// Hand-checked domains whose fetched page belongs to someone else: published with no route.
+const wrongOwner = new Set(readFileSync("data/directory/wrong-owner.txt", "utf8").split("\n").map((s) => s.trim()).filter((s) => s && !s.startsWith("#")));
+for (const d of wrongOwner) { const e = latest.get(d); if (e) latest.set(d, { ...e, request_route: "unknown", dsar_email: null, form_url: null, route_quote: null, verified: false }); }
+// Quotes are shown on the site: decode HTML entities left by the page, and drop non-quotes ("none", a bare address).
+const decode = (s) => s.replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16))).replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&nbsp;/g, " ").replace(/&ndash;/g, "–").replace(/&mdash;/g, "—").replace(/&rsquo;/g, "’").replace(/&lsquo;/g, "‘").replace(/&ldquo;/g, "“").replace(/&rdquo;/g, "”");
+for (const [d, e] of latest) if (typeof e.route_quote === "string") { const q = decode(e.route_quote).trim(); latest.set(d, { ...e, route_quote: q.length >= 20 && !/^\S+@\S+$/.test(q) ? q : null }); }
 const FIELDS = ["domain", "company", "privacy_url", "request_route", "dsar_email", "form_url", "laws_named", "route_quote", "verified", "verified_at", "method"];
 const routed = (e) => e.request_route !== "unknown" && e.request_route !== "none";
 // "verified" means a usable route proven by a quote on the company's own page; no route is never "verified".
