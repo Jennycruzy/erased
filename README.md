@@ -45,6 +45,24 @@ cloud (you allowed it)*. The switch is off unless you turn it on, and your inbox
 nothing was read; with it on, Gemini in the cloud read **11 of 12** real company replies, and Reply Coach named the
 **same next step as on-device Gemini Nano for all 11**, including Asana's deletion confirmation.
 
+## Use it on your own inbox
+
+Anyone with Gmail can run Erased on their own mail, in Chrome on a computer: install the
+[extension](https://github.com/Jennycruzy/erased/releases/latest/download/erased-extension.zip), open Gmail and press
+**Scan my inbox**. Nobody types an email address into a website; Erased reads your own Gmail inside your own browser.
+
+| What Erased does for you | Computer with Gemini Nano | Computer without Gemini Nano |
+|---|---|---|
+| Finds the companies that hold your data | Found, then each one proven by Gemini Nano from the email itself | Found from the emails' sender and subject, on the computer |
+| Flags companies breached after you joined, and ones silent for 3+ years | Yes | Yes |
+| Writes the legal deletion letter; Gmail opens it and you press Send | Yes | Yes |
+| Reads each company's reply and names the next step (Reply Coach) | On the computer | Gemini in the cloud, when you switch it on in **You** |
+| Watches for marketing after "deleted", and builds the complaint pack | Yes | Yes |
+
+On a phone, the [Android app](https://github.com/Jennycruzy/erased/releases/latest/download/erased-android.apk) and the
+[iPhone app](#iphone) read a company's reply you share or paste and give the next step. With nothing to install,
+[/judge](https://forget-me-hybrid.web.app/judge) reads ten real replies, or one you paste, in your own browser.
+
 ## Built on Firebase, every piece live
 
 | Firebase product | What it does in Erased | See it |
