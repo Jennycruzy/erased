@@ -764,12 +764,12 @@
  "judge": {
   "ranAt": "2026-11-27T13:40:00Z",
   "what": "Read all 10 on /judge in Chrome 158 on an Apple M1, cloud box off",
-  "result": "10/10 match the hand label \u00b7 10/10 read by Gemini Nano on the computer \u00b7 median 2.9 s after a 25.2 s first call"
+  "result": "10/10 match the hand label · 10/10 read by Gemini Nano on the computer · median 2.9 s after a 25.2 s first call"
  },
  "more": [
   [
    "Android, Firebase Test Lab virtual phone, 26 Nov (no Gemini Nano there, so PREFER_ON_DEVICE went to the cloud)",
-   "Gemini alone 58/66 \u00b7 rules + Gemini 62-64/66 across two runs \u00b7 66/66 read in the cloud"
+   "Gemini alone 58/66 · rules + Gemini 62-64/66 across two runs · 66/66 read in the cloud"
   ],
   [
    "Android, real phones in Test Lab, 26 Nov (Pixel 10, Pixel 10 Pro, Pixel 9, Galaxy S25, Galaxy S26)",
@@ -777,11 +777,11 @@
   ],
   [
    "App Check with reCAPTCHA Enterprise, 26 Nov",
-   "Website: token exchange accepted \u00b7 extension: token from /appcheck.html, cloud call accepted \u00b7 Android: token in 1.8 s (Test Lab) \u00b7 iPhone: token in 8-12 s (simulator, CI)"
+   "Website: token exchange accepted · extension: token from /appcheck.html, cloud call accepted · Android: token in 1.8 s (Test Lab) · iPhone: token in 8-12 s (simulator, CI)"
   ],
   [
    "iPhone, CI on every push",
-   "Builds with Xcode 26.6 \u00b7 66/66 hand labels match the rules \u00b7 a recorded run reads a real reply through HybridModel"
+   "Builds and tests on Xcode 27 with Firebase iOS SDK 13.2.0 · 66/66 hand labels match the rules · a recorded run reads a real reply through Firebase AI Logic"
   ]
  ],
  "heldOut2": {
