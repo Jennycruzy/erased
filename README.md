@@ -76,8 +76,8 @@ reply*), or build the [iPhone app](#iphone). Steps under [Run it](#run-it).
 On 20 Nov 2026 we sent 30 real deletion requests from a public demo inbox. Erased read every reply on the device:
 
 - **27 of 30 companies replied**, the median one within a minute.
-- **19 of them asked for one more step before deleting anything**: sign in and delete it yourself (9), use our
-  form (4), click a check-it's-you link (3), prove the request comes from you (3), reply YES (2), say what to
+- **19 of them asked for one more step before deleting anything**: sign in and delete it yourself (8), use our
+  form (4), prove the request comes from you (3), reply YES (3), click a check-it's-you link (2), say what to
   delete (1). Reply Coach named each step and wrote the answer; we sent them from the demo inbox.
 - **5 of the 10 companies whose own privacy page says to email them about your rights answered our email by
   telling us to sign in or use their form instead** (Airtable, Box, Figma, Loom, Slack); both sentences, from the
@@ -164,7 +164,7 @@ Gemini Nano and records the screen.
 | Check (Apple M1, Chrome 158, `ONLY_ON_DEVICE`, unless the row says otherwise) | Right next step |
 |---|---|
 | Held out: 29 replies that arrived after the phrase rules were written (21 Nov 2026) | Nano alone 20/29 · rules alone 17/29 · rules + Nano 21/29 |
-| All 66, Nano alone | 52/66 (quote found in the email 65/66) |
+| All 66, Nano alone | 51/66 on 27 Nov, 52/66 on 24 Nov (quote found in the email 64/66) |
 | All 66, as shipped (rules updated after reading these, so in-sample) | 66/66 |
 | Where it ran | 66/66 on the device, median 3.1 s per email |
 
