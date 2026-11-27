@@ -1,4 +1,5 @@
 import XCTest
+import FoundationModels
 import FirebaseAILogic
 @testable import Erased
 
@@ -9,7 +10,7 @@ final class OnDeviceEvalTests: XCTestCase {
 
     func testReadsEveryLabelledReplyOnDevice() async throws {
         print("ERASED eval: availability \(Reader.status())")
-        try XCTSkipUnless(FirebaseAI.SystemLanguageModel.default.isAvailable, "Apple's on-device model is not available here")
+        try XCTSkipUnless(SystemLanguageModel.default.isAvailable, "Apple's on-device model is not available here")
         let coach = try Coach(json: Data(contentsOf: Self.repo.appending(path: "android/app/src/main/assets/coach.json")))
         let set = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: Self.repo.appending(path: "evals/replies.json"))) as? [[String: Any]])
         let reader = Reader(coach: coach)

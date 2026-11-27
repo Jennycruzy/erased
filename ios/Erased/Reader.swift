@@ -33,16 +33,17 @@ struct Reader: Sendable {
 
     let coach: Coach
 
-    private func session(_ whereTo: Where) -> GenerativeModelSession {
-        let ai = FirebaseAI.firebaseAI(backend: .googleAI())
-        let system = FirebaseAI.SystemLanguageModel.default
-        switch whereTo {
-        // One fresh session per email: single turn, no history, like the extension and the Android app.
-        case .deviceOnly: return ai.generativeModelSession(model: system)
-        case .cloudAllowed:
-            // Apple's model first; Gemini only when this iPhone cannot run it.
-            return ai.generativeModelSession(model: HybridModel(primary: system, secondary: ai.geminiModel(name: Reader.cloudModel)))
+    /// Firebase AI Logic hybrid inference on iOS (Firebase 13): Apple's Foundation Models session runs Apple's on-device
+    /// model when this iPhone has it; Gemini through Firebase AI Logic (`geminiLanguageModel`) runs in the same kind of
+    /// session only when the person allows the cloud for this one email and the iPhone cannot run Apple's model.
+    /// One fresh session per email: single turn, no history, like the extension and the Android app.
+    private func session(_ whereTo: Where) -> (LanguageModelSession, String)? {
+        if case .available = SystemLanguageModel.default.availability {
+            return (LanguageModelSession(model: SystemLanguageModel.default), Reader.onDeviceName)
         }
+        guard case .cloudAllowed = whereTo else { return nil }
+        let ai = FirebaseAI.firebaseAI(backend: .googleAI())
+        return (LanguageModelSession(model: ai.geminiLanguageModel(name: Reader.cloudModel)), Reader.cloudModel)
     }
 
     /// Same splitting and numbering as src/core/sentences.ts.
@@ -68,12 +69,16 @@ struct Reader: Sendable {
         let prompt = "\(coach.prompt)\n\nFrom: \(from)\nSubject: \(subject)\n\n" + sents.enumerated().map { "[\($0.offset + 1)] \($0.element)" }.joined(separator: "\n")
         let t0 = Date()
         let ms = { Int(Date().timeIntervalSince(t0) * 1000) }
+        guard let picked = session(whereTo) else {
+            return Read(found: nil, source: "none", ms: 0, error: "Apple's on-device model is not available on this iPhone, and the cloud is off")
+        }
+        let (modelSession, source) = picked
         do {
-            let r = try await session(whereTo).respond(to: prompt, generating: AskAnswer.self)
+            let r = try await modelSession.respond(to: prompt, generating: AskAnswer.self)
             let a = r.content
             let quote = (a.proof >= 1 && a.proof <= sents.count) ? sents[a.proof - 1] : ""
             let found = coach.asks.contains(a.ask) ? Coach.Found(ask: a.ask, quote: body.contains(quote) ? quote : "") : nil
-            return Read(found: found, source: r.rawResponse.modelVersion, ms: ms())
+            return Read(found: found, source: source, ms: ms())
         } catch {
             return Read(found: nil, source: "error", ms: ms(), error: String(String(describing: error).prefix(300)))
         }
@@ -81,7 +86,7 @@ struct Reader: Sendable {
 
     /// What the screen says about Apple's on-device model on this iPhone.
     static func status() -> String {
-        switch FirebaseAI.SystemLanguageModel.default.availability {
+        switch SystemLanguageModel.default.availability {
         case .available: return "ready"
         case .unavailable(.deviceNotEligible): return "this iPhone cannot run it"
         case .unavailable(.appleIntelligenceNotEnabled): return "turn on Apple Intelligence in Settings"
