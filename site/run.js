@@ -21,6 +21,14 @@ const HOOP = {
   still_marketing: ["Kept sending marketing after we said stop", "red"],
 };
 const OUT = { deleted: ["Says deleted", "device"], scheduled: ["Deletion scheduled", "device"], no_account: ["No account under this email", ""] };
+// Results we checked after the export (account gone, request verified) come from /proof.json, with the company's own words.
+const proof = await (await fetch("/proof.json", { cache: "no-store" })).json();
+for (const p of proof.rows) {
+  const r = d.requests.find((x) => x.company === p.company);
+  if (!r) continue;
+  r.outcome = "proof:" + p.company; r.outcomeAt = Date.parse(p.at);
+  OUT[r.outcome] = [p.verdict, p.kind === "gone" ? "device" : "amber"];
+}
 const hard = d.requests.filter((r) => r.hoops?.length || r.outcome).sort((a, b) => (b.hoops?.length ?? 0) - (a.hoops?.length ?? 0) || a.company.localeCompare(b.company));
 document.getElementById("hard-rows").innerHTML = hard.map((r) => `<tr><td><b>${esc(r.company)}</b><div class="q">${r.hoops?.length ?? 0} step${r.hoops?.length === 1 ? "" : "s"}</div></td><td data-label="What they made us do">${(r.hoops ?? []).map((h) => { const [t, k] = HOOP[h.ask] ?? [h.ask, ""]; return `<div><span class="tag ${k === "red" ? "red" : k === "fair" ? "device" : ""}">${esc(t)}${k === "fair" ? " · fair" : ""}</span> <span class="q">${when(h.at)}</span>${h.quote ? `<div>“${esc(h.quote)}”</div>` : ""}</div>`; }).join("") || '<span class="muted">Nothing</span>'}</td><td data-label="Outcome">${r.outcome ? `<span class="tag ${OUT[r.outcome][1]}">${OUT[r.outcome][0]}</span> <span class="q">${when(r.outcomeAt)}</span>` : '<span class="muted">Waiting</span>'}</td></tr>`).join("");
 

@@ -187,3 +187,27 @@ table.cards td .q a { white-space: nowrap; }
 .prose ul { padding-left: 20px; display: grid; gap: 10px; color: var(--muted); }
 .prose p { color: var(--muted); }
 .prose b { color: var(--fg, inherit); }
+
+/* Proof: each company's own words after our request. */
+section.proof { border-top: 0; }
+.proof h2 { font-size: clamp(34px, 5vw, 60px); margin-top: 14px; }
+.proof .lede { margin-top: 14px; }
+#proof-noaccount { margin-top: 18px; }
+.proof-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-top: 32px; }
+.proof-card { display: flex; flex-direction: column; gap: 10px; padding: 22px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); position: relative; overflow: hidden; transition: transform 0.4s var(--ease), border-color 0.4s var(--ease); }
+.proof-card::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: var(--mint); }
+.proof-card.accepted::before { background: var(--amber); }
+.proof-card:hover { transform: translateY(-3px); border-color: var(--line-2); }
+.proof-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 10px; font-size: 18px; }
+.proof-card blockquote { overflow-wrap: anywhere; margin: 6px 0 0; font-size: 21px; line-height: 1.32; font-weight: 600; letter-spacing: -0.015em; color: var(--fg); }
+.proof-card.gone blockquote { color: var(--mint); }
+.proof-story { margin: 0; color: var(--muted); font-size: 14px; }
+.proof-check { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); text-decoration: none; font-weight: 600; display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; }
+.proof-check .q { flex-basis: 100%; font-weight: 400; font-size: 13px; }
+.proof-check:hover { color: var(--mint); }
+.fb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 32px; }
+.fb { padding: 20px 22px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); display: flex; flex-direction: column; gap: 8px; }
+section.block .fb h3 { font-size: 18px; margin: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.fb p { margin: 0; color: var(--muted); font-size: 14px; }
+.fb .live { margin-top: auto; padding-top: 10px; font-size: 13px; font-family: var(--mono); color: var(--mint); text-decoration: none; }
+.fb .live:hover { text-decoration: underline; }

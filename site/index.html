@@ -26,6 +26,14 @@
   </div>
 </div></section>
 
+<section class="block proof"><div class="wrap">
+  <span class="tag device reveal">Checked 27 Nov 2026</span>
+  <h2 class="reveal" id="proof">Gone. In their own words.</h2>
+  <p class="lede reveal">We sent real requests from a public demo inbox and didn't take our own app's word for the results. This is what each company now says, word for word, and how you can check it yourself.</p>
+  <div class="proof-grid" id="proof-cards"></div>
+  <p class="q" id="proof-noaccount"></p>
+</div></section>
+
 <section class="block problem"><div class="wrap">
   <h2 class="reveal">The right to be deleted is the law. Getting it done isn't easy.</h2>
   <p class="lede reveal">GDPR, UK GDPR, California's CCPA, Canada's PIPEDA and Nigeria's NDPA all say a company must erase your data when you ask. Almost nobody does: when 32 European regulators reviewed 764 organisations in 2025, most "had not received a single request for erasure in the last two years" (<a href="https://www.edpb.europa.eu/system/files/2026-02/edpb_cef-report_2025_right-to-erasure_en.pdf">EDPB, Feb 2026</a>, p. 11). Three things get in the way.</p>
@@ -126,8 +134,22 @@
 </div></section>
 
 <section class="block"><div class="wrap">
+  <h2 class="reveal" id="firebase">Built on Firebase, every piece live</h2>
+  <p class="lede reveal">Seven Firebase products, each doing real work in the extension, the website and both phones today.</p>
+  <div class="fb-grid">
+    <div class="fb reveal"><h3><span class="tag device">AI Logic</span>Hybrid inference</h3><p>One SDK runs Gemini Nano in Chrome and on Android and Apple's on-device model on iPhone. Your mail is read only on the device; cloud Gemini reads public privacy pages, or one email if you allow it.</p><a class="live" href="/judge">Run it: /judge →</a></div>
+    <div class="fb reveal" style="--d:.04s"><h3><span class="tag device">App Check</span>Enforced</h3><p>Every Gemini call must carry an App Check token, and enforcement is on, so calls that don't come from Erased are refused. reCAPTCHA Enterprise on the website; the extension and both phones take their token from it.</p><a class="live" href="/evidence">Evidence →</a></div>
+    <div class="fb reveal" style="--d:.08s"><h3><span class="tag">Remote Config</span>One template, four apps</h3><p>The cloud model order and the rule timings (grace, proof and follow-up days) come from one template, read by the extension, the website, Android and iPhone. Each checks the values before using them.</p><a class="live" href="https://github.com/Jennycruzy/erased/blob/main/src/ai/remote.ts">src/ai/remote.ts →</a></div>
+    <div class="fb reveal" style="--d:.12s"><h3><span class="tag">Firestore</span>Directory and board</h3><p>The public deletion directory, and anonymous "who actually deletes" counts with rules that allow one count per user, company and outcome.</p><a class="live" href="/directory">The directory →</a></div>
+    <div class="fb reveal" style="--d:.16s"><h3><span class="tag">Authentication</span>Anonymous</h3><p>Board counts need no account: an anonymous sign-in, so nothing about you is sent with them.</p><a class="live" href="https://github.com/Jennycruzy/erased/blob/main/firestore.rules">firestore.rules →</a></div>
+    <div class="fb reveal" style="--d:.2s"><h3><span class="tag">Hosting</span>Site and directory</h3><p>This site, the /judge page and directory.json, which every app downloads whole and matches on the device, so not even your list of companies is sent.</p><a class="live" href="/directory.json">directory.json →</a></div>
+    <div class="fb reveal" style="--d:.24s"><h3><span class="tag">Test Lab</span>Android on devices</h3><p>The Android app's tests, including its App Check and Gemini paths, run on Test Lab devices, alongside CI for the extension and the iPhone app.</p><a class="live" href="https://github.com/Jennycruzy/erased/actions">CI runs →</a></div>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
   <div class="band reveal"><h2>See it read ten real replies in your own browser.</h2><div class="cta"><a class="btn" href="/judge">Try it in 90 seconds <span class="arrow">→</span></a><a class="btn ghost" href="/evidence">The evidence</a></div></div>
 </div></section>
 
 <footer><div class="wrap">Erased reads your mail on your device with Gemini Nano through Firebase AI Logic. Breach data: <a href="https://haveibeenpwned.com/">Have I Been Pwned</a>. <a href="https://github.com/Jennycruzy/erased">Source</a>, <a href="/privacy">Privacy</a>. Apache-2.0.</div></footer>
-<script type="module" src="/home.js"></script></body></html>
+<script type="module" src="/proof.js"></script><script type="module" src="/home.js"></script></body></html>

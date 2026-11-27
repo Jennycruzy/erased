@@ -1,0 +1,57 @@
+{
+ "checkedAt": "2026-11-27T19:14:00Z",
+ "inbox": "erased.demo.inbox@gmail.com",
+ "rows": [
+  {
+   "company": "Zapier",
+   "verdict": "Deleted",
+   "kind": "gone",
+   "at": "2026-11-27T19:14:00Z",
+   "theirWords": "No users exist with that email.",
+   "source": "Zapier's own password-reset page, asked for erased.demo.inbox@gmail.com after the deletion",
+   "story": "Zapier answered our letter: delete the account yourself first. Its delete page then asked for a fresh password check that looped back to Google sign-in. We set a password from Zapier's own reset email, passed the check and deleted the account.",
+   "check": "Open zapier.com/app/login/forgot and enter erased.demo.inbox@gmail.com.",
+   "checkUrl": "https://zapier.com/app/login/forgot"
+  },
+  {
+   "company": "Medium",
+   "verdict": "Account gone",
+   "kind": "gone",
+   "at": "2026-11-27T18:53:00Z",
+   "theirWords": "Sorry, we didn't recognize that email.",
+   "source": "Medium's own sign-in page, for the address that signed up with Google on 19 Nov 2026 (Google's sign-in notice is in the demo inbox)",
+   "story": "Medium answered our letter on 23 Nov with steps to delete it ourselves. Four days later its sign-in page recognises neither the Google sign-in nor the email address.",
+   "check": "Open medium.com/m/signin, choose Sign in with email and enter erased.demo.inbox@gmail.com.",
+   "checkUrl": "https://medium.com/m/signin"
+  },
+  {
+   "company": "Asana",
+   "verdict": "Deleted",
+   "kind": "gone",
+   "at": "2026-11-23T01:48:00Z",
+   "theirWords": "I can confirm that your Asana account associated with erased.demo.inbox@gmail.com has now been deleted.",
+   "source": "Asana Support, replying to our request ER-6J752",
+   "story": "Two and a half days after one email. Erased read the reply on the device and marked the request confirmed.",
+   "check": "The full reply is on the live run under Asana.",
+   "checkUrl": "/run#rows"
+  },
+  {
+   "company": "Skillshare",
+   "verdict": "Request verified",
+   "kind": "accepted",
+   "at": "2026-11-27T18:53:00Z",
+   "theirWords": "Identity Verified. Your deletion request will now be processed.",
+   "source": "Skillshare's privacy request centre, after its email check",
+   "story": "Skillshare answered our email by pointing to a privacy form behind a captcha. We filled the form under Nigeria's NDPA, a person cleared the captcha, and Skillshare's verification email was answered five minutes later.",
+   "check": "Skillshare's reply to our email, pointing to that form, is on the live run under Skillshare.",
+   "checkUrl": "/run#rows"
+  }
+ ],
+ "noAccount": [
+  "Kaggle",
+  "Spotify",
+  "SurveyMonkey",
+  "Typeform",
+  "Zoom"
+ ]
+}

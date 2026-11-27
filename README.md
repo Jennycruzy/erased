@@ -14,6 +14,36 @@ Built with [Firebase AI Logic](https://firebase.google.com/docs/ai-logic) hybrid
 and on Android, Apple's on-device model on iPhone, and Gemini in the cloud only for public pages, or for one email
 when you allow it.
 
+## Proof: gone, in their own words
+
+We sent real deletion requests from a public demo inbox (`erased.demo.inbox@gmail.com`) and did not take our own
+app's word for the results. This is what each company says now, copied word for word. Two of them you can check
+yourself in ten seconds.
+
+| Company | Result | In the company's own words | Check it yourself |
+|---|---|---|---|
+| **Zapier** | ✅ **Deleted** | *"No users exist with that email."* (Zapier's password-reset page, 27 Nov 2026) | [zapier.com/app/login/forgot](https://zapier.com/app/login/forgot), enter the demo address |
+| **Medium** | ✅ **Account gone** | *"Sorry, we didn't recognize that email."* (Medium's sign-in page, 27 Nov 2026; the account signed up with Google on 19 Nov) | [medium.com/m/signin](https://medium.com/m/signin) → Sign in with email |
+| **Asana** | ✅ **Deleted** | *"I can confirm that your Asana account associated with erased.demo.inbox@gmail.com has now been deleted."* (Asana Support, 23 Nov 2026) | [live run](https://forget-me-hybrid.web.app/run#proof) |
+| **Skillshare** | 🟡 **Request verified** | *"Identity Verified. Your deletion request will now be processed."* (Skillshare's privacy centre, 27 Nov 2026) | [live run](https://forget-me-hybrid.web.app/run#proof) |
+| **Kaggle, Spotify, SurveyMonkey, Typeform, Zoom** | ✅ **No account held** | Each wrote back that it holds no account for the address. | [live run](https://forget-me-hybrid.web.app/run) |
+
+Zapier, Medium and Skillshare each put a step in front of deletion that only a person could pass: a fresh password
+check that looped back to Google sign-in, a "verify you are human" page, and a captcha on the deletion form.
+Reply Coach named each step, and all three were cleared on 27 Nov.
+
+## Built on Firebase, every piece live
+
+| Firebase product | What it does in Erased | See it |
+|---|---|---|
+| **AI Logic, hybrid inference** | One SDK runs Gemini Nano in Chrome and on Android and Apple's on-device model on iPhone. Mail is read `ONLY_ON_DEVICE`; cloud Gemini reads public privacy pages (`ONLY_IN_CLOUD`, URL context), or one email if you allow it (`PREFER_ON_DEVICE`). | [/judge](https://forget-me-hybrid.web.app/judge) |
+| **App Check, enforced** | Every Gemini call must carry a token and enforcement is on: calls that don't come from Erased are refused. reCAPTCHA Enterprise on the website; the extension and both phones take their token from it. | [/evidence](https://forget-me-hybrid.web.app/evidence) |
+| **Remote Config** | One template sets the cloud model order and the rule timings for the extension, the website, Android and iPhone; each checks the values before use. | [`src/ai/remote.ts`](src/ai/remote.ts) |
+| **Cloud Firestore** | The deletion directory, and anonymous "who actually deletes" counts with rules that allow one count per user, company and outcome. | [`firestore.rules`](firestore.rules) |
+| **Authentication** | Anonymous sign-in for board counts: no account, nothing about you sent. | [`src/ai/board.ts`](src/ai/board.ts) |
+| **Hosting** | The site, `/judge`, and `directory.json`, which every app downloads whole and matches on the device. | [forget-me-hybrid.web.app](https://forget-me-hybrid.web.app) |
+| **Test Lab** | The Android app's tests, including its App Check and Gemini paths, run on Test Lab devices. | [CI](https://github.com/Jennycruzy/erased/actions) |
+
 ## The problem
 
 Every sign-up leaves a copy of you behind. One real inbox (the maker's, 8,771 emails, counted on the device from
@@ -86,14 +116,16 @@ On 20 Nov 2026 we sent 30 real deletion requests from a public demo inbox. Erase
   286 (83%) give no time to answer, though GDPR and UK GDPR set one month and California 45 days.
   Every promise we did find, and every ID or sign-in-only demand, is quoted on the
   [directory](https://forget-me-hybrid.web.app/directory#promises).
-- **Outcomes:** Asana confirmed the account is deleted, Canva scheduled the deletion, and 5 companies
-  (Kaggle, Spotify, SurveyMonkey, Typeform, Zoom) said they hold no account for the address.
+- **Outcomes:** Zapier and Asana deleted the account, Medium no longer recognises it, Skillshare verified the
+  deletion request, Canva scheduled the deletion, and 5 companies (Kaggle, Spotify, SurveyMonkey, Typeform, Zoom)
+  said they hold no account for the address. [Proof above](#proof-gone-in-their-own-words).
 - **7 companies kept sending marketing or sign-up nudges after the request**: Codecademy, Grammarly, monday.com,
   Skillshare, Slack, Todoist and Zapier. Erased caught each one, quoted the email, and wrote the "stop now" letter
   with the law that requires it (GDPR and UK GDPR Art 21(3), NDPA s.36). We sent Zapier's on 26 Nov.
 - **Some put a person-only check in front of deletion**: Medium (a "verify you are human" page before sign-in),
   Skillshare (a captcha on its deletion form) and Zapier (a fresh password check inside a short time window, even
-  when you are already signed in).
+  when you are already signed in). All three were cleared on 27 Nov: Zapier's account is deleted, Medium's is gone
+  and Skillshare's request is verified.
 
 Every company, reply and quote is on the [live run](https://forget-me-hybrid.web.app/run).
 
@@ -113,7 +145,7 @@ Every company, reply and quote is on the [live run](https://forget-me-hybrid.web
 | Chrome extension (`src/`) | Gemini Nano, `ONLY_ON_DEVICE` for mail | public pages only | reCAPTCHA Enterprise, via the website |
 | Website `/judge` (`src/site/`) | Gemini Nano | Gemini, `PREFER_ON_DEVICE` (practice emails are public) | reCAPTCHA Enterprise |
 | Android (`android/`) | Gemini Nano through ML Kit, `ONLY_ON_DEVICE` | Gemini, `PREFER_ON_DEVICE`, if you allow it | reCAPTCHA Enterprise, via the website |
-| iPhone (`ios/`) | Apple Foundation Models (`SystemLanguageModel`) | Gemini through `HybridModel`, if you allow it | reCAPTCHA Enterprise, via the website |
+| iPhone (`ios/`) | Apple Foundation Models (`SystemLanguageModel`) | Gemini through `geminiLanguageModel` (Firebase 13), if you allow it | reCAPTCHA Enterprise, via the website |
 
 The phrase rules, the on-device prompt, every answer and the sample replies are exported once from
 `src/core/coach.ts` (`npm run android:coach`) and shipped to both phones; CI on each platform checks the phone
@@ -199,17 +231,18 @@ it), and Erased reads it and shows the quickest lawful next step, with a ready r
 
 ## iPhone
 
-`ios/` is the same reply reader for iPhone (SwiftUI, iOS 26).
+`ios/` is the same reply reader for iPhone (SwiftUI, iOS 27).
 
-- **Apple's on-device model through Firebase AI Logic.** Your reply is read by `FirebaseAI.SystemLanguageModel`
-  only, unless you allow the cloud: then `HybridModel(primary: SystemLanguageModel, secondary: Gemini)` uses Apple's
-  model first and Gemini only when this iPhone has no Apple Intelligence. Structured output with `@Generable`; the
-  answer card shows which model read it (`rawResponse.modelVersion`). Firebase iOS SDK 12.19.3.
+- **Apple's on-device model with Firebase AI Logic.** Your reply is read by Apple's on-device model
+  (`SystemLanguageModel`) only, unless you allow the cloud: then, when this iPhone has no Apple Intelligence, the
+  same `LanguageModelSession` runs Gemini through Firebase AI Logic (`geminiLanguageModel`), in Remote Config's
+  model order. Structured output with `@Generable`; the answer card shows which model read it. Firebase iOS SDK
+  13.2.0.
 - Same `coach.json`, same answers, same one-tap real replies; `CoachParityTests` checks all 66 hand labels.
 - **App Check** with a reCAPTCHA Enterprise token from the website (`WebAppCheck.swift`), tested on the simulator in
   CI (`AppCheckBridgeTests`).
 - Built, tested and screenshotted by `.github/workflows/ios.yml`. Install: `brew install xcodegen && cd ios &&
-  xcodegen`, open `Erased.xcodeproj` in Xcode 26, choose your Apple ID as the team and run it on your iPhone.
+  xcodegen`, open `Erased.xcodeproj` in Xcode 27, choose your Apple ID as the team and run it on your iPhone.
 
 ## Run it
 
