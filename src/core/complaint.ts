@@ -35,10 +35,15 @@ export function complaintHtml(r: StoredRequest, fullName: string, now: number, r
 <p>To: ${esc(law.complaintTo)}</p>
 ${reg ? `<div class="box"><b>Send it to ${esc(reg.name)}.</b> Save this page as a PDF, then attach it on their page: <a href="${esc(reg.url)}">${esc(reg.how)}</a>.</div>` : ""}
 <div class="box"><b>Summary.</b> On ${day(events.find((e) => e.type === "sent")?.at ?? r.createdAt)} I asked ${esc(r.company)} for ${esc(what)} under ${esc(law.name)}.
-${esc(s.reason)} The law required a response within ${esc(law.deadlineText)}.</div>
+${esc(firstPerson(s.reason))} The law required a response within ${esc(law.deadlineText)}.</div>
 <p><b>Complainant:</b> ${esc(fullName || "(your name)")}, account email ${esc(r.accountEmail)}. <b>Reference:</b> ${esc(r.ref)}.</p>
 <h2>What happened</h2><table>${rows}</table>
 <h2>What I ask</h2><p>That ${esc(r.company)} completes the request, confirms it in writing, and that the authority considers the company's handling of it.</p>
 <p><b>Evidence.</b> The emails listed above are in my mailbox and can be provided in full. This pack was prepared by Erased on my own device; quotes are copied word for word from the emails.</p>
 </body></html>`;
+}
+
+/** The panel speaks to you ("after you told them"); the complaint is written by you ("after I told them"). */
+export function firstPerson(reason: string): string {
+  return reason.replace(/\byou told them\b/g, "I told them").replace(/\byou asked\b/g, "I asked").replace(/\bYou asked\b/g, "I asked");
 }

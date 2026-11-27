@@ -1,0 +1,15 @@
+Read all 10 on /judge, cloud box off, 2026-11-27T13:35:41.252Z, 54 s
+
+Reply	Read by	Time	Model said	Decision	Hand label
+Substack	Gemini Nano on this computer	2540 ms	nothing yet: wait	nothing yet: wait (rules)	✓ nothing yet: wait
+Notion	Gemini Nano on this computer	2774 ms	say what to delete	say what to delete (rules)	✓ say what to delete
+Canva	Gemini Nano on this computer	3378 ms	already scheduled	already scheduled (rules)	✓ already scheduled
+Asana	Gemini Nano on this computer	2573 ms	click a check-it's-you link	click a check-it's-you link (rules)	✓ click a check-it's-you link
+Slack	Gemini Nano on this computer	2665 ms	use their form	use their form (rules)	✓ use their form
+Spotify	Gemini Nano on this computer	3045 ms	no account found	no account found (rules)	✓ no account found
+Medium	Gemini Nano on this computer	3667 ms	sign in and delete it	sign in and delete it (rules)	✓ sign in and delete it
+Vimeo	Gemini Nano on this computer	2793 ms	nothing yet: wait	confirm it's really you (rules)	✓ confirm it's really you
+Medium	Gemini Nano on this computer	3979 ms	sign in and delete it	confirm it's really you (rules)	✓ confirm it's really you
+Substack	Gemini Nano on this computer	25151 ms	reply YES	reply YES (rules)	✓ reply YES
+
+10 of 10 practice reads match the hand label.
