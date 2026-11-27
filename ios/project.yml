@@ -24,6 +24,8 @@ targets:
         product: FirebaseAppCheck
       - package: Firebase
         product: FirebaseCore
+      - package: Firebase
+        product: FirebaseRemoteConfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.erased.ios

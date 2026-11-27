@@ -42,6 +42,8 @@ dependencies {
     implementation("com.google.firebase:firebase-ai:18.2.0")
     implementation("com.google.firebase:firebase-ai-ondevice:16.0.0-beta08")
     implementation("com.google.firebase:firebase-appcheck-debug:20.1.0")
+    implementation("com.google.firebase:firebase-config:24.0.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
     ksp("com.google.firebase:firebase-ai-ksp-processor:17.0.0")
 
     testImplementation("junit:junit:4.13.2")
@@ -50,7 +52,6 @@ dependencies {
     androidTestImplementation(platform("androidx.compose:compose-bom:2026.11.01"))
     androidTestImplementation("androidx.test:runner:1.7.0")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
-    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
     androidTestImplementation("com.google.firebase:firebase-appcheck-debug-testing:20.1.0")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")

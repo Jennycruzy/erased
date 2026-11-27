@@ -1,5 +1,4 @@
 import breachFile from "../../data/breaches.json";
-import { getRemoteConfig, getValue, fetchAndActivate } from "firebase/remote-config";
 import { indexBreaches, useHosted } from "../core/breaches";
 import type { DirectoryEntry } from "../core/directory";
 import { companyDomain } from "../core/domain";
@@ -16,6 +15,7 @@ import { answeredAt, askByRules, confirmsDeletion, sentencesWithin, nextStep, NO
 import type { ReplyCoachData } from "../core/requests";
 import { firebase } from "../ai/firebase";
 import { lookupRoute } from "../ai/lookup";
+import { loadRemote, withCloudModels } from "../ai/remote";
 import { ACCOUNT_SCHEMA, ASK_SCHEMA, isMarketing, MARKETING_SCHEMA, privateModel, readAccountEmail, readAsk, readReply, REPLY_SCHEMA } from "../ai/models";
 import { shareOutcome } from "../ai/board";
 import { boardLine, type BoardCounts } from "../core/board";
@@ -42,7 +42,7 @@ let deviceReady = false;
 const fmtDate = (t: number) => (Number.isFinite(t) ? new Date(t).toLocaleDateString(undefined, { year: "numeric", month: "short" }) : "–");
 const fmtDay = (t: number) => new Date(t).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 
-// ---------- Firebase (App Check debug token; Remote Config for the directory location and timings) ----------
+// ---------- Firebase (App Check debug token; Remote Config for the directory, cloud model order and timings) ----------
 // A registered debug token saved in this browser (extension pages share one origin) wins; otherwise the SDK makes a
 // new one and prints it to the console for registering.
 const savedToken = (() => { try { return localStorage.getItem("appcheckDebug"); } catch { return null; } })();
@@ -51,10 +51,10 @@ const fb = () => firebase({ debugToken: savedToken || undefined });
 async function loadDirectory() {
   let url = "https://forget-me-hybrid.web.app/directory.json";
   try {
-    const rc = getRemoteConfig(fb().app);
-    rc.defaultConfig = { directory_url: url };
-    await fetchAndActivate(rc);
-    url = getValue(rc, "directory_url").asString() || url;
+    const remote = await loadRemote(fb().app, url);
+    url = remote.directoryUrl;
+    // The daily badge in the background uses the same waits.
+    await chromeKV.set("timing", remote.timing);
   } catch { /* defaults stay */ }
   try {
     const r = await fetch(url, { cache: "no-cache" });
@@ -317,8 +317,8 @@ function cleanRow(c: Company): HTMLLIElement {
       look.disabled = true;
       look.textContent = "Reading their privacy page…";
       try {
-        // Free-tier limits count per model: when the first is spent, the second reads the page.
-        const e = await lookupRoute(fb().ai, c.domain).catch((err) => (/\b429\b|quota|RESOURCE_EXHAUSTED/i.test(String(err?.message ?? err)) ? lookupRoute(fb().ai, c.domain, "gemini-3.5-flash") : Promise.reject(err)));
+        // Free-tier limits count per model: when one is spent, the next model in Remote Config's order reads the page.
+        const e = await withCloudModels((model) => lookupRoute(fb().ai, c.domain, model));
         directory.set(c.domain, e);
         const extra = ((await chromeKV.get("lookups")) as DirectoryEntry[] | undefined) ?? [];
         await chromeKV.set("lookups", [...extra.filter((x) => x.domain !== c.domain), e]);

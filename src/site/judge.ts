@@ -7,6 +7,7 @@ import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-ch
 import { getAI, getGenerativeModel, GoogleAIBackend, InferenceMode, type GenerativeModel } from "firebase/ai";
 import { firebaseConfig, RECAPTCHA_SITE_KEY } from "../ai/firebase-config";
 import { ASK_PROMPT, ASK_SCHEMA, MAX_EMAIL_CHARS } from "../ai/models";
+import { busy, loadRemote, withCloudModels } from "../ai/remote";
 import { askByRules, coach, ASKS, type Advice, type Ask } from "../core/coach";
 import { numbered, pick, sentencesOf } from "../core/sentences";
 import { quoteIsIn } from "../core/quote";
@@ -16,8 +17,6 @@ import type { StoredRequest } from "../core/store";
 import replies from "../../evals/replies.json";
 import macRun from "../../site/evals.json";
 
-/** Cloud models in order. Free-tier limits are counted per model, so a second model answers when the first is spent. */
-const CLOUD_MODELS = ["gemini-3.5-flash-lite", "gemini-3.5-flash"];
 /** One reply for each kind of ask, including two where Nano alone was wrong on our Mac and the rules were right. */
 const PRACTICE = [2, 3, 23, 4, 19, 25, 50, 66, 59, 1];
 
@@ -48,12 +47,17 @@ const onDeviceParams = {
 // What the extension uses for your own mail: the computer's model or nothing.
 const deviceModel: GenerativeModel = getGenerativeModel(ai, { mode: InferenceMode.ONLY_ON_DEVICE, onDeviceParams } as never);
 // Practice emails are public, so here the cloud may step in when this Chrome has no Gemini Nano.
-const hybridModels: GenerativeModel[] = CLOUD_MODELS.map((model) => getGenerativeModel(ai, {
-  mode: InferenceMode.PREFER_ON_DEVICE,
-  onDeviceParams,
-  inCloudParams: { model, generationConfig: { responseMimeType: "application/json", responseJsonSchema: ASK_SCHEMA } },
-} as never));
-const busy = (e: unknown) => /\b429\b|quota|RESOURCE_EXHAUSTED|\b503\b|overloaded/i.test(String((e as Error)?.message ?? e));
+// The cloud model order comes from Remote Config (cloud_models).
+const remoteReady = loadRemote(app, "https://forget-me-hybrid.web.app/directory.json");
+const hybrid = new Map<string, GenerativeModel>();
+const hybridModel = (model: string): GenerativeModel => {
+  if (!hybrid.has(model)) hybrid.set(model, getGenerativeModel(ai, {
+    mode: InferenceMode.PREFER_ON_DEVICE,
+    onDeviceParams,
+    inCloudParams: { model, generationConfig: { responseMimeType: "application/json", responseJsonSchema: ASK_SCHEMA } },
+  } as never));
+  return hybrid.get(model)!;
+};
 
 type LMApi = { availability: (o?: object) => Promise<string>; create: (o?: object) => Promise<{ destroy: () => void }> };
 const LM = () => (self as unknown as { LanguageModel?: LMApi }).LanguageModel;
@@ -112,10 +116,8 @@ async function read(from: string, subject: string, text: string) {
     if (!useCloud) r = await deviceModel.generateContent(prompt);
     else {
       // Try each cloud model in turn when one is out of its free daily allowance.
-      for (const [i, m] of hybridModels.entries()) {
-        try { r = await m.generateContent(prompt); break; }
-        catch (e) { if (!busy(e) || i === hybridModels.length - 1) throw e; }
-      }
+      await remoteReady;
+      r = await withCloudModels((model) => hybridModel(model).generateContent(prompt));
     }
     if (!r) throw new Error("no answer");
     const raw = JSON.parse(r.response.text()) as { ask?: string; proof?: unknown };

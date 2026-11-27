@@ -78,6 +78,7 @@ struct ContentView: View {
             }
             .background(Color.page)
             .foregroundStyle(Color.ink)
+            .task { await CloudModels.load() }
         }
     }
 

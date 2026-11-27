@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { status, PROOF_DAYS, SIGNIN_WAIT_MS } from "../src/core/requests";
+import { status, DEFAULT_TIMING, SIGNIN_WAIT_MS } from "../src/core/requests";
 import { accountAliveEvent, resetPage, signInQuery } from "../src/core/signin";
 
 const H = 3600e3, D = 24 * H;
@@ -15,7 +15,7 @@ describe("sign-in check states", () => {
   });
   it("no email within 24 h: sign-in checked", () => expect(status(base([sent, ok, { type: "signin_check", at: 5 * D }]), 5 * D + SIGNIN_WAIT_MS + 1).state).toBe("signin_checked"));
   it("proven after 30 quiet days, check passed", () => {
-    const s = status(base([sent, ok, { type: "signin_check", at: 5 * D }]), 2 * D + PROOF_DAYS * D);
+    const s = status(base([sent, ok, { type: "signin_check", at: 5 * D }]), 2 * D + DEFAULT_TIMING.proofDays * D);
     expect(s.state).toBe("proven"); expect(s.reason).toContain("sign-in check passed");
   });
   it("marketing after proven reopens the case; before it, it is broken", () => {

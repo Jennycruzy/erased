@@ -90,6 +90,7 @@ private fun Screen(ctx: Context, coach: Coach, samples: List<Sample>, ink: Ink, 
     val field = OutlinedTextFieldDefaults.colors(focusedBorderColor = ink.fg, unfocusedBorderColor = ink.line, focusedLabelColor = ink.muted, unfocusedLabelColor = ink.muted)
 
     LaunchedEffect(Unit) { status = Reader.status() }
+    LaunchedEffect(Unit) { Reader.loadRemote() }
 
     Column(Modifier.fillMaxSize().systemBarsPadding().verticalScroll(scroll)) {
         // Top bar: brand and where the reading happens.

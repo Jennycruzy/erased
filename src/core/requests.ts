@@ -59,14 +59,28 @@ export interface Status {
   evidence?: RequestEvent;
 }
 
-/** Days after a confirmation (or after the request, which also says stop marketing) before a marketing email counts. */
-export const GRACE_DAYS = 3;
-/** Quiet days after a confirmation before deletion counts as proven. */
-export const PROOF_DAYS = 30;
+/**
+ * The waits the rules use. graceDays: days after a confirmation (or after the request, which also says stop
+ * marketing) before a marketing email counts. proofDays: quiet days after a confirmation before deletion counts as
+ * proven. followUpDays: days after a follow-up before the complaint pack is offered. Remote Config can change them
+ * (grace_days, proof_days, follow_up_days); these are the defaults.
+ */
+export const DEFAULT_TIMING = { graceDays: 3, proofDays: 30, followUpDays: 14 };
+export type Timing = typeof DEFAULT_TIMING;
+let timing: Timing = { ...DEFAULT_TIMING };
+export const currentTiming = (): Timing => ({ ...timing });
+
+/** Applies new waits. Anything that is not a whole number of days from 1 to 365 keeps its current value. */
+export function setTiming(t: Partial<Record<keyof Timing, unknown>>): Timing {
+  const ok = (v: unknown): v is number => typeof v === "number" && Number.isInteger(v) && v >= 1 && v <= 365;
+  const next = { ...timing };
+  for (const k of Object.keys(DEFAULT_TIMING) as Array<keyof Timing>) if (ok(t[k])) next[k] = t[k];
+  timing = next;
+  return currentTiming();
+}
+
 /** How long to watch for a reset or sign-in email after a sign-in check. */
 export const SIGNIN_WAIT_MS = 24 * 3600e3;
-/** Days after a follow-up before the complaint pack is offered. */
-export const FOLLOW_UP_DAYS = 14;
 
 const fmt = (t: number) => new Date(t).toISOString().slice(0, 10);
 
@@ -81,7 +95,7 @@ export function status(r: Request, now: number): Status {
 
   const confirmed = ev.find((e) => e.type === "reply" && e.reply === "deleted") as Extract<RequestEvent, { type: "reply" }> | undefined;
   if (confirmed) {
-    const provenAt = addDays(confirmed.at, PROOF_DAYS);
+    const provenAt = addDays(confirmed.at, timing.proofDays);
     const check = ev.find((e) => e.type === "signin_check" && e.at >= confirmed.at);
     const alive = check && ev.find((e) => e.type === "account_alive" && e.at >= check.at && e.at <= check.at + SIGNIN_WAIT_MS);
     if (alive) {
@@ -90,7 +104,7 @@ export function status(r: Request, now: number): Status {
         reason: `Confirmed on ${fmt(confirmed.at)}, but a sign-in email arrived on ${fmt(alive.at)}: the account still exists.`,
       };
     }
-    const mail = ev.find((e) => e.type === "marketing" && e.at > addDays(confirmed.at, GRACE_DAYS));
+    const mail = ev.find((e) => e.type === "marketing" && e.at > addDays(confirmed.at, timing.graceDays));
     if (mail && mail.at >= provenAt) {
       return {
         state: "reopened", result: "REOPENED_MAIL_AFTER_PROVEN", deadline, evidence: mail,
@@ -107,7 +121,7 @@ export function status(r: Request, now: number): Status {
     if (now >= provenAt && !checkWaiting) {
       return {
         state: "proven", result: "PROVEN_NO_MAIL_30D", deadline, evidence: confirmed,
-        reason: `Confirmed on ${fmt(confirmed.at)} and no marketing for ${PROOF_DAYS} days since${check ? "; sign-in check passed" : ""}.`,
+        reason: `Confirmed on ${fmt(confirmed.at)} and no marketing for ${timing.proofDays} days since${check ? "; sign-in check passed" : ""}.`,
       };
     }
     const days = Math.floor((now - confirmed.at) / 864e5);
@@ -130,7 +144,7 @@ export function status(r: Request, now: number): Status {
 
   // Every request also says "stop sending me marketing". Once they have had it a few days, more marketing breaks
   // the objection (GDPR and UK GDPR Art 21(3), NDPA s.36(4): "shall no longer be processed for such purposes").
-  const still = ev.find((e) => e.type === "marketing" && e.at > addDays(sent.at, GRACE_DAYS));
+  const still = ev.find((e) => e.type === "marketing" && e.at > addDays(sent.at, timing.graceDays));
   if (still) {
     const days = Math.floor((still.at - sent.at) / 864e5);
     return {
@@ -141,11 +155,11 @@ export function status(r: Request, now: number): Status {
 
   const followUp = ev.find((e) => e.type === "followed_up");
   if (followUp) {
-    if (now >= addDays(followUp.at, FOLLOW_UP_DAYS)) {
+    if (now >= addDays(followUp.at, timing.followUpDays)) {
       const acked = ev.some((e) => e.type === "reply" && e.reply === "ack");
       return {
         state: "complaint_ready", result: acked ? "OVERDUE_ACK_ONLY" : "OVERDUE_NO_REPLY", deadline,
-        reason: `No confirmation ${FOLLOW_UP_DAYS} days after the follow-up of ${fmt(followUp.at)}.`,
+        reason: `No confirmation ${timing.followUpDays} days after the follow-up of ${fmt(followUp.at)}.`,
       };
     }
     return { state: "followed_up", deadline, reason: `Followed up on ${fmt(followUp.at)}.` };

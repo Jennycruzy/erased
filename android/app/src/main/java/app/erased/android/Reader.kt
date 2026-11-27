@@ -8,6 +8,9 @@ import com.google.firebase.ai.annotations.Generable
 import com.google.firebase.ai.annotations.Guide
 import com.google.firebase.ai.ondevice.*
 import com.google.firebase.ai.type.*
+import com.google.firebase.remoteconfig.remoteConfig
+import kotlinx.coroutines.tasks.await
+import org.json.JSONArray
 import kotlinx.coroutines.flow.collect
 import kotlinx.serialization.Serializable
 
@@ -31,8 +34,8 @@ data class Read(val found: Coach.Found?, val source: String, val ms: Long, val e
  */
 @OptIn(PublicPreviewAPI::class)
 class Reader(private val coach: Coach) {
-    private fun model(where: Where) = Firebase.ai(backend = GenerativeBackend.googleAI()).generativeModel(
-        modelName = CLOUD_MODEL,
+    private fun model(where: Where, name: String) = Firebase.ai(backend = GenerativeBackend.googleAI()).generativeModel(
+        modelName = name,
         onDeviceConfig = OnDeviceConfig(mode = if (where == Where.DEVICE_ONLY) InferenceMode.ONLY_ON_DEVICE else InferenceMode.PREFER_ON_DEVICE),
     )
 
@@ -54,7 +57,14 @@ class Reader(private val coach: Coach) {
         val prompt = "${coach.prompt}\n\nFrom: $from\nSubject: $subject\n\n" + sents.mapIndexed { i, s -> "[${i + 1}] $s" }.joinToString("\n")
         val t0 = System.currentTimeMillis()
         return try {
-            val r = model(where).generateObject(AskAnswer.firebaseAISchema(), prompt)
+            // Free-tier limits count per model: when one is spent, the next in Remote Config's order answers.
+            val list = cloudModels
+            var r: GenerateObjectResponse<AskAnswer>? = null
+            for ((i, name) in list.withIndex()) {
+                try { r = model(where, name).generateObject(AskAnswer.firebaseAISchema(), prompt); break }
+                catch (e: Exception) { if (!busy(e) || i == list.lastIndex) throw e }
+            }
+            r!!
             val a: AskAnswer? = r.getObject()
             val quote = a?.proof?.let { sents.getOrNull(it - 1) } ?: ""
             val ask = a?.ask?.takeIf { it in coach.asks }
@@ -65,7 +75,29 @@ class Reader(private val coach: Coach) {
     }
 
     companion object {
-        const val CLOUD_MODEL = "gemini-3.5-flash-lite"
+        /** Cloud models in order; Remote Config (cloud_models) can change them. */
+        val DEFAULT_CLOUD_MODELS = listOf("gemini-3.5-flash-lite", "gemini-3.5-flash")
+        @Volatile var cloudModels: List<String> = DEFAULT_CLOUD_MODELS
+            private set
+
+        /** Reads cloud_models: a JSON list of one to four Gemini model names. Anything else gives null. */
+        fun parseModels(raw: String): List<String>? = runCatching {
+            val a = JSONArray(raw)
+            val l = (0 until a.length()).map { a.get(it) }
+            if (l.size !in 1..4 || !l.all { it is String && Regex("^gemini-[a-z0-9.-]{1,40}$").matches(it) }) null else l.map { it as String }
+        }.getOrNull()
+
+        fun busy(e: Throwable) = Regex("\\b429\\b|quota|RESOURCE_EXHAUSTED|\\b503\\b|overloaded", RegexOption.IGNORE_CASE).containsMatchIn(e.message ?: e.toString())
+
+        /** Fetches the Remote Config template once; without a network, the defaults stay. */
+        suspend fun loadRemote() {
+            runCatching {
+                val rc = Firebase.remoteConfig
+                rc.setDefaultsAsync(mapOf("cloud_models" to JSONArray(DEFAULT_CLOUD_MODELS).toString())).await()
+                rc.fetchAndActivate().await()
+                parseModels(rc.getString("cloud_models"))?.let { cloudModels = it }
+            }
+        }
         /** Android's on-device limit is 4,000 tokens per request. */
         const val MAX_CHARS = 9000
 

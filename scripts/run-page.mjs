@@ -2,7 +2,7 @@
 import fs from "fs";
 const [, , input, out = "site/run.json"] = process.argv;
 const { requests, lastChecked } = JSON.parse(fs.readFileSync(input, "utf8"));
-const { status, GRACE_DAYS } = await import("../dist-node/requests.mjs");
+const { status, currentTiming } = await import("../dist-node/requests.mjs");
 const ID_DOC = /\b(passport|driver'?s licen[cs]e|photo id|id card|identity document|government[- ]issued|copy of (your|an?) id)\b/i;
 const NOT_HOOPS = new Set(["wait", "scheduled", "no_account"]);
 // Public page: never a support agent's name ("Ed here with Zapier Support"), only what the company asked.
@@ -25,7 +25,7 @@ const rows = requests.map((r) => {
     if (sent && e.at < sent.at) continue;
     hoops.push({ ask, at: e.at, quote: clean(e.coach?.askQuote ?? e.quote) });
   }
-  const mkt = sent && ev.find((e) => e.type === "marketing" && e.at > sent.at + GRACE_DAYS * 864e5);
+  const mkt = sent && ev.find((e) => e.type === "marketing" && e.at > sent.at + currentTiming().graceDays * 864e5);
   if (mkt) hoops.push({ ask: "still_marketing", at: mkt.at, quote: mkt.subject });
   const last = [...ev].reverse().find((e) => e.type === "reply" && (e.reply === "deleted" || ["scheduled", "no_account"].includes(e.coach?.ask)));
   const outcome = !last ? null : last.reply === "deleted" ? "deleted" : last.coach.ask;

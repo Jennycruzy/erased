@@ -155,7 +155,7 @@ run, the directory, the anonymous "who actually deletes" board and the evidence 
 
 **Firebase.** AI Logic (hybrid: on-device for mail, cloud for public pages), App Check (reCAPTCHA Enterprise on
 the website; the extension and phones take their token from it; no remote code), Firestore (directory; board counts with rules that allow one count per anonymous
-user, company and outcome), Remote Config (cloud model list, proof timings, directory location, prompt version),
+user, company and outcome), Remote Config (cloud model order on all three platforms, the rule timings, directory location),
 anonymous Auth for board counts.
 
 ## Accuracy
