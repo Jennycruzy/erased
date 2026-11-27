@@ -87,3 +87,5 @@ input:not([type]), input[type="text"] { font: inherit; padding: 8px; border: 1px
 .coach-wait { font-size: 12px; color: var(--muted); }
 .coach .row-actions { margin-top: 8px; }
 .morning-more { margin-top: 6px; padding: 4px 10px; font-size: 12px; border-radius: 999px; }
+.list li.group { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 16px; font-size: 13px; font-weight: 600; color: var(--muted); background: var(--chip); border-bottom: 1px solid var(--line); }
+.list li.group button { font-size: 12px; padding: 4px 12px; }

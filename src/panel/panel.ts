@@ -257,17 +257,35 @@ async function restoreTrail() {
 // ---------- Clean up ----------
 const chosenKind = new Map<string, RequestKind>();
 
+let showOthers = false;
+
 async function renderClean() {
   const reqs = await store.requests();
   const asked = new Set(reqs.map((r) => r.domain));
-  const picks = companies.filter((c) => (c.breachedAfterJoining.length || c.stale) && c.account !== "unknown" && !asked.has(c.domain));
+  const open = companies.filter((c) => c.account !== "unknown" && !asked.has(c.domain));
+  const picks = open.filter((c) => c.breachedAfterJoining.length || c.stale);
+  // Every other company you hold an account with can be asked too; the risky ones only come first.
+  const others = open.filter((c) => !picks.includes(c));
   $("clean-n").textContent = picks.length ? String(picks.length) : "";
   const list = $("clean-list");
-  if (!picks.length) {
-    list.replaceChildren(el("li", "empty", companies.length ? "Nothing to clean up right now." : "Scan your inbox first."));
+  if (!open.length) {
+    list.replaceChildren(el("li", "empty", companies.length ? "You have asked every company Erased found." : "Scan your inbox first."));
     return;
   }
-  list.replaceChildren(...picks.slice(0, 200).map(cleanRow));
+  const rows: HTMLElement[] = picks.slice(0, 200).map(cleanRow);
+  if (others.length) {
+    const expanded = showOthers || !picks.length;
+    const head = el("li", "group");
+    head.append(el("span", "", picks.length ? `Every other company with your account (${others.length})` : `Nothing breached or long forgotten. Ask any company with your account (${others.length})`));
+    if (picks.length) {
+      const t = el("button", "", expanded ? "Hide" : "Show") as HTMLButtonElement;
+      t.onclick = () => { showOthers = !expanded; void renderClean(); };
+      head.append(t);
+    }
+    rows.push(head);
+    if (expanded) rows.push(...others.slice(0, 300).map(cleanRow));
+  }
+  list.replaceChildren(...rows);
 }
 
 function cleanRow(c: Company): HTMLLIElement {
@@ -313,7 +331,7 @@ function cleanRow(c: Company): HTMLLIElement {
     acts.append(look);
   }
   mid.append(el("div", "name", dir?.company || c.domain), whyLine(c), route, acts);
-  li.append(dot, mid, el("span", "tag" + (c.breachedAfterJoining.length ? " red" : ""), c.breachedAfterJoining.length ? "Breached" : "Unused"));
+  li.append(dot, mid, el("span", "tag" + (c.breachedAfterJoining.length ? " red" : ""), c.breachedAfterJoining.length ? "Breached" : c.stale ? "Unused" : "Account"));
   return li;
 }
 
