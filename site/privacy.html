@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy · Erased</title><meta name="description" content="What Erased reads, where it reads it, and the little it ever sends anywhere.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/site.css"></head><body>
+<header class="site"><div class="wrap"><a class="brand" href="/">Erased</a><nav class="links">
+<a href="/run">Live run</a>
+<a href="/directory">Directory</a><a href="/run#hard">Who makes it hard</a><a href="/evidence">Evidence</a><a href="/judge">Try it</a></nav></div></header>
+<section class="block"><div class="wrap prose"><h2>Privacy</h2>
+<p class="muted">Erased helps you find the companies that hold your data, ask them to delete it, and check whether they did. It is built so that your mail never leaves your device. Last updated 27 November 2026.</p>
+
+<h3>The Chrome extension</h3>
+<ul>
+<li><b>Your Gmail is read in your own browser.</b> The extension reads your mailbox through the Gmail tab you already have open, with your own signed-in session. Erased has no server that receives your mail, and it never asks for your password.</li>
+<li><b>Emails are read on your device.</b> Welcome, password-reset and receipt emails, and companies' replies to your requests, are read by Gemini Nano running inside Chrome on your computer (Firebase AI Logic, on-device only). The text of your emails is never sent to the cloud.</li>
+<li><b>What stays in your browser.</b> The list of companies, your requests and their replies, your name, account email address and region (used to write the letter) are kept in the extension's own storage in Chrome on your computer. Uninstalling the extension deletes them.</li>
+<li><b>Letters are sent by you.</b> Erased opens each letter in your Gmail as a draft. Nothing is sent until you press Send.</li>
+<li><b>What goes to the cloud, and only this.</b> When a company is not in Erased's public directory and you press "Find how to remove", the company's name and domain (for example "example.com") go to Gemini in the cloud through Firebase AI Logic, which reads that company's public privacy page. No email text, no address and nothing about you is sent.</li>
+<li><b>Public files.</b> The extension downloads Erased's public directory of privacy contacts, the public breach catalogue (from Have I Been Pwned) and the public outcome board from forget-me-hybrid.web.app. They are the same files for everyone, so the download does not reveal which companies you have.</li>
+<li><b>App Check.</b> To keep the Gemini service from being abused, a hidden page on forget-me-hybrid.web.app asks Google reCAPTCHA Enterprise for an App Check token. Google processes that check under its own <a href="https://policies.google.com/privacy">privacy policy</a>.</li>
+<li><b>Sharing an outcome is off unless you turn it on.</b> If you switch on "Share outcomes" in the You tab, Erased adds an anonymous count to the public board when a request reaches an outcome: the company's domain, the outcome (for example "confirmed") and the month, under a random anonymous ID from Firebase Authentication. Nothing else is sent, and one person can count once per company and outcome.</li>
+</ul>
+
+<h3>The Android and iPhone apps</h3>
+<ul>
+<li>You share or paste one company reply. It is read on the phone (Gemini Nano on Android, Apple's on-device model on iPhone).</li>
+<li>Only if your phone cannot run an on-device model and you switch on the cloud option, that one email is read by Gemini in the cloud through Firebase AI Logic, to tell you what it asks of you. It is not stored by Erased.</li>
+<li>Your name, email address and region for the written reply stay on the phone.</li>
+</ul>
+
+<h3>The website</h3>
+<p>The practice replies on <a href="/judge">Try it</a> are public replies from Erased's own demo inbox. Anything you paste there is read in your browser by Gemini Nano, or by Gemini in the cloud only if you tick the box. The site uses no analytics, no advertising and no tracking cookies.</p>
+
+<h3>What Erased never does</h3>
+<p>Erased does not sell, rent or share your data, does not use it for advertising, and does not keep a copy of your mail anywhere. There are no accounts to create.</p>
+
+<h3>Contact</h3>
+<p>Questions or requests: open an issue at <a href="https://github.com/Jennycruzy/erased/issues">github.com/Jennycruzy/erased</a>. The source code is public under the Apache-2.0 licence, so every statement on this page can be checked in it.</p>
+</div></section><footer><div class="wrap">Erased reads your mail on your device with Gemini Nano through Firebase AI Logic. Breach data: <a href="https://haveibeenpwned.com/">Have I Been Pwned</a>. <a href="/privacy">Privacy</a>. Apache-2.0.</div></footer></body></html>

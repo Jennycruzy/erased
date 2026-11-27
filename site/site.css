@@ -182,3 +182,8 @@ button.tag.on { background: var(--mint-bg); color: var(--mint); border-color: rg
 .promise + .promise { margin-top: 8px; }
 table.cards td { overflow-wrap: anywhere; }
 table.cards td .q a { white-space: nowrap; }
+.prose { max-width: 820px; }
+.prose h3 { margin-top: 32px; }
+.prose ul { padding-left: 20px; display: grid; gap: 10px; color: var(--muted); }
+.prose p { color: var(--muted); }
+.prose b { color: var(--fg, inherit); }
