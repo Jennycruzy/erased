@@ -82,8 +82,8 @@ On 20 Nov 2026 we sent 30 real deletion requests from a public demo inbox. Erase
 - **5 of the 10 companies whose own privacy page says to email them about your rights answered our email by
   telling us to sign in or use their form instead** (Airtable, Box, Figma, Loom, Slack); both sentences, from the
   page and from the reply, are on the [live run](https://forget-me-hybrid.web.app/run#said).
-- **Most privacy pages never say when you will hear back.** Of 240 company privacy pages we read in full,
-  204 (85%) give no time to answer, though GDPR and UK GDPR set one month and California 45 days.
+- **Most privacy pages never say when you will hear back.** Of 343 company privacy pages we read in full,
+  286 (83%) give no time to answer, though GDPR and UK GDPR set one month and California 45 days.
   Every promise we did find, and every ID or sign-in-only demand, is quoted on the
   [directory](https://forget-me-hybrid.web.app/directory#promises).
 - **Results so far:** Asana confirmed the account is deleted, Canva scheduled the deletion, and 5 companies
@@ -168,6 +168,7 @@ Gemini Nano and records the screen.
 | Check (Apple M1, Chrome 158, `ONLY_ON_DEVICE`, unless the row says otherwise) | Right next step |
 |---|---|
 | Held out: 29 replies that arrived after the phrase rules were written (21 Nov 2026) | Nano alone 20/29 · rules alone 17/29 · rules + Nano 21/29 |
+| Held out again: 3 replies after the second freeze (26 Nov 22:38 to 27 Nov 14:30 UTC), [results](evals/heldout-2/RESULTS.md) | Nano alone 3/3 (on the device) · cloud alone 2/3 · rules alone 2/3 · rules + Nano 2/3 |
 | All 66, Nano alone | 51/66 on 27 Nov, 52/66 on 24 Nov (quote found in the email 64/66) |
 | All 66, as shipped (rules updated after reading these, so in-sample) | 66/66 |
 | Where it ran | 66/66 on the device, median 3.1 s per email |

@@ -1,0 +1,53 @@
+{
+ "rows": [
+  {
+   "id": 1,
+   "company": "monday.com",
+   "label": "log_in_delete",
+   "model": "wait",
+   "quoteOk": true,
+   "source": "in_cloud",
+   "ms": 1281,
+   "rules": "confirm_sender",
+   "final": "confirm_sender"
+  },
+  {
+   "id": 2,
+   "company": "Zapier",
+   "label": "log_in_delete",
+   "model": "log_in_delete",
+   "quoteOk": true,
+   "source": "in_cloud",
+   "ms": 749,
+   "rules": "log_in_delete",
+   "final": "log_in_delete"
+  },
+  {
+   "id": 3,
+   "company": "Vimeo",
+   "label": "wait",
+   "model": "wait",
+   "quoteOk": true,
+   "source": "in_cloud",
+   "ms": 779,
+   "rules": "wait",
+   "final": "wait"
+  }
+ ],
+ "started": "2026-11-27T14:12:21.466Z",
+ "availability": "available",
+ "summary": {
+  "items": 3,
+  "modelAlone": "2/3",
+  "modelQuoteFound": "3/3",
+  "rulesAlone": "2/3",
+  "shipped": "2/3",
+  "onDevice": "0/3",
+  "set": "heldout2",
+  "reader": "cloud gemini-3.5-flash-lite",
+  "medianMs": 779,
+  "availability": "available",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36"
+ },
+ "done": "2026-11-27T14:12:24.292Z"
+}

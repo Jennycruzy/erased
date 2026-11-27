@@ -762,9 +762,9 @@
   "file": "evals/results-mac-26nov.json"
  },
  "judge": {
-  "ranAt": "2026-11-26T20:22:00Z",
+  "ranAt": "2026-11-27T13:40:00Z",
   "what": "Read all 10 on /judge in Chrome 158 on an Apple M1, cloud box off",
-  "result": "10/10 match the hand label \u00b7 10/10 read by Gemini Nano on the computer \u00b7 about 3 s each after a 28.5 s first call"
+  "result": "10/10 match the hand label \u00b7 10/10 read by Gemini Nano on the computer \u00b7 median 2.9 s after a 25.2 s first call"
  },
  "more": [
   [
@@ -783,5 +783,13 @@
    "iPhone, CI on every push",
    "Builds with Xcode 26.6 \u00b7 66/66 hand labels match the rules \u00b7 a recorded run reads a real reply through HybridModel"
   ]
- ]
+ ],
+ "heldOut2": {
+  "what": "3 replies that arrived after the second freeze (26 Nov 22:38 UTC) and before 27 Nov 14:30 UTC, labelled before any reader ran",
+  "nanoAlone": "3/3",
+  "cloudAlone": "2/3",
+  "rulesAlone": "2/3",
+  "shippedMix": "2/3",
+  "onDevice": "3/3"
+ }
 }

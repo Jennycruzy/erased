@@ -11,7 +11,7 @@ const ID_DOC = /\b(ID|identity card|identification document|proof of identity|pa
 const ONLY = /\b(only way|only be|only through|only via|must|solely|exclusively|cannot .* (by|via) (e-?mail|mail))\b/i;
 const SIGNIN = /\b(log(ging)? ?in|sign(ing)? ?in|your account|account settings)\b/i;
 const ABOUT_REQUEST = /\b(request|rights?|delet|eras|access)/i;
-const NOT_REQUEST = /complain|withdraw|ceas|unsubscrib|DPF|dispute|refund|cancel|log data|retain|retention/i;
+const NOT_REQUEST = /complain|withdraw|ceas|unsubscrib|DPF|dispute|refund|cancel|log data|retain|retention|average/i;
 const ABOUT_ID_CHECK = /verify your identity|proof of identity|request|identity card proving/i;
 const AGENT = /\bagent|authori[sz]ed|on (your|their|his|her) behalf/i;
 // "We will acknowledge within 10 days and respond within 45": the answer is 45. An acknowledgement alone is not an answer.

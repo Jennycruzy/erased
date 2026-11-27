@@ -8,6 +8,7 @@ const ev = await (await fetch("/evals.json", { cache: "no-store" })).json();
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
 document.getElementById("acc").innerHTML = [
   ["Held out: " + ev.heldOut.what, `Nano alone ${ev.heldOut.nanoAlone} · rules alone ${ev.heldOut.rulesAlone} · rules + Nano ${ev.heldOut.shippedMix}`],
+  ...(ev.heldOut2 ? [["Held out again: " + ev.heldOut2.what, `Nano alone ${ev.heldOut2.nanoAlone} (${ev.heldOut2.onDevice} on the device) · cloud alone ${ev.heldOut2.cloudAlone} · rules alone ${ev.heldOut2.rulesAlone} · rules + Nano ${ev.heldOut2.shippedMix}`]] : []),
   ["All 66, Nano alone", `${ev.all66.nanoAlone} (quote found ${ev.all66.nanoQuoteFound})`],
   ["All 66, as shipped (" + ev.all66.shippedNote + ")", ev.all66.shipped],
   ["Where it ran", `${ev.all66.onDevice} on the device · median ${(ev.all66.medianMs / 1000).toFixed(1)} s · ${ev.device}`],

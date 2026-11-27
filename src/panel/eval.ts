@@ -4,7 +4,15 @@
 import { ASK_SCHEMA, privateModel, readAsk } from "../ai/models";
 import { firebase } from "../ai/firebase";
 import { askByRules, type Ask } from "../core/coach";
-import set from "../../evals/replies.json";
+import { getGenerativeModel, InferenceMode } from "firebase/ai";
+import main from "../../evals/replies.json";
+import heldout2 from "../../evals/heldout-2/replies.json";
+
+// ?set=heldout2 scores the second held-out set; ?mode=cloud reads with Gemini in the cloud only (same prompt and
+// schema as on the device), for the held-out comparison.
+const params = new URLSearchParams(location.search);
+const set = params.get("set") === "heldout2" ? heldout2 : main;
+const CLOUD = params.get("mode") === "cloud";
 
 interface Item { id: number; company: string; from: string; subject: string; text: string; label: Ask }
 interface Row { id: number; company: string; label: Ask; model: Ask | null; quoteOk: boolean; source: string; ms: number; rules: Ask; final: Ask; error?: string }
@@ -22,7 +30,9 @@ async function run() {
   out.availability = String(await LM()?.availability(opts).catch((e) => "error: " + e) ?? "no LanguageModel");
   show();
   const { ai } = firebase({ debugToken: localStorage.getItem("appcheckDebug") || undefined });
-  const m = privateModel(ai, ASK_SCHEMA);
+  const m = CLOUD
+    ? getGenerativeModel(ai, { mode: InferenceMode.ONLY_IN_CLOUD, inCloudParams: { model: "gemini-3.5-flash-lite", generationConfig: { responseMimeType: "application/json", responseJsonSchema: ASK_SCHEMA } } } as never)
+    : privateModel(ai, ASK_SCHEMA);
   for (const it of set as Item[]) {
     const rules = askByRules(it.text).ask;
     try {
@@ -46,6 +56,8 @@ async function run() {
     rulesAlone: `${right("rules")}/${n}`,
     shipped: `${right("final")}/${n}`,
     onDevice: `${out.rows.filter((r) => r.source === "on_device").length}/${n}`,
+    set: params.get("set") ?? "replies",
+    reader: CLOUD ? "cloud gemini-3.5-flash-lite" : "on-device",
     medianMs: ms[Math.floor(ms.length / 2)] ?? null,
     availability: out.availability,
     userAgent: navigator.userAgent,

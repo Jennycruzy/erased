@@ -57,6 +57,16 @@
         "source": "/favicon.ico",
         "destination": "/favicon.svg",
         "type": 301
+      },
+      {
+        "source": "/board",
+        "destination": "/run#hard",
+        "type": 301
+      },
+      {
+        "source": "/board.html",
+        "destination": "/run#hard",
+        "type": 301
       }
     ]
   }

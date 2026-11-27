@@ -1,14 +1,14 @@
 {
- "generatedAt": "2026-11-27T14:00:25.795Z",
- "readUntil": "2026-11-27T14:00:20.576Z",
+ "generatedAt": "2026-11-27T14:12:29.069Z",
+ "readUntil": "2026-11-27T14:11:48.497Z",
  "summary": {
-  "pages": 240,
-  "idRequired": 3,
-  "idMaybe": 4,
+  "pages": 343,
+  "idRequired": 5,
+  "idMaybe": 6,
   "signinOnly": 2,
-  "promiseDays": 36,
-  "noPromise": 204,
-  "agentAllowed": 79
+  "promiseDays": 57,
+  "noPromise": 286,
+  "agentAllowed": 110
  },
  "rows": [
   {
@@ -2803,6 +2803,1222 @@
    },
    "agent": "You may designate an authorized agent to submit requests on your behalf.",
    "readAt": "2026-11-27T14:00:20.576Z"
+  },
+  {
+   "company": "Inter-Con Security",
+   "domain": "icsecurity.com",
+   "page": "https://icsecurity.com/privacy-policy/",
+   "route": "form",
+   "address": "www.icsecurity.com/contact-us/",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:00:26.991Z"
+  },
+  {
+   "company": "InterPals",
+   "domain": "interpals.net",
+   "page": "https://interpals.net/app/privacy",
+   "route": "email",
+   "address": "support@interpals.net",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:00:33.092Z"
+  },
+  {
+   "company": "Jefit",
+   "domain": "jefit.com",
+   "page": "https://www.jefit.com/privacy-policy",
+   "route": "email",
+   "address": "support@jefit.com",
+   "asks": [],
+   "days": {
+    "days": 45,
+    "quote": "We will disclose and deliver the required information free of charge within 45 days of receiving Your verifiable request."
+   },
+   "agent": "Only You, or a person registered with the California Secretary of State that You authorize to act on Your behalf, may make a verifiable request related to Your personal information.",
+   "readAt": "2026-11-27T14:00:40.454Z"
+  },
+  {
+   "company": "Job&Talent",
+   "domain": "jobandtalent.com",
+   "page": "https://www.jobandtalent.com/legal/privacy-notice",
+   "route": "account_settings",
+   "address": null,
+   "asks": [
+    {
+     "kind": "id_required",
+     "quote": "In case of sending a request by e-mail, it shall include a copy of your ID or any other equivalent identity document, as well as the minimum content stipulated in the applicable regulations."
+    }
+   ],
+   "days": null,
+   "agent": "You may exercise these rights yourself or through your authorized agent.",
+   "readAt": "2026-11-27T14:00:46.268Z"
+  },
+  {
+   "company": "JoomlArt",
+   "domain": "joomlart.com",
+   "page": "https://www.joomlart.com/joomlart/privacy",
+   "route": "portal",
+   "address": null,
+   "asks": [],
+   "days": {
+    "days": 3,
+    "quote": "Such requests will be processed within 72 hours (excluding weekends)."
+   },
+   "agent": null,
+   "readAt": "2026-11-27T14:00:52.519Z"
+  },
+  {
+   "company": "Kemper",
+   "domain": "kemper.com",
+   "page": "https://www.kemper.com/ccpa-notice",
+   "route": "email",
+   "address": "privacy@kemper.com",
+   "asks": [],
+   "days": null,
+   "agent": "An authorized agent may submit a request on your behalf using the webform or toll-free number listed above.",
+   "readAt": "2026-11-27T14:00:59.472Z"
+  },
+  {
+   "company": "LandAirSea",
+   "domain": "landairsea.com",
+   "page": "https://landairsea.com/pages/website-privacy-policy",
+   "route": "email",
+   "address": "support@landairsea.com",
+   "asks": [],
+   "days": {
+    "days": 45,
+    "quote": "We will respond to your request within forty-five (45) days."
+   },
+   "agent": "Only you, or someone legally authorized to act on your behalf, may make a request related to your Personal Information.",
+   "readAt": "2026-11-27T14:01:11.262Z"
+  },
+  {
+   "company": "Last.fm",
+   "domain": "last.fm",
+   "page": "https://www.last.fm/legal/privacy",
+   "route": "email",
+   "address": "dp3@last.fm",
+   "asks": [],
+   "days": {
+    "days": 30,
+    "quote": "In addition, you can exercise the following rights at any time, and we respond within one month (extendable to three months for complex cases):"
+   },
+   "agent": "We may also need additional information to verify that your authorised agent or representative has the authority to make a request on your behalf.",
+   "readAt": "2026-11-27T14:01:17.136Z"
+  },
+  {
+   "company": "Le Coq Sportif",
+   "domain": "lecoqsportif.com.co",
+   "page": "https://lecoqsportif.com.co/policies/terms-of-service",
+   "route": "email",
+   "address": "recepcion@paitrade.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:01:23.326Z"
+  },
+  {
+   "company": "Lifeboat Network",
+   "domain": "lbsg.net",
+   "page": "https://www.lbsg.net/privacy-policy/",
+   "route": "email",
+   "address": "privacy@lbsg.net",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:01:28.888Z"
+  },
+  {
+   "company": "Linux Mint",
+   "domain": "linuxmint.com",
+   "page": "https://linuxmint.com/privacy.php",
+   "route": "email",
+   "address": "privacy@linuxmint.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:01:34.837Z"
+  },
+  {
+   "company": "Livpure",
+   "domain": "livpure.com",
+   "page": "https://livpure.com/policies/privacy-policy",
+   "route": "email",
+   "address": "customercare@livpure.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:01:40.735Z"
+  },
+  {
+   "company": "Locally.com",
+   "domain": "locally.com",
+   "page": "https://www.locally.com/legal/privacy/",
+   "route": "form",
+   "address": "support@locally.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:01:46.655Z"
+  },
+  {
+   "company": "Lyrics Mania",
+   "domain": "lyricsmania.com",
+   "page": "https://www.lyricsmania.com/privacy-policy.html",
+   "route": "email",
+   "address": "info@lyricsmania.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:01:59.547Z"
+  },
+  {
+   "company": "MagicDuel",
+   "domain": "magicduel.com",
+   "page": "https://magicduel.com/index.php?pag=privacy&amp;nodemo=true",
+   "route": "email",
+   "address": null,
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:02:05.335Z"
+  },
+  {
+   "company": "MajorGeeks",
+   "domain": "majorgeeks.com",
+   "page": "https://www.majorgeeks.com/content/page/privacy.html",
+   "route": "account_settings",
+   "address": "https://forums.majorgeeks.com/gdpr/index.php",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:02:11.435Z"
+  },
+  {
+   "company": "Malwarebytes",
+   "domain": "malwarebytes.org",
+   "page": "https://www.malwarebytes.com/legal/privacy-policy",
+   "route": "form",
+   "address": "privacy@malwarebytes.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:02:17.235Z"
+  },
+  {
+   "company": "MangaToon",
+   "domain": "mangatoon.mobi",
+   "page": "https://mangatoon.mobi/PrivacyPolicy/en",
+   "route": "email",
+   "address": "support@mangatoon.mobi",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:02:24.192Z"
+  },
+  {
+   "company": "Marcus & Millichap",
+   "domain": "marcusmillichap.com",
+   "page": "https://www.marcusmillichap.com/privacy-policy",
+   "route": "form",
+   "address": null,
+   "asks": [],
+   "days": null,
+   "agent": "California residents may designate an authorized agent to make a request under the CCPA on your behalf.",
+   "readAt": "2026-11-27T14:02:30.599Z"
+  },
+  {
+   "company": "Ziff Davis",
+   "domain": "mashable.com",
+   "page": "https://www.ziffdavis.com/ztg-privacy-policy",
+   "route": "email",
+   "address": "privacy@ziffdavis.com",
+   "asks": [],
+   "days": null,
+   "agent": "Right to an Authorized Agent (CA) : If you would like to make a request on behalf of a California consumer who is a current or former customer, please provide an email from the email address we have on file for the customer authorizing the request.",
+   "readAt": "2026-11-27T14:02:37.096Z"
+  },
+  {
+   "company": "Mate1 Social Enterprises Inc",
+   "domain": "mate1.com",
+   "page": "https://www.edate.com/privacy-policy",
+   "route": "email",
+   "address": "privacy@edate.com",
+   "asks": [
+    {
+     "kind": "id_maybe",
+     "quote": "For your protection, we may ask for proof of identity before we can answer any such requests."
+    }
+   ],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:02:43.538Z"
+  },
+  {
+   "company": "McGraw Hill",
+   "domain": "mheducation.com",
+   "page": "https://www.mheducation.com/about-us/trust-center/privacy.html",
+   "route": "form",
+   "address": null,
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:02:49.260Z"
+  },
+  {
+   "company": "Medela",
+   "domain": "medela.com",
+   "page": "https://www.medela.com/en/footer-content/privacy-and-cookie-policy",
+   "route": "form",
+   "address": "Privacy Request Webform",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:02:55.789Z"
+  },
+  {
+   "company": "MediaWorks",
+   "domain": "mediaworks.co.nz",
+   "page": "https://mediaworks.co.nz/privacy-notice",
+   "route": "email",
+   "address": "privacy@mediaworks.co.nz",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:03:02.177Z"
+  },
+  {
+   "company": "Conscious Dating Network",
+   "domain": "meetmindful.com",
+   "page": "https://www.meetmindful.com/privacy.php",
+   "route": "email",
+   "address": null,
+   "asks": [],
+   "days": {
+    "days": 30,
+    "quote": "This request may take up to 30 days to fulfill, and we may need to verify your identity before processing."
+   },
+   "agent": null,
+   "readAt": "2026-11-27T14:03:08.449Z"
+  },
+  {
+   "company": "moneycontrol.com",
+   "domain": "moneycontrol.com",
+   "page": "https://www.moneycontrol.com/cdata/privacypolicy.php",
+   "route": "email",
+   "address": "dpo@nw18.com",
+   "asks": [],
+   "days": null,
+   "agent": "You are entitled to appoint an Authorized Agent to raise a request on your behalf provided the authorized agent is able to submit us with your consent for the respective request.",
+   "readAt": "2026-11-27T14:03:16.020Z"
+  },
+  {
+   "company": "mSpy",
+   "domain": "mspy.com",
+   "page": "https://www.mspy.com/privacy-policy.html",
+   "route": "email",
+   "address": "dpo@mspy.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:03:22.280Z"
+  },
+  {
+   "company": "Multiplayer.it",
+   "domain": "multiplayer.it",
+   "page": "https://multiplayer.it/privacy-policy/",
+   "route": "email",
+   "address": "dpo@netaddiction.it",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:03:28.176Z"
+  },
+  {
+   "company": "MuslimMatch",
+   "domain": "muslimmatch.com",
+   "page": "https://www.muslimmatch.com/privacy.php",
+   "route": "email",
+   "address": "helpdesk@muslimmatch.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:03:34.541Z"
+  },
+  {
+   "company": "mylovely.ai",
+   "domain": "mylovely.ai",
+   "page": "https://www.mylovely.ai/privacy",
+   "route": "email",
+   "address": "support@mylovely.ai",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:03:40.331Z"
+  },
+  {
+   "company": "MyFitnessPal",
+   "domain": "myfitnesspal.com",
+   "page": "https://www.myfitnesspal.com/privacy-policy",
+   "route": "form",
+   "address": "privacy@myfitnesspal.com",
+   "asks": [],
+   "days": null,
+   "agent": "Where legally permitted, you may submit requests through an authorized agent or representative at privacy@myfitnesspal.com .",
+   "readAt": "2026-11-27T14:03:46.731Z"
+  },
+  {
+   "company": "Myspace",
+   "domain": "myspace.com",
+   "page": "https://myspace.com/pages/privacy",
+   "route": "account_settings",
+   "address": null,
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:03:52.946Z"
+  },
+  {
+   "company": "NetGalley",
+   "domain": "netgalley.com",
+   "page": "https://www.netgalley.com/privacy",
+   "route": "email",
+   "address": "info@netgalley.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:03:59.271Z"
+  },
+  {
+   "company": "Nival",
+   "domain": "nival.com",
+   "page": "https://nival.com/privacypolicy-us",
+   "route": "email",
+   "address": "privacy@nival.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:04:04.985Z"
+  },
+  {
+   "company": "Odido",
+   "domain": "odido.nl",
+   "page": "https://www.odido.nl/privacy",
+   "route": "email",
+   "address": "dpo@odido.nl",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:04:11.202Z"
+  },
+  {
+   "company": "Otelier",
+   "domain": "otelier.com",
+   "page": "https://otelier.com/policies/privacy-policy",
+   "route": "email",
+   "address": "hello@otelier.com",
+   "asks": [],
+   "days": null,
+   "agent": "In accordance with applicable laws, you may designate an authorized agent to make requests on your behalf to exercise your rights.",
+   "readAt": "2026-11-27T14:04:17.040Z"
+  },
+  {
+   "company": "Oz Hair and Beauty",
+   "domain": "ozhairandbeauty.com",
+   "page": "https://www.ozhairandbeauty.com/pages/privacy-policy",
+   "route": "email",
+   "address": "privacy@ozhairandbeauty.com",
+   "asks": [],
+   "days": {
+    "days": 30,
+    "quote": "You may also ask us to provide you with access to the personal information we hold about you, and we will respond to your request within a reasonable period, and in most cases within 30 days."
+   },
+   "agent": null,
+   "readAt": "2026-11-27T14:04:23.218Z"
+  },
+  {
+   "company": "Pampling",
+   "domain": "pampling.com",
+   "page": "https://www.pampling.com/privacidad",
+   "route": "email",
+   "address": "rgpd@ateacompliance.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:04:29.409Z"
+  },
+  {
+   "company": "ParkMobile",
+   "domain": "parkmobile.io",
+   "page": "https://parkmobile.io/legal/privacy-policy",
+   "route": "email",
+   "address": "privacy@parkmobile.io",
+   "asks": [],
+   "days": {
+    "days": 45,
+    "quote": "We use good faith efforts to respond to a verifiable consumer request within forty-five (45) days after its receipt."
+   },
+   "agent": "You can also have an authorized agent exercise your rights on your behalf using the same methods as described above.",
+   "readAt": "2026-11-27T14:04:35.285Z"
+  },
+  {
+   "company": "Hussle",
+   "domain": "payasugym.com",
+   "page": "https://www.hussle.com/legal/privacy",
+   "route": "email",
+   "address": "info@hussle.com",
+   "asks": [],
+   "days": {
+    "days": 30,
+    "quote": "If you want to exercise any of your rights, please contact the Data Privacy Manager on info@hussle.com (FAO Data Privacy Manager) and we will act upon your request within 1 calendar month."
+   },
+   "agent": null,
+   "readAt": "2026-11-27T14:04:41.300Z"
+  },
+  {
+   "company": "Energy Review",
+   "domain": "peoplesenergy.co.uk",
+   "page": "https://www.energy-review.co.uk/privacy",
+   "route": "email",
+   "address": "privacy@energy-review.co.uk",
+   "asks": [],
+   "days": {
+    "days": 30,
+    "quote": "We will respond within one month of receiving your request."
+   },
+   "agent": null,
+   "readAt": "2026-11-27T14:04:47.359Z"
+  },
+  {
+   "company": "Pi-hole LLC",
+   "domain": "pi-hole.net",
+   "page": "https://pi-hole.net/privacy/",
+   "route": "email",
+   "address": "legal@pi-hole.net",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:04:53.481Z"
+  },
+  {
+   "company": "Piping Rock",
+   "domain": "pipingrock.com",
+   "page": "https://www.pipingrock.com/en-ie/policies/privacy-policy",
+   "route": "email",
+   "address": "customerservice@pipingrock.com",
+   "asks": [],
+   "days": null,
+   "agent": "To the extent authorized in State Privacy Laws, you may designate an agent to submit requests on your behalf.",
+   "readAt": "2026-11-27T14:04:59.582Z"
+  },
+  {
+   "company": "Pitney Bowes",
+   "domain": "pitneybowes.com",
+   "page": "https://www.pitneybowes.com/us/legal/privacy-statement.html",
+   "route": "email",
+   "address": null,
+   "asks": [],
+   "days": {
+    "days": 45,
+    "quote": "We will respond to verifiable requests for disclosure or deletion of Personal Information free of charge, within 45 days of receipt."
+   },
+   "agent": "In some jurisdictions, you can designate an authorized agent to make a request on your behalf.",
+   "readAt": "2026-11-27T14:05:05.727Z"
+  },
+  {
+   "company": "Pixel Federation",
+   "domain": "pixelfederation.com",
+   "page": "https://portal.pixelfederation.com/en/privacy",
+   "route": "email",
+   "address": "privacy@pixelfederation.com",
+   "asks": [],
+   "days": null,
+   "agent": "You may designate an authorized agent to make a request on your behalf subject to proof of identity and authorization.",
+   "readAt": "2026-11-27T14:05:11.463Z"
+  },
+  {
+   "company": "Pixlr",
+   "domain": "pixlr.com",
+   "page": "https://pixlr.com/privacy-policy/",
+   "route": "email",
+   "address": "dpo@pixlr.com",
+   "asks": [],
+   "days": {
+    "days": 30,
+    "quote": "Account data is deleted within 30 days of closure"
+   },
+   "agent": null,
+   "readAt": "2026-11-27T14:05:17.430Z"
+  },
+  {
+   "company": "playbook.vc",
+   "domain": "playbook.vc",
+   "page": "https://playbook.vc/legal/privacy.html",
+   "route": "email",
+   "address": "privacy@pnptc.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:05:23.577Z"
+  },
+  {
+   "company": "Proptiger",
+   "domain": "proptiger.com",
+   "page": "https://www.proptiger.com/privacy-policy",
+   "route": "email",
+   "address": "customer.service@proptiger.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:05:29.627Z"
+  },
+  {
+   "company": "Prosper",
+   "domain": "prosper.com",
+   "page": "https://www.prosper.com/legal/privacy-policy",
+   "route": "portal",
+   "address": "privacy@prosper.com",
+   "asks": [],
+   "days": {
+    "days": 45,
+    "quote": "If we can verify your request, we will make our best effort to respond within forty-five (45) days of our receipt of your request."
+   },
+   "agent": "You may designate an authorized agent to exercise privacy rights on your behalf.",
+   "readAt": "2026-11-27T14:05:35.608Z"
+  },
+  {
+   "company": "Provecho",
+   "domain": "provecho.bio",
+   "page": "https://www.provecho.bio/privacy-policy",
+   "route": "email",
+   "address": "support@provecho.co",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:05:41.416Z"
+  },
+  {
+   "company": "BVD Info / Moody's",
+   "domain": "bvdinfo.com",
+   "page": "https://www.moodys.com/web/en/us/legal/privacy-policy.html",
+   "route": "email",
+   "address": null,
+   "asks": [],
+   "days": null,
+   "agent": "Only you, or a natural person or a business entity that you have authorized to act on your behalf, may make a verifiable consumer request related to your Personal Data.",
+   "readAt": "2026-11-27T14:05:47.217Z"
+  },
+  {
+   "company": "QuinStreet",
+   "domain": "quinstreet.com",
+   "page": "https://www.quinstreet.com/privacy-notice/",
+   "route": "form",
+   "address": "legalq@quinstreet.com",
+   "asks": [],
+   "days": null,
+   "agent": "Depending on your U.S. state of residence, you may authorize someone to make a privacy rights request on your behalf (an authorized agent).",
+   "readAt": "2026-11-27T14:05:53.572Z"
+  },
+  {
+   "company": "R2Games",
+   "domain": "r2games.com",
+   "page": "https://www.r2games.com/public/privacy-policy.html",
+   "route": "email",
+   "address": "support@r2games.com.hk",
+   "asks": [],
+   "days": {
+    "days": 10,
+    "quote": "After receiving the personal identity information, we will respond to your request and finish the process within ten working days."
+   },
+   "agent": null,
+   "readAt": "2026-11-27T14:05:59.851Z"
+  },
+  {
+   "company": "BlueSnap",
+   "domain": "bluesnap.com",
+   "page": "https://www.bluesnap.com/legal/privacy-policy/",
+   "route": "form",
+   "address": "https://www.bluesnap.com/legal/privacy-policy/",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:06:06.018Z"
+  },
+  {
+   "company": "Reincubate",
+   "domain": "reincubate.com",
+   "page": "https://reincubate.com/about/privacy-security/",
+   "route": "email",
+   "address": "support@reincubate.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:06:23.281Z"
+  },
+  {
+   "company": "RentoMojo",
+   "domain": "rentomojo.com",
+   "page": "https://www.rentomojo.com/privacy-policy",
+   "route": "email",
+   "address": "jo@rentomojo.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:06:35.073Z"
+  },
+  {
+   "company": "Republican Party of Texas",
+   "domain": "texasgop.org",
+   "page": "https://texasgop.org/privacy-policy/",
+   "route": "email",
+   "address": "info@texasgop.org",
+   "asks": [],
+   "days": {
+    "days": 90,
+    "quote": "We will respond to such verified requests within 60-90 days."
+   },
+   "agent": null,
+   "readAt": "2026-11-27T14:06:41.308Z"
+  },
+  {
+   "company": "ReverbNation",
+   "domain": "reverbnation.com",
+   "page": "https://www.reverbnation.com/privacy",
+   "route": "email",
+   "address": "privacy@reverbnation.com",
+   "asks": [],
+   "days": null,
+   "agent": "You may designate an authorized agent to submit requests on your behalf through a valid power of attorney in certain circumstances or through signed written permission that authorizes the agent to act on your behalf.",
+   "readAt": "2026-11-27T14:06:48.201Z"
+  },
+  {
+   "company": "rightdev.co.uk",
+   "domain": "rightdev.co.uk",
+   "page": "https://www.rightdev.co.uk/privacy_statement/",
+   "route": "form",
+   "address": "https://www.rightbiz.co.uk/contact_us/",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:06:53.952Z"
+  },
+  {
+   "company": "Robinhood",
+   "domain": "robinhood.com",
+   "page": "https://robinhood.com/eu/en/support/articles/privacy-policy/",
+   "route": "email",
+   "address": "privacy@robinhood.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:07:00.147Z"
+  },
+  {
+   "company": "Robinsons Malls",
+   "domain": "robinsonsmalls.com",
+   "page": "https://robinsonsmalls.com/RMalls-plus-privacy-policy",
+   "route": "email",
+   "address": "dpo@robinsonsland.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:07:06.652Z"
+  },
+  {
+   "company": "Royal Enfield",
+   "domain": "royalenfield.com",
+   "page": "https://www.royalenfield.com/in/en/legal/privacy-policy/",
+   "route": "email",
+   "address": null,
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:07:12.376Z"
+  },
+  {
+   "company": "Scentbird",
+   "domain": "scentbird.com",
+   "page": "https://www.scentbird.com/privacy",
+   "route": "email",
+   "address": "support@scentbird.com",
+   "asks": [],
+   "days": null,
+   "agent": "Some customers use third-party services, similar to Truebill, to request account deletion on their behalf.",
+   "readAt": "2026-11-27T14:07:25.007Z"
+  },
+  {
+   "company": "Scholastic",
+   "domain": "scholastic.com",
+   "page": "https://www.scholastic.ie/privacy",
+   "route": "email",
+   "address": "privacy@scholastic.co.uk",
+   "asks": [],
+   "days": {
+    "days": 30,
+    "quote": "We try to respond to all legitimate requests within one month."
+   },
+   "agent": null,
+   "readAt": "2026-11-27T14:07:31.627Z"
+  },
+  {
+   "company": "Maple Ridge – Pitt Meadows School District No. 42",
+   "domain": "sd42.ca",
+   "page": "https://www.sd42.ca/website-privacy-policy/",
+   "route": "email",
+   "address": "privacy@sd42.ca",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:07:38.017Z"
+  },
+  {
+   "company": "SCUF Gaming",
+   "domain": "scufgaming.com",
+   "page": "https://www.scufgaming.com/eu/en/s/privacy-policy",
+   "route": "email",
+   "address": "data.controller@corsair.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:07:45.564Z"
+  },
+  {
+   "company": "SevenRooms",
+   "domain": "sevenrooms.com",
+   "page": "https://sevenrooms.com/privacy-policy/",
+   "route": "email",
+   "address": "privacy@sevenrooms.com",
+   "asks": [],
+   "days": null,
+   "agent": "Under the State Privacy Laws, you may be permitted to authorize an authorized agent to make a request on your behalf.",
+   "readAt": "2026-11-27T14:07:51.659Z"
+  },
+  {
+   "company": "Shadi.com",
+   "domain": "shadi.com",
+   "page": "https://www.shadi.com/privacy-policy",
+   "route": "email",
+   "address": null,
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:07:57.688Z"
+  },
+  {
+   "company": "Sharecare",
+   "domain": "sharecare.com",
+   "page": "https://www.sharecare.com/terms/privacypolicy",
+   "route": "form",
+   "address": "privacy@sharecare.com",
+   "asks": [],
+   "days": null,
+   "agent": "You may designate an authorized agent to request information on your behalf, provided that the authorized agent complies with our verification procedures to ensure your permission has been obtained.",
+   "readAt": "2026-11-27T14:08:04.118Z"
+  },
+  {
+   "company": "ShareThis",
+   "domain": "sharethis.com",
+   "page": "https://sharethis.com/privacy/",
+   "route": "email",
+   "address": "privacy@sharethis.com",
+   "asks": [],
+   "days": {
+    "days": 30,
+    "quote": "We will endeavor to respond to any requests to exercise your rights within one month from when they are made, although this period may be extended in some cases in which case we will inform you before the expiration of the one-month period."
+   },
+   "agent": "Depending upon where you live, you may also submit a data subject rights request through an authorized agent.",
+   "readAt": "2026-11-27T14:08:09.915Z"
+  },
+  {
+   "company": "Shitexpress",
+   "domain": "shitexpress.com",
+   "page": "https://www.shitexpress.com/privacy",
+   "route": "email",
+   "address": "info@shitexpress.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:08:15.794Z"
+  },
+  {
+   "company": "Slickwraps",
+   "domain": "slickwraps.com",
+   "page": "https://www.slickwraps.com/pages/privacy-policy",
+   "route": "email",
+   "address": "contact@slickwraps.com",
+   "asks": [],
+   "days": null,
+   "agent": "An authorized agent may submit a request for you, but we may request proof of authorization and identity.",
+   "readAt": "2026-11-27T14:08:21.829Z"
+  },
+  {
+   "company": "Snail Games USA",
+   "domain": "snail.com",
+   "page": "https://snail.com/privacy-policy",
+   "route": "email",
+   "address": "customersupport@snail.com",
+   "asks": [],
+   "days": null,
+   "agent": "Only a Resident, or a person authorized to act on the Resident’s behalf, may make a consumer request to Snail Games related to the Resident’s Personal Information.",
+   "readAt": "2026-11-27T14:08:28.116Z"
+  },
+  {
+   "company": "socialengineered.net",
+   "domain": "socialengineered.net",
+   "page": "https://socialengineered.net/privacy-policy/",
+   "route": "account_settings",
+   "address": null,
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:08:34.117Z"
+  },
+  {
+   "company": "songtrivia2.io",
+   "domain": "songtrivia2.io",
+   "page": "https://songtrivia.io/privacy",
+   "route": "email",
+   "address": "gdpr@songtrivia.io",
+   "asks": [
+    {
+     "kind": "id_maybe",
+     "quote": "We may ask for proof of identity before processing your request."
+    }
+   ],
+   "days": {
+    "days": 30,
+    "quote": "We will respond to your request within 30 days (GDPR) or 45 days (CCPA)."
+   },
+   "agent": null,
+   "readAt": "2026-11-27T14:08:40.150Z"
+  },
+  {
+   "company": "Sound Radix",
+   "domain": "soundradix.com",
+   "page": "https://www.soundradix.com/pages/privacy/",
+   "route": "form",
+   "address": "https://www.soundradix.com/pages/privacy/",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:08:46.009Z"
+  },
+  {
+   "company": "Sphero",
+   "domain": "sphero.com",
+   "page": "https://sphero.com/pages/privacy",
+   "route": "email",
+   "address": "dpo@sphero.com",
+   "asks": [],
+   "days": null,
+   "agent": "We do allow you to rely on an authorized agent to submit a request on your behalf, but they must first provide us your written authorization allowing them to make such a request on your behalf.",
+   "readAt": "2026-11-27T14:08:51.939Z"
+  },
+  {
+   "company": "SpyPhone.com",
+   "domain": "spyfone.com",
+   "page": "https://www.spyphone.com/privacy/",
+   "route": "account_settings",
+   "address": "support@spyphone.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:08:57.800Z"
+  },
+  {
+   "company": "Stratfor",
+   "domain": "stratfor.com",
+   "page": "https://www.ranenetwork.com/privacy-policy",
+   "route": "email",
+   "address": "support@ranenetwork.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:09:03.476Z"
+  },
+  {
+   "company": "Stripchat",
+   "domain": "stripchat.com",
+   "page": "https://stripchat.com/privacy",
+   "route": "email",
+   "address": "help@stripchat.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:09:09.492Z"
+  },
+  {
+   "company": "Suba Games",
+   "domain": "subagames.com",
+   "page": "https://subagames.com/privacypolicy.aspx",
+   "route": "account_settings",
+   "address": "privacy@subagames.com.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:09:15.649Z"
+  },
+  {
+   "company": "success.com",
+   "domain": "success.com",
+   "page": "https://www.success.com/privacy",
+   "route": "email",
+   "address": "customerservice@success.com",
+   "asks": [],
+   "days": null,
+   "agent": "You may designate an authorized agent to submit a request on your behalf; we may require proof of the agent’s authority and may still need to verify your identity directly with you.",
+   "readAt": "2026-11-27T14:09:22.040Z"
+  },
+  {
+   "company": "Suno",
+   "domain": "suno.com",
+   "page": "https://suno.com/privacy",
+   "route": "portal",
+   "address": null,
+   "asks": [],
+   "days": {
+    "days": 30,
+    "quote": "We will respond to requests to exercise these rights without undue delay and at least within one month (though this may be extended by a further two months in certain circumstances)."
+   },
+   "agent": "You may also designate, in writing or through a power of attorney document, an authorized agent to make requests on your behalf to exercise your rights.",
+   "readAt": "2026-11-27T14:09:28.014Z"
+  },
+  {
+   "company": "Surveylama",
+   "domain": "surveylama.com",
+   "page": "https://surveylama.com/en/privacy-policy",
+   "route": "email",
+   "address": null,
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:09:34.122Z"
+  },
+  {
+   "company": "Swvl",
+   "domain": "swvl.com",
+   "page": "https://www.swvl.com/privacy-policy",
+   "route": "email",
+   "address": "legal@swvl.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:09:39.863Z"
+  },
+  {
+   "company": "TAP Air Portugal",
+   "domain": "flytap.com",
+   "page": "https://www.flytap.com/en-ie/legal-info/privacy",
+   "route": "portal",
+   "address": "https://www.flytap.com/en-ie/legal-info/privacy",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:09:47.749Z"
+  },
+  {
+   "company": "teespring.com",
+   "domain": "teespring.com",
+   "page": "https://www.amaze.co/policies/corporate/privacy-policy",
+   "route": "form",
+   "address": "privacy@amaze.co",
+   "asks": [],
+   "days": null,
+   "agent": "You may use an authorized agent to submit a request on your behalf.",
+   "readAt": "2026-11-27T14:09:53.508Z"
+  },
+  {
+   "company": "Terravision",
+   "domain": "terravision.eu",
+   "page": "https://www.terravision.eu/privacy-notice.html?noredirect=en_US",
+   "route": "email",
+   "address": "dpo@terravision.eu",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:09:59.262Z"
+  },
+  {
+   "company": "The Halloween Spot",
+   "domain": "thehalloweenspot.com",
+   "page": "https://www.thehalloweenspot.com/policies/privacy-policy",
+   "route": "email",
+   "address": "halloweenspot@halloweenspotonline.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:10:05.111Z"
+  },
+  {
+   "company": "The Post Millennial",
+   "domain": "thepostmillennial.com",
+   "page": "https://thepostmillennial.com/legal/privacy",
+   "route": "form",
+   "address": "admin@thepm.news",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:10:11.735Z"
+  },
+  {
+   "company": "TheTVDB.com",
+   "domain": "thetvdb.com",
+   "page": "https://thetvdb.com/privacy-policy",
+   "route": "email",
+   "address": "legal@whipmedia.com",
+   "asks": [],
+   "days": {
+    "days": 30,
+    "quote": "We will make commercially reasonable efforts to provide You reasonable access to Your Personal Data within 30 days of Your access request to the contact address below."
+   },
+   "agent": "If You are an authorized representative submitting a request on a user's behalf, please submit the request per the instructions below We will follow up to request a signed, written permission signed by the individual who is the subject of the request authorizing You to make the request on their behalf.",
+   "readAt": "2026-11-27T14:10:17.961Z"
+  },
+  {
+   "company": "Tibber AS",
+   "domain": "tibber.com",
+   "page": "https://tibber.com/en/terms/privacy-policy",
+   "route": "email",
+   "address": "privacy@tibber.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:10:29.663Z"
+  },
+  {
+   "company": "ticketcounter.nl",
+   "domain": "ticketcounter.nl",
+   "page": "https://ticketcounter.nl/privacy-verklaring/",
+   "route": "email",
+   "address": "info@ticketcounter.nl",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:10:35.512Z"
+  },
+  {
+   "company": "TNAFlix",
+   "domain": "tnaflix.com",
+   "page": "https://www.tnaflix.com/privacy",
+   "route": "email",
+   "address": "support@tnaflix.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:10:41.132Z"
+  },
+  {
+   "company": "Tracki",
+   "domain": "tracki.com",
+   "page": "https://tracki.com/pages/privacy-policy-1",
+   "route": "email",
+   "address": null,
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:10:47.030Z"
+  },
+  {
+   "company": "TravelOK.com",
+   "domain": "travelok.com",
+   "page": "https://www.travelok.com/privacy-policy",
+   "route": "email",
+   "address": "tokfeedback@travelok.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:10:53.505Z"
+  },
+  {
+   "company": "Trillian",
+   "domain": "trillian.im",
+   "page": "https://trillian.im/legal/privacy-policy/",
+   "route": "email",
+   "address": "privacy-feedback@ceruleanstudios.com",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:11:05.772Z"
+  },
+  {
+   "company": "TrueFire",
+   "domain": "truefire.com",
+   "page": "https://truefire.com/privacy-policy",
+   "route": "email",
+   "address": "help@truefire.com",
+   "asks": [],
+   "days": null,
+   "agent": "You may authorize a representative to act on your behalf with proper documentation.",
+   "readAt": "2026-11-27T14:11:11.746Z"
+  },
+  {
+   "company": "UnicoCampania",
+   "domain": "unicocampania.it",
+   "page": "https://unicocampania.it/privacy",
+   "route": "email",
+   "address": "dpo@unicocampania.it",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:11:17.571Z"
+  },
+  {
+   "company": "University of Pennsylvania",
+   "domain": "upenn.edu",
+   "page": "https://www.upenn.edu/about/privacy-policy",
+   "route": "email",
+   "address": "privacy@upenn.edu",
+   "asks": [],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:11:23.333Z"
+  },
+  {
+   "company": "Astoria Company",
+   "domain": "astoriacompany.com",
+   "page": "https://astoriacompany.com/privacy-policy",
+   "route": "form",
+   "address": "privacy@astoriacompany.com",
+   "asks": [],
+   "days": {
+    "days": 45,
+    "quote": "We will respond to a verifiable privacy request within forty-five (45) days of receipt."
+   },
+   "agent": "Authorized agents may submit requests through Authorized Agent Request .",
+   "readAt": "2026-11-27T14:11:29.420Z"
+  },
+  {
+   "company": "Upstox",
+   "domain": "upstox.com",
+   "page": "https://upstox.com/terms-of-use-and-privacy-policy/",
+   "route": "email",
+   "address": "privacy@rksv.in",
+   "asks": [],
+   "days": {
+    "days": 30,
+    "quote": "Your request will be processed within 30 business days from the time we receive all the necessary information."
+   },
+   "agent": null,
+   "readAt": "2026-11-27T14:11:35.308Z"
+  },
+  {
+   "company": "Vedantu",
+   "domain": "vedantu.com",
+   "page": "https://www.vedantu.com/privacy-policy",
+   "route": "email",
+   "address": "dpo@vedantu.com",
+   "asks": [
+    {
+     "kind": "id_required",
+     "quote": "Information to enable us to check and verify your identity, e.g., your date of birth, mark-sheets, Passport/Aadhar/Voter ID details."
+    }
+   ],
+   "days": null,
+   "agent": null,
+   "readAt": "2026-11-27T14:11:48.497Z"
   }
  ]
 }
