@@ -56,6 +56,17 @@
    "story": "Same morning as our email. In its other reply Wix wrote that the data from all its services is deleted 7 days later and cannot be reverted, and that its support will no longer recognise the account.",
    "check": "Wix's replies are on the live run under Wix, including a later one confirming that the account is deactivated and its data deletion has begun.",
    "checkUrl": "/run#rows"
+  },
+  {
+   "company": "Grammarly",
+   "verdict": "Deleted",
+   "kind": "gone",
+   "at": "2026-11-28T08:38:00Z",
+   "theirWords": "Your account has been deleted.",
+   "source": "Grammarly's own page, grammarly.com/account-deleted, after deleting the account signed in as erased.demo.inbox@gmail.com",
+   "story": "Grammarly answered our letter by taking the address off its mailing list and saying the account itself must be deleted by us, from its profile page. Erased named that step. We signed in with Google, pressed Delete Account and confirmed. The whole run is on video.",
+   "check": "Watch the 36-second screen recording of the deletion.",
+   "checkUrl": "https://github.com/Jennycruzy/erased/releases/download/v1.0/erased-grammarly-deleted.mp4"
   }
  ],
  "noAccount": [

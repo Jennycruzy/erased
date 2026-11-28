@@ -11,7 +11,7 @@ if (box) {
       <blockquote>“${esc(r.theirWords)}”</blockquote>
       <p class="q">${esc(r.source)} · ${day(r.at)}</p>
       <p class="proof-story">${esc(r.story)}</p>
-      <a class="proof-check" href="${esc(r.checkUrl)}"${r.checkUrl.startsWith("http") ? ' target="_blank" rel="noopener"' : ""}>${r.checkUrl.startsWith("http") ? "Check it yourself" : "See it"} <span class="arrow">→</span><span class="q">${esc(r.check)}</span></a>
+      <a class="proof-check" href="${esc(r.checkUrl)}"${r.checkUrl.startsWith("http") ? ' target="_blank" rel="noopener"' : ""}>${r.checkUrl.endsWith(".mp4") ? "Watch it" : r.checkUrl.startsWith("http") ? "Check it yourself" : "See it"} <span class="arrow">→</span><span class="q">${esc(r.check)}</span></a>
     </article>`).join("");
   const n = document.getElementById("proof-noaccount");
   if (n) n.textContent = `${d.noAccount.length} more companies (${d.noAccount.join(", ")}) wrote back that they hold no account for the address.`;
