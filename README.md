@@ -25,7 +25,7 @@ yourself in ten seconds.
 | **Zapier** | ✅ **Deleted** | *"No users exist with that email."* (Zapier's password-reset page, 27 Nov 2026) | [zapier.com/app/login/forgot](https://zapier.com/app/login/forgot), enter the demo address |
 | **Medium** | ✅ **Account gone** | *"Sorry, we didn't recognize that email."* (Medium's sign-in page, 27 Nov 2026; the account signed up with Google on 19 Nov) | [medium.com/m/signin](https://medium.com/m/signin) → Sign in with email |
 | **Asana** | ✅ **Deleted** | *"I can confirm that your Asana account associated with erased.demo.inbox@gmail.com has now been deleted."* (Asana Support, 23 Nov 2026) | [live run](https://forget-me-hybrid.web.app/run#proof) |
-| **Skillshare** | 🟡 **Request verified** | *"Identity Verified. Your deletion request will now be processed."* (Skillshare's privacy centre, 27 Nov 2026) | [live run](https://forget-me-hybrid.web.app/run#proof) |
+| **Skillshare** | ✅ **Deleted** | *"We have taken action per your request."* (Skillshare's Privacy Team, about its Deletion request, 28 Nov 2026) | [live run](https://forget-me-hybrid.web.app/run#proof) |
 | **Kaggle, Spotify, SurveyMonkey, Typeform, Zoom** | ✅ **No account held** | Each wrote back that it holds no account for the address. | [live run](https://forget-me-hybrid.web.app/run) |
 
 Zapier, Medium and Skillshare each put a step in front of deletion that only a person could pass: a fresh password
@@ -147,8 +147,7 @@ On 20 Nov 2026 we sent 30 real deletion requests from a public demo inbox. Erase
   286 (83%) give no time to answer, though GDPR and UK GDPR set one month and California 45 days.
   Every promise we did find, and every ID or sign-in-only demand, is quoted on the
   [directory](https://forget-me-hybrid.web.app/directory#promises).
-- **Outcomes:** Zapier and Asana deleted the account, Medium no longer recognises it, Skillshare verified the
-  deletion request, Canva scheduled the deletion, and 5 companies (Kaggle, Spotify, SurveyMonkey, Typeform, Zoom)
+- **Outcomes:** Zapier, Asana and Skillshare deleted the account, Medium no longer recognises it, Canva scheduled the deletion, and 5 companies (Kaggle, Spotify, SurveyMonkey, Typeform, Zoom)
   said they hold no account for the address. [Proof above](#proof-gone-in-their-own-words).
 - **7 companies kept sending marketing or sign-up nudges after the request**: Codecademy, Grammarly, monday.com,
   Skillshare, Slack, Todoist and Zapier. Erased caught each one, quoted the email, and wrote the "stop now" letter
@@ -156,7 +155,7 @@ On 20 Nov 2026 we sent 30 real deletion requests from a public demo inbox. Erase
 - **Some put a person-only check in front of deletion**: Medium (a "verify you are human" page before sign-in),
   Skillshare (a captcha on its deletion form) and Zapier (a fresh password check inside a short time window, even
   when you are already signed in). All three were cleared on 27 Nov: Zapier's account is deleted, Medium's is gone
-  and Skillshare's request is verified.
+  and Skillshare wrote on 28 Nov that it has taken action on the deletion.
 
 Every company, reply and quote is on the [live run](https://forget-me-hybrid.web.app/run).
 

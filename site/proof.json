@@ -1,5 +1,5 @@
 {
- "checkedAt": "2026-11-27T19:14:00Z",
+ "checkedAt": "2026-11-28T08:15:00Z",
  "inbox": "erased.demo.inbox@gmail.com",
  "rows": [
   {
@@ -37,13 +37,13 @@
   },
   {
    "company": "Skillshare",
-   "verdict": "Request verified",
-   "kind": "accepted",
-   "at": "2026-11-27T18:53:00Z",
-   "theirWords": "Identity Verified. Your deletion request will now be processed.",
-   "source": "Skillshare's privacy request centre, after its email check",
-   "story": "Skillshare answered our email by pointing to a privacy form behind a captcha. We filled the form under Nigeria's NDPA, a person cleared the captcha, and Skillshare's verification email was answered five minutes later.",
-   "check": "Skillshare's reply to our email, pointing to that form, is on the live run under Skillshare.",
+   "verdict": "Deleted",
+   "kind": "gone",
+   "at": "2026-11-28T00:04:00Z",
+   "theirWords": "We have taken action per your request.",
+   "source": "Skillshare's Privacy Team (privacy-requests@skillshare.com), email \"Privacy Request / skillshare.com results\" to the demo inbox about its Deletion request",
+   "story": "Skillshare answered our email by pointing to a privacy form behind a captcha. We filled the form under Nigeria's NDPA, a person cleared the captcha, and the identity check was answered five minutes later. Skillshare confirmed receipt at 22:03 UTC and wrote that it had taken action two hours later, about five hours after the form.",
+   "check": "Both Skillshare emails are in the demo inbox; its first reply, pointing to the form, is on the live run under Skillshare.",
    "checkUrl": "/run#rows"
   }
  ],
