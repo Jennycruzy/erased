@@ -66,6 +66,17 @@ jobs:
             sleep 8
             xcrun simctl io "$UDID" screenshot "screen-$mode.png"
           done
+      - name: Device build for real-iPhone testing (unsigned; the device cloud signs it)
+        working-directory: ios
+        run: |
+          set -o pipefail
+          xcodebuild build-for-testing -project Erased.xcodeproj -scheme Erased -sdk iphoneos -configuration Debug \
+            -derivedDataPath build/dev CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" | tail -30
+          P=build/dev/Build/Products/Debug-iphoneos
+          mkdir -p device/Payload && cp -R "$P/Erased.app" device/Payload/
+          (cd device && zip -qr ../Erased-device.ipa Payload)
+          (cd "$P" && zip -qr "$OLDPWD/ErasedUITests-Runner.zip" ErasedUITests-Runner.app)
+          ls -la Erased-device.ipa ErasedUITests-Runner.zip
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -74,6 +85,8 @@ jobs:
             ios/Erased-simulator.zip
             ios/screen-*.png
             ios/demo.mp4
+            ios/Erased-device.ipa
+            ios/ErasedUITests-Runner.zip
             ios/build/tests.xcresult
             ios/Erased.xcodeproj
           retention-days: 30

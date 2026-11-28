@@ -20,4 +20,21 @@ final class DemoUITests: XCTestCase {
         app.swipeUp()
         sleep(3)
     }
+
+    /// On a real iPhone: reads one real reply with the cloud left off, so the answer can only come from Apple's
+    /// on-device model (or, without Apple Intelligence, from the known phrases). Prints where it was read.
+    func testReadOnDeviceOnly() throws {
+        let app = XCUIApplication()
+        app.launch()
+        sleep(3)
+        app.buttons["Substack"].tap()
+        sleep(2)
+        app.buttons["read"].tap()
+        let source = app.staticTexts["source"]
+        XCTAssertTrue(source.waitForExistence(timeout: 90), "no answer within 90 s")
+        print("ERASED device: \(source.label) | \(app.staticTexts["headline"].label)")
+        sleep(5)
+        app.swipeUp()
+        sleep(4)
+    }
 }

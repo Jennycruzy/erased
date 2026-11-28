@@ -30,6 +30,14 @@ import java.io.File
 class NanoOnDeviceTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
 
+    /** With a debug secret (Test Lab), App Check uses the debug provider; without one (a device cloud), the app's own
+     *  App Check runs: the token from the website's reCAPTCHA Enterprise check, as on a person's phone. */
+    private fun appCheck(block: () -> Unit) {
+        if (InstrumentationRegistry.getArguments().getString("firebaseAppCheckDebugSecret") != null)
+            DebugAppCheckTestHelper.fromInstrumentationArgs().withDebugProvider<Throwable> { block() }
+        else block()
+    }
+
     private val ctx = InstrumentationRegistry.getInstrumentation().targetContext
     private val testCtx = InstrumentationRegistry.getInstrumentation().context
     private val out = File(ctx.getExternalFilesDir(null), "nano").apply { mkdirs() }
@@ -70,7 +78,7 @@ class NanoOnDeviceTest {
     }
 
     @Test
-    fun b_readsOneReplyOnScreen() = DebugAppCheckTestHelper.fromInstrumentationArgs().withDebugProvider<Throwable> {
+    fun b_readsOneReplyOnScreen() = appCheck {
         compose.waitForIdle(); Thread.sleep(1500); shot("01-start")
         if (!ready()) { log("screen: Nano not available on this phone, switching on the cloud fallback"); compose.onNode(isToggleable()).performScrollTo().performClick() }
         compose.onNodeWithText("Company").performTextInput("Substack")
@@ -91,7 +99,7 @@ class NanoOnDeviceTest {
     }
 
     @Test
-    fun c_readsEveryLabelledReply() = DebugAppCheckTestHelper.fromInstrumentationArgs().withDebugProvider<Throwable> { runBlocking {
+    fun c_readsEveryLabelledReply() = appCheck { runBlocking {
         // With Gemini Nano: on-device only. Without it: the hybrid setting the app uses when you allow the cloud.
         val where = if (ready()) Where.DEVICE_ONLY else Where.CLOUD_ALLOWED
         if (args.getString("erasedScreensOnly") == "1") { log("eval: skipped (screens only)"); return@runBlocking }

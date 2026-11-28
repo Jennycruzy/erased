@@ -17,6 +17,14 @@ import org.junit.Test
 class DemoVideoTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
 
+    /** With a debug secret (Test Lab), App Check uses the debug provider; without one (a device cloud), the app's own
+     *  App Check runs: the token from the website's reCAPTCHA Enterprise check, as on a person's phone. */
+    private fun appCheck(block: () -> Unit) {
+        if (InstrumentationRegistry.getArguments().getString("firebaseAppCheckDebugSecret") != null)
+            DebugAppCheckTestHelper.fromInstrumentationArgs().withDebugProvider<Throwable> { block() }
+        else block()
+    }
+
     private fun pause(ms: Long) { compose.waitForIdle(); Thread.sleep(ms) }
     private fun hideKeyboard() = InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("input keyevent 111").close()
     private val answer get() = hasText("Read ", substring = true) and !hasText("Read it")
@@ -43,7 +51,7 @@ class DemoVideoTest {
     }
 
     @Test
-    fun walkthrough() = DebugAppCheckTestHelper.fromInstrumentationArgs().withDebugProvider<Throwable> {
+    fun walkthrough() = appCheck {
         pause(3000)
         // No Gemini Nano on this phone: switch on the cloud fallback, as a person would.
         if (runBlocking { FirebaseAIOnDevice.checkStatus() } != OnDeviceModelStatus.AVAILABLE) {
