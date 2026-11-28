@@ -1,0 +1,559 @@
+{
+ "what": "The Erased Android app on real phones on BrowserStack App Automate, 27 Nov 2026. NanoOnDeviceTest with no debug token, so App Check ran as on a person's phone (reCAPTCHA Enterprise token from the website). These phones have no Gemini Nano, so the app read with PREFER_ON_DEVICE: Gemini in the cloud through Firebase AI Logic. 66 hand-labelled real replies from evals/replies.json.",
+ "browserstackBuild": "f2e5d81811d7fc68017af23fd8f7da83a9cf60b6",
+ "phones": [
+  {
+   "phone": "Samsung Galaxy S25 (Android 15)",
+   "device": "device=samsung SM-S931B sdk=35 build=AP3A.240905.015.A2.S931BXXU1AYB4 status=UNAVAILABLE",
+   "onScreen": "Read by Gemini in the cloud (you allowed it) \u00b7 2332 ms",
+   "n": 66,
+   "rulesThenGemini": 65,
+   "geminiAlone": 59,
+   "readInCloud": 65,
+   "readOnDevice": 0
+  },
+  {
+   "phone": "Google Pixel 10 Pro (Android 16)",
+   "device": "device=Google Pixel 10 Pro sdk=36 build=BD1A.250702.001 status=UNAVAILABLE",
+   "onScreen": "Read by Gemini in the cloud (you allowed it) \u00b7 2882 ms",
+   "n": 66,
+   "rulesThenGemini": 63,
+   "geminiAlone": 56,
+   "readInCloud": 64,
+   "readOnDevice": 0,
+   "medianMs": 759,
+   "rows": [
+    {
+     "id": 1,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "874"
+    },
+    {
+     "id": 2,
+     "label": "go_ahead",
+     "nano": "go_ahead",
+     "final": "go_ahead",
+     "source": "In Cloud",
+     "ms": "745"
+    },
+    {
+     "id": 3,
+     "label": "confirm_sender",
+     "nano": "log_in_delete",
+     "final": "confirm_sender",
+     "source": "In Cloud",
+     "ms": "707"
+    },
+    {
+     "id": 4,
+     "label": "log_in_delete",
+     "nano": "log_in_delete",
+     "final": "log_in_delete",
+     "source": "In Cloud",
+     "ms": "754"
+    },
+    {
+     "id": 5,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "999"
+    },
+    {
+     "id": 6,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "759"
+    },
+    {
+     "id": 7,
+     "label": "go_ahead",
+     "nano": "go_ahead",
+     "final": "go_ahead",
+     "source": "In Cloud",
+     "ms": "753"
+    },
+    {
+     "id": 8,
+     "label": "log_in_delete",
+     "nano": "log_in_delete",
+     "final": "log_in_delete",
+     "source": "In Cloud",
+     "ms": "705"
+    },
+    {
+     "id": 9,
+     "label": "log_in_delete",
+     "nano": "log_in_delete",
+     "final": "log_in_delete",
+     "source": "In Cloud",
+     "ms": "4399"
+    },
+    {
+     "id": 10,
+     "label": "wait",
+     "nano": "null",
+     "final": "wait",
+     "source": "error",
+     "ms": "3866",
+     "error": "Something unexpected happened."
+    },
+    {
+     "id": 11,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "823"
+    },
+    {
+     "id": 12,
+     "label": "log_in_delete",
+     "nano": "log_in_delete",
+     "final": "log_in_delete",
+     "source": "In Cloud",
+     "ms": "759"
+    },
+    {
+     "id": 13,
+     "label": "wait",
+     "nano": "provide_info",
+     "final": "provide_info",
+     "source": "In Cloud",
+     "ms": "728"
+    },
+    {
+     "id": 14,
+     "label": "confirm_sender",
+     "nano": "confirm_sender",
+     "final": "confirm_sender",
+     "source": "In Cloud",
+     "ms": "749"
+    },
+    {
+     "id": 15,
+     "label": "confirm_sender",
+     "nano": "confirm_sender",
+     "final": "confirm_sender",
+     "source": "In Cloud",
+     "ms": "843"
+    },
+    {
+     "id": 16,
+     "label": "confirm_sender",
+     "nano": "use_form",
+     "final": "confirm_sender",
+     "source": "In Cloud",
+     "ms": "764"
+    },
+    {
+     "id": 17,
+     "label": "log_in_delete",
+     "nano": "log_in_delete",
+     "final": "log_in_delete",
+     "source": "In Cloud",
+     "ms": "885"
+    },
+    {
+     "id": 18,
+     "label": "log_in_delete",
+     "nano": "log_in_delete",
+     "final": "log_in_delete",
+     "source": "In Cloud",
+     "ms": "832"
+    },
+    {
+     "id": 19,
+     "label": "no_account",
+     "nano": "confirm_sender",
+     "final": "no_account",
+     "source": "In Cloud",
+     "ms": "3625"
+    },
+    {
+     "id": 20,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "5139"
+    },
+    {
+     "id": 21,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "840"
+    },
+    {
+     "id": 22,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "634"
+    },
+    {
+     "id": 23,
+     "label": "confirm_sender",
+     "nano": "confirm_sender",
+     "final": "confirm_sender",
+     "source": "In Cloud",
+     "ms": "751"
+    },
+    {
+     "id": 24,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "738"
+    },
+    {
+     "id": 25,
+     "label": "use_form",
+     "nano": "use_form",
+     "final": "use_form",
+     "source": "In Cloud",
+     "ms": "627"
+    },
+    {
+     "id": 26,
+     "label": "use_form",
+     "nano": "use_form",
+     "final": "use_form",
+     "source": "In Cloud",
+     "ms": "976"
+    },
+    {
+     "id": 27,
+     "label": "use_form",
+     "nano": "use_form",
+     "final": "use_form",
+     "source": "In Cloud",
+     "ms": "658"
+    },
+    {
+     "id": 28,
+     "label": "use_form",
+     "nano": "use_form",
+     "final": "use_form",
+     "source": "In Cloud",
+     "ms": "775"
+    },
+    {
+     "id": 29,
+     "label": "use_form",
+     "nano": "use_form",
+     "final": "use_form",
+     "source": "In Cloud",
+     "ms": "807"
+    },
+    {
+     "id": 30,
+     "label": "no_account",
+     "nano": "no_account",
+     "final": "no_account",
+     "source": "In Cloud",
+     "ms": "2929"
+    },
+    {
+     "id": 31,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "566"
+    },
+    {
+     "id": 32,
+     "label": "use_form",
+     "nano": "use_form",
+     "final": "use_form",
+     "source": "In Cloud",
+     "ms": "779"
+    },
+    {
+     "id": 33,
+     "label": "wait",
+     "nano": "null",
+     "final": "wait",
+     "source": "error",
+     "ms": "86",
+     "error": "Something unexpected happened."
+    },
+    {
+     "id": 34,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "915"
+    },
+    {
+     "id": 35,
+     "label": "scheduled",
+     "nano": "scheduled",
+     "final": "scheduled",
+     "source": "In Cloud",
+     "ms": "741"
+    },
+    {
+     "id": 36,
+     "label": "wait",
+     "nano": "scheduled",
+     "final": "scheduled",
+     "source": "In Cloud",
+     "ms": "714"
+    },
+    {
+     "id": 37,
+     "label": "use_form",
+     "nano": "use_form",
+     "final": "use_form",
+     "source": "In Cloud",
+     "ms": "931"
+    },
+    {
+     "id": 38,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "698"
+    },
+    {
+     "id": 39,
+     "label": "wait",
+     "nano": "provide_info",
+     "final": "provide_info",
+     "source": "In Cloud",
+     "ms": "763"
+    },
+    {
+     "id": 40,
+     "label": "confirm_sender",
+     "nano": "provide_info",
+     "final": "confirm_sender",
+     "source": "In Cloud",
+     "ms": "794"
+    },
+    {
+     "id": 41,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "4398"
+    },
+    {
+     "id": 42,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "731"
+    },
+    {
+     "id": 43,
+     "label": "log_in_delete",
+     "nano": "use_form",
+     "final": "log_in_delete",
+     "source": "In Cloud",
+     "ms": "671"
+    },
+    {
+     "id": 44,
+     "label": "log_in_delete",
+     "nano": "log_in_delete",
+     "final": "log_in_delete",
+     "source": "In Cloud",
+     "ms": "772"
+    },
+    {
+     "id": 45,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "715"
+    },
+    {
+     "id": 46,
+     "label": "log_in_delete",
+     "nano": "log_in_delete",
+     "final": "log_in_delete",
+     "source": "In Cloud",
+     "ms": "767"
+    },
+    {
+     "id": 47,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "740"
+    },
+    {
+     "id": 48,
+     "label": "use_form",
+     "nano": "use_form",
+     "final": "use_form",
+     "source": "In Cloud",
+     "ms": "714"
+    },
+    {
+     "id": 49,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "672"
+    },
+    {
+     "id": 50,
+     "label": "verify_link",
+     "nano": "verify_link",
+     "final": "verify_link",
+     "source": "In Cloud",
+     "ms": "888"
+    },
+    {
+     "id": 51,
+     "label": "verify_link",
+     "nano": "verify_link",
+     "final": "verify_link",
+     "source": "In Cloud",
+     "ms": "765"
+    },
+    {
+     "id": 52,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "832"
+    },
+    {
+     "id": 53,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "671"
+    },
+    {
+     "id": 54,
+     "label": "use_form",
+     "nano": "use_form",
+     "final": "use_form",
+     "source": "In Cloud",
+     "ms": "665"
+    },
+    {
+     "id": 55,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "566"
+    },
+    {
+     "id": 56,
+     "label": "no_account",
+     "nano": "no_account",
+     "final": "no_account",
+     "source": "In Cloud",
+     "ms": "707"
+    },
+    {
+     "id": 57,
+     "label": "no_account",
+     "nano": "no_account",
+     "final": "no_account",
+     "source": "In Cloud",
+     "ms": "831"
+    },
+    {
+     "id": 58,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "727"
+    },
+    {
+     "id": 59,
+     "label": "clarify",
+     "nano": "clarify",
+     "final": "clarify",
+     "source": "In Cloud",
+     "ms": "1017"
+    },
+    {
+     "id": 60,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "719"
+    },
+    {
+     "id": 61,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "688"
+    },
+    {
+     "id": 62,
+     "label": "no_account",
+     "nano": "no_account",
+     "final": "no_account",
+     "source": "In Cloud",
+     "ms": "732"
+    },
+    {
+     "id": 63,
+     "label": "verify_link",
+     "nano": "verify_link",
+     "final": "verify_link",
+     "source": "In Cloud",
+     "ms": "4584"
+    },
+    {
+     "id": 64,
+     "label": "log_in_delete",
+     "nano": "log_in_delete",
+     "final": "log_in_delete",
+     "source": "In Cloud",
+     "ms": "790"
+    },
+    {
+     "id": 65,
+     "label": "wait",
+     "nano": "wait",
+     "final": "wait",
+     "source": "In Cloud",
+     "ms": "2582"
+    },
+    {
+     "id": 66,
+     "label": "scheduled",
+     "nano": "scheduled",
+     "final": "scheduled",
+     "source": "In Cloud",
+     "ms": "748"
+    }
+   ]
+  }
+ ]
+}

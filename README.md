@@ -130,7 +130,7 @@ reply*), or build the [iPhone app](#iphone). Steps under [Run it](#run-it).
 | ![Reply Coach on a real Substack reply: the sentence that asks for a step is highlighted, and the written YES is ready](docs/img/coach.png) | ![The Erased side panel in Chrome after scanning the demo inbox: 27 companies, and the companies still sending marketing listed first](docs/img/extension.png) |
 | **Reply Coach** on Substack's real reply: the sentence that asks for a step, and the answer it writes. | **The extension** after scanning the demo inbox: 27 companies; what needs you first. |
 | ![The Erased Android app](docs/img/android.png) | ![The Erased iPhone app](docs/img/iphone.png) |
-| **Android** (Firebase Test Lab virtual phone, recorded run). | **iPhone** (simulator, CI). |
+| **Android** on a real Google Pixel 10 Pro: read by Gemini in the cloud in 2.5 s ([recorded run](https://github.com/Jennycruzy/erased/releases/download/v1.0/erased-real-pixel-10-pro.mp4)). | **iPhone** (simulator, CI). |
 
 ## What happened when we used it
 
@@ -237,7 +237,10 @@ Gemini Nano and records the screen.
 | All 66, as shipped (rules updated after reading these, so in-sample) | 66/66 |
 | Where it ran | 66/66 on the device, median 3.1 s per email |
 
-| Android, Firebase Test Lab (no Gemini Nano on that phone, so `PREFER_ON_DEVICE` went to the cloud) | Gemini alone 58/66 · rules + Gemini 64/66 · 66/66 read in the cloud |
+| Phones (`PREFER_ON_DEVICE`, all 66 replies) | Right next step |
+|---|---|
+| Android on real phones (BrowserStack, 27 Nov, the app's own App Check): Samsung Galaxy S25, Google Pixel 10 Pro | rules + Gemini **65/66** (Galaxy S25) and **63/66** (Pixel 10 Pro) · Gemini alone 59/66 and 56/66 · read in the cloud by hybrid inference, 0.76 s median · [Galaxy S25 run](https://github.com/Jennycruzy/erased/releases/download/v1.0/erased-real-galaxy-s25.mp4) · [Pixel 10 Pro run](https://github.com/Jennycruzy/erased/releases/download/v1.0/erased-real-pixel-10-pro.mp4) · [`evals/real-phones-27nov.json`](evals/real-phones-27nov.json) |
+| Android, Firebase Test Lab | Gemini alone 58/66 · rules + Gemini 64/66 · 66/66 read in the cloud |
 
 Known phrases decide first because they are exact; Nano decides when no known phrase matches, and only with a
 sentence that is really in the email. Results: `evals/results-mac.json`.
@@ -259,7 +262,8 @@ it), and Erased reads it and shows the quickest lawful next step, with a ready r
 - **App Check** with a reCAPTCHA Enterprise token from the website (`WebAppCheck.kt`): the APK is not installed
   from the Play Store, so Play Integrity cannot vouch for it.
 - Built and tested by `.github/workflows/android.yml`; the APK is in the run's artifacts. An on-device check
-  (`NanoOnDeviceTest`) runs in Firebase Test Lab: it reads every labelled reply and records where each was read.
+  (`NanoOnDeviceTest`) runs in Firebase Test Lab and on real phones (Samsung Galaxy S25 and Google Pixel 10 Pro on
+  BrowserStack): it reads every labelled reply and records where each was read. On the real phones: 65/66 and 63/66.
 
 ## iPhone
 
