@@ -26,6 +26,15 @@ yourself in ten seconds. 5 more companies hold no account, and 7 were caught sti
 - **It proves the end.** "Deleted" counts only when the company says so in its own words, or its own sign-in page no
   longer knows you. [Proof below](#proof-gone-in-their-own-words).
 
+**Judging criteria: where to look**
+
+| Criterion | The short answer | See it |
+|---|---|---|
+| **Technological implementation** | Firebase AI Logic hybrid inference in four apps (extension, website, Android, iPhone) sharing one Coach. Private mail is read `ONLY_ON_DEVICE`; public privacy pages `ONLY_IN_CLOUD` with URL context; a company's reply `PREFER_ON_DEVICE` only if you allow it. App Check enforced, Remote Config, Firestore, Hosting, Test Lab. 247 tests. | [Built on Firebase](#built-on-firebase-every-piece-live) · [Why hybrid](#why-hybrid) · [Accuracy](#accuracy) |
+| **Design** | A complete loop, not a demo: find every account, send the request, read the reply, answer the hoop, count the deadline, write the complaint, prove the end. A 90-second judge page with no install. | [/judge](https://forget-me-hybrid.web.app/judge) · [What you see](#what-you-see) |
+| **Potential impact** | Real requests to real companies from a public inbox: 8 accounts now deleted or gone, 4 checkable by you in ten seconds; 66 real replies scored on real Samsung and Google phones (65/66, 63/66). A directory of 2,189 companies' deletion routes, each quoted from its own privacy page. | [Proof](#proof-gone-in-their-own-words) · [/run](https://forget-me-hybrid.web.app/run) · [/directory](https://forget-me-hybrid.web.app/directory) |
+| **Quality of the idea** | Hybrid is the point, not a feature: the list of every company you use is the most private thing in your inbox, so it never leaves the device; the public law and privacy pages are where the cloud helps. | [The problem](#the-problem) · [How Erased fixes it](#how-erased-fixes-it) |
+
 ## Proof: gone, in their own words
 
 We sent real deletion requests from a public demo inbox (`erased.demo.inbox@gmail.com`) and did not take our own
