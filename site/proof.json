@@ -78,6 +78,17 @@
    "story": "Airtable answered our letter by deleting the address from its sales and marketing systems and saying the account itself must be deleted by us. Erased named that step. We signed in, pressed Delete your Airtable user account and confirmed. A 20-second recording shows it; Airtable's sign-in page now treats the address as new.",
    "check": "Open airtable.com/login, enter erased.demo.inbox@gmail.com and press Continue. The deletion itself is in a 20-second recording on the release.",
    "checkUrl": "https://airtable.com/login"
+  },
+  {
+   "company": "monday.com",
+   "verdict": "Account gone",
+   "kind": "gone",
+   "at": "2026-11-28T08:56:00Z",
+   "theirWords": "We couldn't find this email.",
+   "source": "monday.com's own sign-in page, asked for erased.demo.inbox@gmail.com, which had a monday.com account and got its emails",
+   "story": "monday.com's privacy team asked us to prove the request was ours. Erased wrote the answer, and on 26 Nov the team replied that our request was in progress. Two days later its sign-in page no longer finds the address and offers a new sign-up.",
+   "check": "Open auth.monday.com/auth/login_monday, enter erased.demo.inbox@gmail.com and press Next.",
+   "checkUrl": "https://auth.monday.com/auth/login_monday"
   }
  ],
  "noAccount": [
