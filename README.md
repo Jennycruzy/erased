@@ -130,7 +130,7 @@ reply*), or build the [iPhone app](#iphone). Steps under [Run it](#run-it).
 | ![Reply Coach on a real Substack reply: the sentence that asks for a step is highlighted, and the written YES is ready](docs/img/coach.png) | ![The Erased side panel in Chrome after scanning the demo inbox: 27 companies, and the companies still sending marketing listed first](docs/img/extension.png) |
 | **Reply Coach** on Substack's real reply: the sentence that asks for a step, and the answer it writes. | **The extension** after scanning the demo inbox: 27 companies; what needs you first. |
 | ![The Erased Android app](docs/img/android.png) | ![The Erased iPhone app](docs/img/iphone.png) |
-| **Android** on a real Google Pixel 10 Pro: read by Gemini in the cloud in 2.5 s ([recorded run](https://github.com/Jennycruzy/erased/releases/download/v1.0/erased-real-pixel-10-pro.mp4)). | **iPhone** (simulator, CI). |
+| **Android** on a real Google Pixel 10 Pro: read by Gemini in the cloud in 2.5 s ([recorded run](https://github.com/Jennycruzy/erased/releases/download/v1.0/erased-real-pixel-10-pro.mp4)). | **iPhone** on a real iPhone 18 Pro: read by Gemini in the cloud through Firebase AI Logic in 6.6 s ([recorded run](https://github.com/Jennycruzy/erased/releases/download/v1.0/erased-real-iphone-18-pro.mp4)). |
 
 ## What happened when we used it
 
@@ -240,6 +240,7 @@ Gemini Nano and records the screen.
 | Phones (`PREFER_ON_DEVICE`, all 66 replies) | Right next step |
 |---|---|
 | Android on real phones (BrowserStack, 27 Nov, the app's own App Check): Samsung Galaxy S25, Google Pixel 10 Pro | rules + Gemini **65/66** (Galaxy S25) and **63/66** (Pixel 10 Pro) · Gemini alone 59/66 and 56/66 · read in the cloud by hybrid inference, 0.76 s median · [Galaxy S25 run](https://github.com/Jennycruzy/erased/releases/download/v1.0/erased-real-galaxy-s25.mp4) · [Pixel 10 Pro run](https://github.com/Jennycruzy/erased/releases/download/v1.0/erased-real-pixel-10-pro.mp4) · [`evals/real-phones-27nov.json`](evals/real-phones-27nov.json) |
+| iPhone on a real phone (BrowserStack, 28 Nov, the app's own App Check): iPhone 18 Pro, iOS 27.2 | Substack's real reply read by Gemini in the cloud (`geminiLanguageModel`) in 6.6 s: right next step, reply written · [recorded run](https://github.com/Jennycruzy/erased/releases/download/v1.0/erased-real-iphone-18-pro.mp4) |
 | Android, Firebase Test Lab | Gemini alone 58/66 · rules + Gemini 64/66 · 66/66 read in the cloud |
 
 Known phrases decide first because they are exact; Nano decides when no known phrase matches, and only with a
@@ -277,6 +278,8 @@ it), and Erased reads it and shows the quickest lawful next step, with a ready r
 - Same `coach.json`, same answers, same one-tap real replies; `CoachParityTests` checks all 66 hand labels.
 - **App Check** with a reCAPTCHA Enterprise token from the website (`WebAppCheck.swift`), tested on the simulator in
   CI (`AppCheckBridgeTests`).
+- Ran on a real iPhone 18 Pro (iOS 27.2, BrowserStack) with the app's own App Check: a real reply read by Gemini in the
+  cloud through Firebase AI Logic in 6.6 s ([recorded run](https://github.com/Jennycruzy/erased/releases/download/v1.0/erased-real-iphone-18-pro.mp4)).
 - Built, tested and screenshotted by `.github/workflows/ios.yml`. Install: `brew install xcodegen && cd ios &&
   xcodegen`, open `Erased.xcodeproj` in Xcode 27, choose your Apple ID as the team and run it on your iPhone.
 
