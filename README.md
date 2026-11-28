@@ -17,7 +17,7 @@ when you allow it.
 ## Proof: gone, in their own words
 
 We sent real deletion requests from a public demo inbox (`erased.demo.inbox@gmail.com`) and did not take our own
-app's word for the results. This is what each company says now, copied word for word. Two of them you can check
+app's word for the results. This is what each company says now, copied word for word. Three of them you can check
 yourself in ten seconds.
 
 | Company | Result | In the company's own words | Check it yourself |
@@ -28,6 +28,7 @@ yourself in ten seconds.
 | **Skillshare** | ✅ **Deleted** | *"We have taken action per your request."* (Skillshare's Privacy Team, about its Deletion request, 28 Nov 2026) | [live run](https://forget-me-hybrid.web.app/run#proof) |
 | **Wix** | ✅ **Account closed** | *"We've deactivated your account, you will no longer be able to log into your account."* Its data is *"deleted 7 days after receiving this message"* (Wix Customer Care, 23 Nov 2026) | [live run](https://forget-me-hybrid.web.app/run#proof) |
 | **Grammarly** | ✅ **Deleted** | *"Your account has been deleted."* (Grammarly's own page after we pressed Delete Account, the step its reply asked for, 28 Nov 2026) | [screen recording, 36 s](https://github.com/Jennycruzy/erased/releases/download/v1.0/erased-grammarly-deleted.mp4) |
+| **Airtable** | ✅ **Account gone** | *"Create your profile. Signing up as erased.demo.inbox@gmail.com."* (Airtable's sign-in page after we deleted the account, the step its reply asked for, 28 Nov 2026) | [airtable.com/login](https://airtable.com/login), enter the demo address · [deletion, 20 s](https://github.com/Jennycruzy/erased/releases/download/v1.0/erased-airtable-deleted.mp4) |
 | **Kaggle, Spotify, SurveyMonkey, Typeform, Zoom** | ✅ **No account held** | Each wrote back that it holds no account for the address. | [live run](https://forget-me-hybrid.web.app/run) |
 
 Zapier, Medium and Skillshare each put a step in front of deletion that only a person could pass: a fresh password
@@ -149,7 +150,7 @@ On 20 Nov 2026 we sent 30 real deletion requests from a public demo inbox. Erase
   286 (83%) give no time to answer, though GDPR and UK GDPR set one month and California 45 days.
   Every promise we did find, and every ID or sign-in-only demand, is quoted on the
   [directory](https://forget-me-hybrid.web.app/directory#promises).
-- **Outcomes:** Zapier, Asana, Skillshare and Grammarly deleted the account, Wix closed it, Medium no longer recognises it, Canva scheduled the deletion, and 5 companies (Kaggle, Spotify, SurveyMonkey, Typeform, Zoom)
+- **Outcomes:** Zapier, Asana, Skillshare and Grammarly deleted the account, Wix closed it, Medium and Airtable no longer recognise it, Canva scheduled the deletion, and 5 companies (Kaggle, Spotify, SurveyMonkey, Typeform, Zoom)
   said they hold no account for the address. [Proof above](#proof-gone-in-their-own-words).
 - **7 companies kept sending marketing or sign-up nudges after the request**: Codecademy, Grammarly, monday.com,
   Skillshare, Slack, Todoist and Zapier. Erased caught each one, quoted the email, and wrote the "stop now" letter

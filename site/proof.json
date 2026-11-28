@@ -67,6 +67,17 @@
    "story": "Grammarly answered our letter by taking the address off its mailing list and saying the account itself must be deleted by us, from its profile page. Erased named that step. We signed in with Google, pressed Delete Account and confirmed. The whole run is on video.",
    "check": "Watch the 36-second screen recording of the deletion.",
    "checkUrl": "https://github.com/Jennycruzy/erased/releases/download/v1.0/erased-grammarly-deleted.mp4"
+  },
+  {
+   "company": "Airtable",
+   "verdict": "Account gone",
+   "kind": "gone",
+   "at": "2026-11-28T08:46:00Z",
+   "theirWords": "Create your profile.",
+   "source": "Airtable's own sign-in page, asked for erased.demo.inbox@gmail.com after the deletion: it answers \"Signing up as erased.demo.inbox@gmail.com\" and asks for a new name and password",
+   "story": "Airtable answered our letter by deleting the address from its sales and marketing systems and saying the account itself must be deleted by us. Erased named that step. We signed in, pressed Delete your Airtable user account and confirmed. A 20-second recording shows it; Airtable's sign-in page now treats the address as new.",
+   "check": "Open airtable.com/login, enter erased.demo.inbox@gmail.com and press Continue. The deletion itself is in a 20-second recording on the release.",
+   "checkUrl": "https://airtable.com/login"
   }
  ],
  "noAccount": [
