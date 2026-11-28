@@ -14,6 +14,18 @@ Built with [Firebase AI Logic](https://firebase.google.com/docs/ai-logic) hybrid
 and on Android, Apple's on-device model on iPhone, and Gemini in the cloud only for public pages, or for one email
 when you allow it.
 
+**Measured on a real inbox:** 30 real deletion requests → 27 companies answered → 19 of them asked for one more step
+first → Erased named each step and wrote the answer → **8 accounts are now deleted or gone**, 4 of which you can check
+yourself in ten seconds. 5 more companies hold no account, and 7 were caught still sending marketing after the request.
+
+**What it does that a request sender doesn't:**
+- **Your inbox never leaves your device.** The list of every company you use is built `ONLY_ON_DEVICE`; it is never
+  uploaded, not even to us.
+- **It doesn't stop at "sent".** It reads each reply, names the one step the company put in your way, answers it
+  with the law that backs you, counts down the legal deadline and writes the regulator complaint when it runs out.
+- **It proves the end.** "Deleted" counts only when the company says so in its own words, or its own sign-in page no
+  longer knows you. [Proof below](#proof-gone-in-their-own-words).
+
 ## Proof: gone, in their own words
 
 We sent real deletion requests from a public demo inbox (`erased.demo.inbox@gmail.com`) and did not take our own
