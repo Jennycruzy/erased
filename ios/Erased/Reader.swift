@@ -44,6 +44,8 @@ struct Reader: Sendable {
             return [(LanguageModelSession(model: SystemLanguageModel.default), Reader.onDeviceName)]
         }
         guard case .cloudAllowed = whereTo else { return [] }
+        // Gemini as a Foundation Models session arrived with iOS 27; on iOS 26 the iPhone reads on the device only.
+        guard #available(iOS 27.0, *) else { return [] }
         let ai = FirebaseAI.firebaseAI(backend: .googleAI())
         return CloudModels.current.map { (LanguageModelSession(model: ai.geminiLanguageModel(name: $0)), $0) }
     }

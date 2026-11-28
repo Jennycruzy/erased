@@ -3,7 +3,7 @@ name: Erased
 options:
   bundleIdPrefix: app.erased
   deploymentTarget:
-    iOS: "27.0"
+    iOS: "26.0"
 packages:
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk

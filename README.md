@@ -292,7 +292,7 @@ it), and Erased reads it and shows the quickest lawful next step, with a ready r
 
 ## iPhone
 
-`ios/` is the same reply reader for iPhone (SwiftUI, iOS 27).
+`ios/` is the same reply reader for iPhone (SwiftUI, iOS 26 and later; the cloud reader needs iOS 27).
 
 - **Apple's on-device model with Firebase AI Logic.** Your reply is read by Apple's on-device model
   (`SystemLanguageModel`) only, unless you allow the cloud: then, when this iPhone has no Apple Intelligence, the
@@ -304,6 +304,8 @@ it), and Erased reads it and shows the quickest lawful next step, with a ready r
   CI (`AppCheckBridgeTests`).
 - Ran on a real iPhone 18 Pro (iOS 27.2, BrowserStack) with the app's own App Check: a real reply read by Gemini in the
   cloud through Firebase AI Logic in 6.6 s ([recorded run](https://github.com/Jennycruzy/erased/releases/download/v1.0/erased-real-iphone-18-pro.mp4)).
+  It also runs on real iPhone 17 Pro, iPhone 17 Pro Max and iPhone Air on iOS 26 (BrowserStack, 28 Nov): the same
+  reply, the right next step on each.
 - Built, tested and screenshotted by `.github/workflows/ios.yml`. Install: `brew install xcodegen && cd ios &&
   xcodegen`, open `Erased.xcodeproj` in Xcode 27, choose your Apple ID as the team and run it on your iPhone.
 
