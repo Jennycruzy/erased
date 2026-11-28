@@ -26,6 +26,7 @@ yourself in ten seconds.
 | **Medium** | ✅ **Account gone** | *"Sorry, we didn't recognize that email."* (Medium's sign-in page, 27 Nov 2026; the account signed up with Google on 19 Nov) | [medium.com/m/signin](https://medium.com/m/signin) → Sign in with email |
 | **Asana** | ✅ **Deleted** | *"I can confirm that your Asana account associated with erased.demo.inbox@gmail.com has now been deleted."* (Asana Support, 23 Nov 2026) | [live run](https://forget-me-hybrid.web.app/run#proof) |
 | **Skillshare** | ✅ **Deleted** | *"We have taken action per your request."* (Skillshare's Privacy Team, about its Deletion request, 28 Nov 2026) | [live run](https://forget-me-hybrid.web.app/run#proof) |
+| **Wix** | ✅ **Account closed** | *"We've deactivated your account, you will no longer be able to log into your account."* Its data is *"deleted 7 days after receiving this message"* (Wix Customer Care, 23 Nov 2026) | [live run](https://forget-me-hybrid.web.app/run#proof) |
 | **Kaggle, Spotify, SurveyMonkey, Typeform, Zoom** | ✅ **No account held** | Each wrote back that it holds no account for the address. | [live run](https://forget-me-hybrid.web.app/run) |
 
 Zapier, Medium and Skillshare each put a step in front of deletion that only a person could pass: a fresh password
@@ -147,7 +148,7 @@ On 20 Nov 2026 we sent 30 real deletion requests from a public demo inbox. Erase
   286 (83%) give no time to answer, though GDPR and UK GDPR set one month and California 45 days.
   Every promise we did find, and every ID or sign-in-only demand, is quoted on the
   [directory](https://forget-me-hybrid.web.app/directory#promises).
-- **Outcomes:** Zapier, Asana and Skillshare deleted the account, Medium no longer recognises it, Canva scheduled the deletion, and 5 companies (Kaggle, Spotify, SurveyMonkey, Typeform, Zoom)
+- **Outcomes:** Zapier, Asana and Skillshare deleted the account, Wix closed it, Medium no longer recognises it, Canva scheduled the deletion, and 5 companies (Kaggle, Spotify, SurveyMonkey, Typeform, Zoom)
   said they hold no account for the address. [Proof above](#proof-gone-in-their-own-words).
 - **7 companies kept sending marketing or sign-up nudges after the request**: Codecademy, Grammarly, monday.com,
   Skillshare, Slack, Todoist and Zapier. Erased caught each one, quoted the email, and wrote the "stop now" letter

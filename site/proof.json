@@ -9,7 +9,7 @@
    "at": "2026-11-27T19:14:00Z",
    "theirWords": "No users exist with that email.",
    "source": "Zapier's own password-reset page, asked for erased.demo.inbox@gmail.com after the deletion",
-   "story": "Zapier answered our letter: delete the account yourself first. Its delete page then asked for a fresh password check that looped back to Google sign-in. We set a password from Zapier's own reset email, passed the check and deleted the account.",
+   "story": "Zapier answered our letter: delete the account yourself first. Its delete page then asked for a fresh password check that looped back to Google sign-in. We set a password from Zapier's own reset email, passed the check and deleted the account. Zapier Support then wrote back: \"I've verified that your account has been successfully removed\", and started erasing the rest from its systems, backups and marketing lists.",
    "check": "Open zapier.com/app/login/forgot and enter erased.demo.inbox@gmail.com.",
    "checkUrl": "https://zapier.com/app/login/forgot"
   },
@@ -44,6 +44,17 @@
    "source": "Skillshare's Privacy Team (privacy-requests@skillshare.com), email \"Privacy Request / skillshare.com results\" to the demo inbox about its Deletion request",
    "story": "Skillshare answered our email by pointing to a privacy form behind a captcha. We filled the form under Nigeria's NDPA, a person cleared the captcha, and the identity check was answered five minutes later. Skillshare confirmed receipt at 22:03 UTC and wrote that it had taken action two hours later, about five hours after the form.",
    "check": "Both Skillshare emails are in the demo inbox; its first reply, pointing to the form, is on the live run under Skillshare.",
+   "checkUrl": "/run#rows"
+  },
+  {
+   "company": "Wix",
+   "verdict": "Account closed",
+   "kind": "gone",
+   "at": "2026-11-23T02:12:00Z",
+   "theirWords": "We've deactivated your account, you will no longer be able to log into your account.",
+   "source": "Wix Customer Care (notifications-support@wix.com), replying to our request, ref 060526038",
+   "story": "Same morning as our email. In its other reply Wix wrote that the data from all its services is deleted 7 days later and cannot be reverted, and that its support will no longer recognise the account.",
+   "check": "Wix's replies are on the live run under Wix, including a later one confirming that the account is deactivated and its data deletion has begun.",
    "checkUrl": "/run#rows"
   }
  ],
